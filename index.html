@@ -11,12 +11,27 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#1F2937}.loading{display:flex;justify-content:center;align-items:center;height:100vh;color:white;font-size:1.5rem}.auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}.auth-box{background:white;border-radius:16px;padding:2rem;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}.auth-header{text-align:center;margin-bottom:2rem}.auth-header h1{font-size:1.75rem;color:#4F46E5;margin-bottom:0.5rem}.form-group{margin-bottom:1.5rem}.form-group label{display:block;margin-bottom:0.5rem;font-weight:600;color:#374151}.form-group input,.form-group select,.form-group textarea{width:100%;padding:0.75rem;border:2px solid #E5E7EB;border-radius:8px;font-size:1rem}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#4F46E5}.btn-primary{width:100%;padding:0.875rem;border:none;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;margin-bottom:1rem}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(79,70,229,0.3)}.btn-primary:disabled{opacity:0.5;cursor:not-allowed}.btn-secondary{padding:0.75rem 1.5rem;border:2px solid #E5E7EB;background:white;color:#6B7280;border-radius:8px;font-weight:600;cursor:pointer;margin-right:0.5rem}.btn-secondary:hover{border-color:#4F46E5;color:#4F46E5}.btn-edit{padding:0.5rem 1rem;border:2px solid #4F46E5;background:white;color:#4F46E5;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.875rem;margin-right:0.5rem}.btn-edit:hover{background:#4F46E5;color:white}.error-message{background:#FEE2E2;color:#991B1B;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.875rem}.app-container{display:flex;min-height:100vh}.sidebar{width:280px;background:rgba(255,255,255,0.95);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.08)}.sidebar-header{padding:2rem 1.5rem;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white}.sidebar-header h2{font-size:1.5rem;font-weight:700}.selector-entidad{padding:1rem 1.5rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB}.selector-entidad select{width:100%;padding:0.5rem;border:2px solid #E5E7EB;border-radius:6px}.user-info{padding:1rem 1.5rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB;font-size:0.875rem}.user-email{color:#4F46E5;font-weight:600;margin-bottom:0.5rem}.btn-logout{padding:0.5rem 1rem;background:white;border:2px solid #E5E7EB;border-radius:6px;cursor:pointer;font-size:0.875rem;width:100%}.nav-items{flex:1;padding:1rem 0}.nav-item{width:100%;padding:1rem 1.5rem;border:none;background:none;display:flex;align-items:center;gap:0.75rem;cursor:pointer;color:#4B5563;font-size:1rem;border-left:3px solid transparent;text-align:left}.nav-item:hover:not(:disabled){background:#F3F4F6;color:#4F46E5}.nav-item.activo{background:rgba(79,70,229,0.1);color:#4F46E5;font-weight:600;border-left-color:#4F46E5}.nav-item:disabled{opacity:0.4;cursor:not-allowed}.main-content{flex:1;padding:2rem;overflow-y:auto;background:#F9FAFB}.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}.page-header h1{font-size:2rem;font-weight:800;color:#111827}.card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1.5rem}.card h3{font-size:1.25rem;font-weight:700;color:#111827;margin-bottom:1rem}.card h4{font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:0.5rem}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}.stat-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid #4F46E5}.stat-label{font-size:0.875rem;color:#6B7280;margin-bottom:0.5rem;text-transform:uppercase;font-weight:600}.stat-value{font-size:2.5rem;font-weight:800;color:#111827}.semaforo{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:8px;font-size:0.875rem;font-weight:600}.semaforo.critico{background:#FEE2E2;color:#991B1B}.semaforo.precaucion{background:#FEF3C7;color:#92400E}.semaforo.optimo{background:#D1FAE5;color:#065F46}.tabla{width:100%;border-collapse:collapse}.tabla th{background:#F9FAFB;padding:1rem;text-align:left;font-weight:700;color:#374151;font-size:0.875rem}.tabla td{padding:1rem;border-top:1px solid #E5E7EB}.tabla tr:hover{background:#F9FAFB}.badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:700}.empty-state{text-align:center;padding:4rem 2rem;color:#6B7280}.empty-state h3{font-size:1.5rem;color:#111827;margin:1rem 0}.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem}.modal{background:white;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}.modal-header{padding:1.5rem;border-bottom:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white;border-radius:16px 16px 0 0}.modal-header h2{font-size:1.5rem;font-weight:700}.btn-cerrar{background:rgba(255,255,255,0.2);border:none;color:white;width:36px;height:36px;border-radius:6px;cursor:pointer;font-size:1.5rem;line-height:1}.modal-body{padding:1.5rem}.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}.btn-group{display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap}@media print{.sidebar,.page-header button,.btn-primary,.btn-secondary,.btn-edit{display:none!important}.main-content{padding:1rem}.app-container{display:block}}@media(max-width:768px){.sidebar{width:100%}.app-container{flex-direction:column}.grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#1F2937}.loading{display:flex;justify-content:center;align-items:center;height:100vh;color:white;font-size:1.5rem}.auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}.auth-box{background:white;border-radius:16px;padding:2rem;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}.auth-header{text-align:center;margin-bottom:2rem}.auth-header h1{font-size:1.75rem;color:#4F46E5;margin-bottom:0.5rem}.form-group{margin-bottom:1.5rem}.form-group label{display:block;margin-bottom:0.5rem;font-weight:600;color:#374151}.form-group input,.form-group select,.form-group textarea{width:100%;padding:0.75rem;border:2px solid #E5E7EB;border-radius:8px;font-size:1rem}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#4F46E5}.btn-primary{width:100%;padding:0.875rem;border:none;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;margin-bottom:1rem}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(79,70,229,0.3)}.btn-primary:disabled{opacity:0.5;cursor:not-allowed}.btn-secondary{padding:0.75rem 1.5rem;border:2px solid #E5E7EB;background:white;color:#6B7280;border-radius:8px;font-weight:600;cursor:pointer;margin-right:0.5rem}.btn-secondary:hover{border-color:#4F46E5;color:#4F46E5}.btn-edit{padding:0.5rem 1rem;border:2px solid #4F46E5;background:white;color:#4F46E5;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.875rem;margin-right:0.5rem}.btn-edit:hover{background:#4F46E5;color:white}.error-message{background:#FEE2E2;color:#991B1B;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.875rem}.app-container{display:flex;min-height:100vh}.sidebar{width:280px;background:rgba(255,255,255,0.95);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.08)}.sidebar-header{padding:2rem 1.5rem;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white}.sidebar-header h2{font-size:1.5rem;font-weight:700}.selector-entidad{padding:1rem 1.5rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB}.selector-entidad select{width:100%;padding:0.5rem;border:2px solid #E5E7EB;border-radius:6px}.user-info{padding:1rem 1.5rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB;font-size:0.875rem}.user-email{color:#4F46E5;font-weight:600;margin-bottom:0.5rem}.btn-logout{padding:0.5rem 1rem;background:white;border:2px solid #E5E7EB;border-radius:6px;cursor:pointer;font-size:0.875rem;width:100%}.nav-items{flex:1;padding:1rem 0}.nav-item{width:100%;padding:1rem 1.5rem;border:none;background:none;display:flex;align-items:center;gap:0.75rem;cursor:pointer;color:#4B5563;font-size:1rem;border-left:3px solid transparent;text-align:left}.nav-item:hover:not(:disabled){background:#F3F4F6;color:#4F46E5}.nav-item.activo{background:rgba(79,70,229,0.1);color:#4F46E5;font-weight:600;border-left-color:#4F46E5}.nav-item:disabled{opacity:0.4;cursor:not-allowed}.main-content{flex:1;padding:2rem;overflow-y:auto;background:#F9FAFB}.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}.page-header h1{font-size:2rem;font-weight:800;color:#111827}.card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1.5rem}.card h3{font-size:1.25rem;font-weight:700;color:#111827;margin-bottom:1rem}.card h4{font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:0.5rem}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}.stat-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid #4F46E5}.stat-label{font-size:0.875rem;color:#6B7280;margin-bottom:0.5rem;text-transform:uppercase;font-weight:600}.stat-value{font-size:2.5rem;font-weight:800;color:#111827}.semaforo{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:8px;font-size:0.875rem;font-weight:600}.semaforo.critico{background:#FEE2E2;color:#991B1B}.semaforo.precaucion{background:#FEF3C7;color:#92400E}.semaforo.optimo{background:#D1FAE5;color:#065F46}.tabla{width:100%;border-collapse:collapse}.tabla th{background:#F9FAFB;padding:1rem;text-align:left;font-weight:700;color:#374151;font-size:0.875rem}.tabla td{padding:1rem;border-top:1px solid #E5E7EB}.tabla tr:hover{background:#F9FAFB}.badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:700}.empty-state{text-align:center;padding:4rem 2rem;color:#6B7280}.empty-state h3{font-size:1.5rem;color:#111827;margin:1rem 0}.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem}.modal{background:white;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}.modal-header{padding:1.5rem;border-bottom:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white;border-radius:16px 16px 0 0}.modal-header h2{font-size:1.5rem;font-weight:700}.btn-cerrar{background:rgba(255,255,255,0.2);border:none;color:white;width:36px;height:36px;border-radius:6px;cursor:pointer;font-size:1.5rem;line-height:1}.modal-body{padding:1.5rem}.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}.btn-group{display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap}@media print{
+  .sidebar,.page-header button,.btn-primary,.btn-secondary,.btn-edit,.btn-logout,.nav-items,.btn-cerrar,.modal-overlay{display:none!important}
+  .app-container{display:block!important;max-width:100%!important}
+  .main-content{padding:0.5rem!important;max-width:100%!important}
+  .modal{position:relative!important;max-width:100%!important;width:100%!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;margin:0!important;padding:0!important}
+  .modal-header{border-bottom:2px solid #000!important;padding-bottom:0.5rem!important;page-break-after:avoid!important}
+  .modal-body{overflow:visible!important;max-height:none!important}
+  .card,table,tr,td,th,h3,h4{page-break-inside:avoid!important}
+  h2,h3,h4,h5{page-break-after:avoid!important}
+  table{width:100%!important;font-size:0.75rem!important;border-collapse:collapse!important}
+  th,td{padding:0.3rem 0.4rem!important;border:1px solid #ddd!important}
+  .card h3{font-size:1rem!important;margin-bottom:0.5rem!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  @page{margin:1cm!important}
+}@media(max-width:768px){.sidebar{width:100%}.app-container{flex-direction:column}.grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
+
 
 
 
@@ -244,139 +259,447 @@ const VistaDashboard=({entidad,datos})=>{
 };
 const VistaConfig=({user,entidad,datos,isAdmin})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;const{ejes=[],objetivos=[],indicadores=[]}=datos;const ref=db.collection('fundacoofisam_datos').doc(entidad.id);const scoreConfig=entidad.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};const guardarEje=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('ejes').doc(itemEdit.id).update(form);}else{await ref.collection('ejes').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarObjetivo=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('objetivos').doc(itemEdit.id).update(form);}else{await ref.collection('objetivos').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarIndicador=async(e)=>{e.preventDefault();setLoading(true);try{const metasPorAnio={};if(form.anios){form.anios.split(',').forEach(a=>{const anio=a.trim();if(anio)metasPorAnio[anio]=parseFloat(form[`meta_${anio}`]||form.meta);});}const data={objetivoId:form.objetivoId,nombre:form.nombre,tipo:form.tipo,periodicidad:form.periodicidad,meta:parseFloat(form.meta),unidad:form.unidad,estrategia:form.estrategia||'',metasPorAnio};if(itemEdit){await ref.collection('indicadores').doc(itemEdit.id).update(data);}else{await ref.collection('indicadores').add(data);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(coleccion,id)=>{if(!window.confirm('¿Eliminar?'))return;try{await ref.collection(coleccion).doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEje=(eje)=>{setItemEdit(eje);setForm({nombre:eje.nombre,color:eje.color});setModal('eje');};const editarObjetivo=(obj)=>{setItemEdit(obj);setForm({ejeId:obj.ejeId,nombre:obj.nombre});setModal('objetivo');};const editarIndicador=(ind)=>{setItemEdit(ind);const anios=ind.metasPorAnio?Object.keys(ind.metasPorAnio).join(','):'';const formData={objetivoId:ind.objetivoId,nombre:ind.nombre,tipo:ind.tipo,periodicidad:ind.periodicidad,meta:ind.meta,unidad:ind.unidad,estrategia:ind.estrategia||'',anios};if(ind.metasPorAnio){Object.entries(ind.metasPorAnio).forEach(([anio,meta])=>{formData[`meta_${anio}`]=meta;});}setForm(formData);setModal('indicador');};return(<div><div className="page-header"><h1>Planeación - {entidad.nombre}</h1></div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Ejes Estratégicos ({ejes.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',color:'#4F46E5'});setModal('eje');}}>+ Nuevo Eje</button></div>{ejes.length===0?<p style={{color:'#6B7280'}}>No hay ejes</p>:<div className="grid">{ejes.map(eje=>(<div key={eje.id} className="card" style={{borderLeft:`4px solid ${eje.color}`}}><h4>{eje.nombre}</h4><div className="btn-group"><button className="btn-edit" onClick={()=>editarEje(eje)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('ejes',eje.id)}>🗑️ Eliminar</button></div></div>))}</div>}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Objetivos ({objetivos.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({ejeId:'',nombre:''});setModal('objetivo');}} disabled={ejes.length===0}>+ Nuevo Objetivo</button></div>{objetivos.length===0?<p style={{color:'#6B7280'}}>No hay objetivos</p>:objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return(<div key={obj.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}><div className="badge" style={{background:eje?.color,color:'white',marginBottom:'0.5rem'}}>{eje?.nombre||'Sin eje'}</div><p>{obj.nombre}</p><div className="btn-group"><button className="btn-edit" onClick={()=>editarObjetivo(obj)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('objetivos',obj.id)}>🗑️ Eliminar</button></div></div>);})}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Indicadores ({indicadores.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({objetivoId:'',nombre:'',tipo:'ascendente',periodicidad:'Mensual',meta:'',unidad:'%',estrategia:'',anios:''});setModal('indicador');}} disabled={objetivos.length===0}>+ Nuevo Indicador</button></div>{indicadores.length===0?<p style={{color:'#6B7280'}}>No hay indicadores</p>:<div className="grid">{indicadores.map(ind=>{const obj=objetivos.find(o=>o.id===ind.objetivoId);const eje=ejes.find(e=>e.id===obj?.ejeId);return(<div key={ind.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}><div className="badge" style={{background:eje?.color,color:'white',marginBottom:'0.5rem'}}>{eje?.nombre}</div><h4>{ind.nombre}</h4><p style={{color:'#6B7280',fontSize:'0.875rem',marginTop:'0.5rem'}}>Meta: {ind.meta} {ind.unidad} | {ind.tipo==='ascendente'?'📈':'📉'}</p>{ind.metasPorAnio&&Object.keys(ind.metasPorAnio).length>0&&(<p style={{color:'#4F46E5',fontSize:'0.75rem',marginTop:'0.25rem'}}>Metas: {Object.entries(ind.metasPorAnio).map(([a,m])=>`${a}:${m}`).join(', ')}</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarIndicador(ind)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('indicadores',ind.id)}>🗑️ Eliminar</button></div></div>);})}</div>}</div>{modal==='eje'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Eje</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarEje}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>Color</label><input type="color" value={form.color} onChange={e=>setForm({...form,color:e.target.value})}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='objetivo'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Objetivo</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarObjetivo}><div className="form-group"><label>Eje *</label><select value={form.ejeId} onChange={e=>setForm({...form,ejeId:e.target.value})} required><option value="">Seleccionar...</option>{ejes.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}</select></div><div className="form-group"><label>Nombre *</label><textarea value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='indicador'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Indicador</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarIndicador}><div className="form-group"><label>Objetivo *</label><select value={form.objetivoId} onChange={e=>setForm({...form,objetivoId:e.target.value})} required><option value="">Seleccionar...</option>{objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}</select></div><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-row"><div className="form-group"><label>Tipo *</label><select value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})} required><option value="ascendente">📈 Ascendente</option><option value="descendente">📉 Descendente</option></select></div><div className="form-group"><label>Periodicidad *</label><select value={form.periodicidad} onChange={e=>setForm({...form,periodicidad:e.target.value})} required><option value="Mensual">Mensual</option><option value="Bimestral">Bimestral</option><option value="Trimestral">Trimestral</option></select></div></div><div className="form-row"><div className="form-group"><label>Meta Base *</label><input type="number" step="0.01" value={form.meta} onChange={e=>setForm({...form,meta:e.target.value})} required/></div><div className="form-group"><label>Unidad *</label><input type="text" value={form.unidad} onChange={e=>setForm({...form,unidad:e.target.value})} required placeholder="%"/></div></div><div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>{form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}<div className="form-group"><label>Estrategia</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
 const VistaPlanOperativo=({user,entidad,datos})=>{
-const[objetivoSel,setObjetivoSel]=useState('');
-const[anioSel,setAnioSel]=useState(new Date().getFullYear().toString());
-const[busqueda,setBusqueda]=useState('');
-const[vistaGantt,setVistaGantt]=useState(false);
-const[modal,setModal]=useState(false);
-const[form,setForm]=useState({});
-const[itemEdit,setItemEdit]=useState(null);
-const[loading,setLoading]=useState(false);
-const[actividades,setActividades]=useState([]);
-const prefijo='fundacoofisam';
+  const[vista,setVista]=useState('planes');
+  const[planSel,setPlanSel]=useState(null);
+  const[planes,setPlanes]=useState([]);
+  const[actividades,setActividades]=useState([]);
+  const[modalPlan,setModalPlan]=useState(false);
+  const[modalActividad,setModalActividad]=useState(false);
+  const[modalSeguimiento,setModalSeguimiento]=useState(null);
+  const[modalScore,setModalScore]=useState(false);
+  const[todasActividades,setTodasActividades]=useState([]);
+  const[formPlan,setFormPlan]=useState({});
+  const[formActividad,setFormActividad]=useState({});
+  const[itemEdit,setItemEdit]=useState(null);
+  const[loading,setLoading]=useState(false);
+  
+  
+  
+  useEffect(()=>{
+    if(!entidad)return;
+    const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').onSnapshot(s=>{
+      const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
+      setTodasActividades(d);
+    });
+    return()=>unsub();
+  },[entidad]);
+  useEffect(()=>{
+    if(!entidad)return;
+    const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('planes_operativos').onSnapshot(s=>{
+      const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
+      d.sort((a,b)=>(b.anio||0)-(a.anio||0));
+      setPlanes(d);
+    });
+    return()=>unsub();
+  },[entidad]);
+  
+  useEffect(()=>{
+    if(!entidad||!planSel)return;
+    const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').where('planId','==',planSel.id).onSnapshot(s=>{
+      const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
+      d.sort((a,b)=>(a.fechaInicio||'').localeCompare(b.fechaInicio||''));
+      setActividades(d);
+    });
+    return()=>unsub();
+  },[entidad,planSel]);
+  
+  if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;
+  const{ejes=[],objetivos=[]}=datos;
+  
+  const guardarPlan=async(e)=>{
+    e.preventDefault();setLoading(true);
+    try{
+      const ref=db.collection('fundacoofisam_datos').doc(entidad.id).collection('planes_operativos');
+      const data={...formPlan,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+      if(itemEdit){
+        await ref.doc(itemEdit.id).update(data);
+      }else{
+        await ref.add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+      setModalPlan(false);setFormPlan({});setItemEdit(null);
+    }catch(err){alert('Error: '+err.message);}
+    finally{setLoading(false);}
+  };
+  
+  const eliminarPlan=async(id)=>{
+    if(!window.confirm('¿Eliminar plan y todas sus actividades?'))return;
+    const batch=db.batch();
+    batch.delete(db.collection('fundacoofisam_datos').doc(entidad.id).collection('planes_operativos').doc(id));
+    const acts=await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').where('planId','==',id).get();
+    acts.forEach(doc=>batch.delete(doc.ref));
+    await batch.commit();
+  };
+  
+  const guardarActividad=async(e)=>{
+    e.preventDefault();setLoading(true);
+    try{
+      const ref=db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades');
+      const data={
+        ...formActividad,
+        planId:planSel.id,
+        estado:formActividad.estado||'Pendiente',
+        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+      };
+      if(itemEdit){
+        await ref.doc(itemEdit.id).update(data);
+      }else{
+        await ref.add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+      setModalActividad(false);setFormActividad({});setItemEdit(null);
+    }catch(err){alert('Error: '+err.message);}
+    finally{setLoading(false);}
+  };
+  
+  const eliminarActividad=async(id)=>{
+    if(!window.confirm('¿Eliminar?'))return;
+    await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(id).delete();
+  };
+  
+  const guardarSeguimiento=async(e)=>{
+    e.preventDefault();setLoading(true);
+    try{
+      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(modalSeguimiento.id).update({
+        estado:modalSeguimiento.estado,
+        observacionesSeguimiento:modalSeguimiento.observacionesSeguimiento,
+        fechaCambioEstado:new Date().toISOString().split('T')[0]
+      });
+      setModalSeguimiento(null);
+    }catch(err){alert('Error: '+err.message);}
+    finally{setLoading(false);}
+  };
+  
+  const estadoColor={
+    'Pendiente':{bg:'#FEF3C7',c:'#92400E'},
+    'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},
+    'Completado':{bg:'#D1FAE5',c:'#065F46'},
+    'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}
+  };
+  
+  return(<div>
+    <div className="page-header">
+      <h1>🗓️ Plan Operativo Anual</h1>
+      {!planSel?
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormPlan({anio:new Date().getFullYear().toString()});setItemEdit(null);setModalPlan(true);}}>+ Nuevo POA</button>
+      :
+        <div style={{display:'flex',gap:'0.5rem'}}>
+          <button className={`btn-${vista==='actividades'?'primary':'secondary'}`} onClick={()=>setVista('actividades')} style={{width:'auto'}}>📋 Actividades</button>
+          <button className={`btn-${vista==='seguimiento'?'primary':'secondary'}`} onClick={()=>setVista('seguimiento')} style={{width:'auto'}}>✅ Seguimiento</button>
+          <button className="btn-primary" onClick={()=>setModalScore(true)} style={{width:'auto',background:'#059669'}}>📊 Avance</button>
+          <button className="btn-secondary" onClick={()=>{setPlanSel(null);setVista('planes');}} style={{width:'auto'}}>← Volver</button>
+        </div>
+      }
+    </div>
+    
+    {!planSel?
+    <div>
+      <div className="card">
+        <h3>Planes Operativos ({planes.length})</h3>
+        {planes.length===0?<p style={{color:'#9CA3AF'}}>No hay planes. Crea el primero.</p>:
+        <div style={{display:'grid',gap:'1rem'}}>
+          {planes.map(plan=>{
+            const actsPlan=todasActividades.filter(a=>a.planId===plan.id);
+            const completadas=actsPlan.filter(a=>a.estado==='Completado').length;
+            const total=actsPlan.length;
+            const avance=total>0?Math.round((completadas/total)*100):0;
+            const objs=objetivos.filter(o=>(plan.objetivosIds||[]).includes(o.id));
+            return(<div key={plan.id} className="card" style={{padding:'1rem',background:'#F9FAFB',cursor:'pointer'}} onClick={()=>{setPlanSel(plan);setVista('actividades');}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+                <div style={{flex:1}}>
+                  <h4 style={{margin:'0 0 0.5rem 0',color:'#111827'}}>{plan.nombre}</h4>
+                  <p style={{margin:'0.25rem 0',fontSize:'0.85rem',color:'#6B7280'}}>📅 Año: {plan.anio}</p>
+                  <p style={{margin:'0.25rem 0',fontSize:'0.85rem',color:'#6B7280'}}>🎯 Objetivos: {objs.length}</p>
+                  <div style={{marginTop:'0.5rem'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.25rem'}}>
+                      <span style={{fontSize:'0.8rem',color:'#6B7280'}}>Avance:</span>
+                      <span style={{fontSize:'0.85rem',fontWeight:700,color:avance>=100?'#059669':avance>=50?'#F59E0B':'#DC2626'}}>{avance}%</span>
+                    </div>
+                    <div style={{width:'100%',height:'6px',background:'#E5E7EB',borderRadius:'3px'}}>
+                      <div style={{width:avance+'%',height:'100%',background:avance>=100?'#059669':avance>=50?'#F59E0B':'#DC2626'}}></div>
+                    </div>
+                  </div>
+                  {objs.length>0&&<div style={{marginTop:'0.5rem',display:'flex',flexWrap:'wrap',gap:'0.25rem'}}>
+                    {objs.map(obj=><span key={obj.id} style={{fontSize:'0.75rem',padding:'0.25rem 0.5rem',background:'#EEF2FF',color:'#4F46E5',borderRadius:'4px'}}>{obj.nombre}</span>)}
+                  </div>}
+                  {plan.descripcion&&<p style={{margin:'0.5rem 0 0 0',fontSize:'0.85rem',color:'#6B7280',fontStyle:'italic'}}>"{plan.descripcion}"</p>}
+                </div>
+                <div style={{display:'flex',gap:'0.3rem'}} onClick={e=>e.stopPropagation()}>
+                  <button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>
+                  <button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>
+                </div>
+              </div>
+            </div>);
+          })}
+        </div>}
+      </div>
+    </div>
+    :
+    <div>
+      <div className="card" style={{marginBottom:'1rem',background:'#EEF2FF'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div>
+            <h3 style={{margin:'0 0 0.25rem 0',color:'#4F46E5'}}>{planSel.nombre}</h3>
+            <p style={{margin:0,fontSize:'0.85rem',color:'#6B7280'}}>📅 {planSel.anio} • 🎯 {(planSel.objetivosIds||[]).length} objetivos • 📝 {actividades.length} actividades</p>
+          </div>
+        </div>
+      </div>
+      
+      {vista==='actividades'?
+      <div className="card">
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+          <h3>Actividades ({actividades.length})</h3>
+          <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>
+        </div>
+        {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
+        <table className="tabla">
+          <thead>
+            <tr>
+              <th>Actividad</th>
+              <th>Tarea</th>
+              <th>Responsable</th>
+              <th>Fechas</th>
+              <th>Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {actividades.map(act=>{
+              const ec=estadoColor[act.estado]||estadoColor['Pendiente'];
+              return(<tr key={act.id}>
+                <td><strong>{act.actividad}</strong></td>
+                <td style={{fontSize:'0.85rem',color:'#6B7280'}}>{act.tarea||'-'}</td>
+                <td>{act.responsable}</td>
+                <td style={{fontSize:'0.8rem'}}>{act.fechaInicio} → {act.fechaFin||''}</td>
+                <td><span style={{padding:'0.25rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:600,background:ec.bg,color:ec.c}}>{act.estado}</span></td>
+                <td>
+                  <div style={{display:'flex',gap:'0.3rem'}}>
+                    <button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>
+                    <button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>
+                  </div>
+                </td>
+              </tr>);
+            })}
+          </tbody>
+        </table>}
+      </div>
+      :
+      <div className="card">
+        <h3>Seguimiento de Actividades</h3>
+        {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
+        <div style={{display:'grid',gap:'1rem'}}>
+          {actividades.map(act=>{
+            const ec=estadoColor[act.estado]||estadoColor['Pendiente'];
+            return(<div key={act.id} className="card" style={{padding:'1rem',background:'#F9FAFB'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'0.5rem'}}>
+                <div style={{flex:1}}>
+                  <h4 style={{margin:'0 0 0.5rem 0',color:'#111827'}}>{act.actividad}</h4>
+                  {act.tarea&&<p style={{margin:'0.25rem 0',fontSize:'0.85rem',color:'#6B7280'}}>📋 Tarea: {act.tarea}</p>}
+                  <p style={{margin:'0.25rem 0',fontSize:'0.85rem',color:'#6B7280'}}>👤 {act.responsable}</p>
+                  <p style={{margin:'0.25rem 0',fontSize:'0.85rem',color:'#6B7280'}}>📅 {act.fechaInicio} → {act.fechaFin||'-'}</p>
+                  {act.observaciones&&<p style={{margin:'0.5rem 0',fontSize:'0.85rem',padding:'0.5rem',background:'white',borderRadius:'4px',borderLeft:'3px solid #4F46E5'}}>📝 {act.observaciones}</p>}
+                  {act.observacionesSeguimiento&&<p style={{margin:'0.5rem 0',fontSize:'0.85rem',padding:'0.5rem',background:'#FEF3C7',borderRadius:'4px',borderLeft:'3px solid #F59E0B'}}>💬 Seguimiento: {act.observacionesSeguimiento}</p>}
+                </div>
+                <span style={{padding:'0.5rem 0.75rem',borderRadius:'6px',fontWeight:700,fontSize:'0.85rem',background:ec.bg,color:ec.c,whiteSpace:'nowrap'}}>{act.estado}</span>
+              </div>
+              <div style={{display:'flex',gap:'0.5rem',marginTop:'1rem',paddingTop:'1rem',borderTop:'1px solid #E5E7EB',flexWrap:'wrap'}}>
+                <button onClick={()=>setModalSeguimiento({...act,estado:'Pendiente'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Pendiente'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Pendiente'?700:400}}>⏸️ Pendiente</button>
+                <button onClick={()=>setModalSeguimiento({...act,estado:'En Proceso'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>
+                <button onClick={()=>setModalSeguimiento({...act,estado:'Completado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>
+                <button onClick={()=>setModalSeguimiento({...act,estado:'Reprogramado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>
+              </div>
+            </div>);
+          })}
+        </div>}
+      </div>}
+    </div>}
+    
+    {modalPlan&&<div className="modal-overlay" onClick={()=>{setModalPlan(false);setItemEdit(null);}}>
+      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:'700px'}}>
+        <div className="modal-header">
+          <h2>{itemEdit?'✏️ Editar':'📝 Nuevo'} Plan Operativo</h2>
+          <button className="btn-cerrar" onClick={()=>{setModalPlan(false);setItemEdit(null);}}>×</button>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={guardarPlan}>
+            <div className="form-group">
+              <label>Nombre del POA *</label>
+              <input type="text" value={formPlan.nombre||''} onChange={e=>setFormPlan({...formPlan,nombre:e.target.value})} required placeholder="Ej: POA 2025"/>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Año *</label>
+                <select value={formPlan.anio||''} onChange={e=>setFormPlan({...formPlan,anio:e.target.value})} required>
+                  <option value="">Seleccionar...</option>
+                  {['2024','2025','2026','2027','2028'].map(a=><option key={a} value={a}>{a}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Objetivos Estratégicos *</label>
+              <div style={{border:'1px solid #E5E7EB',borderRadius:'6px',padding:'0.5rem',maxHeight:'200px',overflow:'auto'}}>
+                {objetivos.length===0?<p style={{color:'#9CA3AF',fontSize:'0.85rem',margin:0}}>No hay objetivos</p>:
+                objetivos.map(obj=>{
+                  const eje=ejes.find(e=>e.id===obj.ejeId);
+                  return(<label key={obj.id} style={{display:'block',padding:'0.25rem',cursor:'pointer'}}>
+                    <input type="checkbox" checked={(formPlan.objetivosIds||[]).includes(obj.id)} onChange={e=>{
+                      const ids=formPlan.objetivosIds||[];
+                      setFormPlan({...formPlan,objetivosIds:e.target.checked?[...ids,obj.id]:ids.filter(i=>i!==obj.id)});
+                    }}/> <strong>[{eje?.nombre}]</strong> {obj.nombre}
+                  </label>);
+                })}
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Descripción</label>
+              <textarea value={formPlan.descripcion||''} onChange={e=>setFormPlan({...formPlan,descripcion:e.target.value})} rows={2}/>
+            </div>
+            <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+          </form>
+        </div>
+      </div>
+    </div>}
+    
+    {modalActividad&&planSel&&<div className="modal-overlay" onClick={()=>{setModalActividad(false);setItemEdit(null);}}>
+      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:'700px'}}>
+        <div className="modal-header">
+          <h2>{itemEdit?'✏️ Editar':'📝 Nueva'} Actividad</h2>
+          <button className="btn-cerrar" onClick={()=>{setModalActividad(false);setItemEdit(null);}}>×</button>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={guardarActividad}>
+            <div className="form-group">
+              <label>Actividad *</label>
+              <input type="text" value={formActividad.actividad||''} onChange={e=>setFormActividad({...formActividad,actividad:e.target.value})} required placeholder="Nombre de la actividad"/>
+            </div>
+            <div className="form-group">
+              <label>Tarea</label>
+              <textarea value={formActividad.tarea||''} onChange={e=>setFormActividad({...formActividad,tarea:e.target.value})} rows={2} placeholder="Descripción de la tarea"/>
+            </div>
+            <div className="form-group">
+              <label>Responsable *</label>
+              <input type="text" value={formActividad.responsable||''} onChange={e=>setFormActividad({...formActividad,responsable:e.target.value})} required/>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Fecha Inicio *</label>
+                <input type="date" value={formActividad.fechaInicio||''} onChange={e=>setFormActividad({...formActividad,fechaInicio:e.target.value})} required/>
+              </div>
+              <div className="form-group">
+                <label>Fecha Fin</label>
+                <input type="date" value={formActividad.fechaFin||''} onChange={e=>setFormActividad({...formActividad,fechaFin:e.target.value})}/>
+              </div>
+            </div>
+            <div className="form-group">
+              <label>Observaciones</label>
+              <textarea value={formActividad.observaciones||''} onChange={e=>setFormActividad({...formActividad,observaciones:e.target.value})} rows={2}/>
+            </div>
+            <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+          </form>
+        </div>
+      </div>
+    </div>}
+    
+    {modalSeguimiento&&<div className="modal-overlay" onClick={()=>setModalSeguimiento(null)}>
+      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:'600px'}}>
+        <div className="modal-header">
+          <h2>✅ Actualizar Seguimiento</h2>
+          <button className="btn-cerrar" onClick={()=>setModalSeguimiento(null)}>×</button>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={guardarSeguimiento}>
+            <div className="form-group">
+              <label>Actividad</label>
+              <input type="text" value={modalSeguimiento.actividad} disabled style={{background:'#F3F4F6'}}/>
+            </div>
+            <div className="form-group">
+              <label>Nuevo Estado *</label>
+              <select value={modalSeguimiento.estado} onChange={e=>setModalSeguimiento({...modalSeguimiento,estado:e.target.value})} required>
+                <option value="Pendiente">⏸️ Pendiente</option>
+                <option value="En Proceso">🔄 En Proceso</option>
+                <option value="Completado">✅ Completado</option>
+                <option value="Reprogramado">🔁 Reprogramado</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Observaciones del Seguimiento</label>
+              <textarea value={modalSeguimiento.observacionesSeguimiento||''} onChange={e=>setModalSeguimiento({...modalSeguimiento,observacionesSeguimiento:e.target.value})} rows={3} placeholder="Añade notas sobre el cambio de estado..."/>
+            </div>
+            <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+          </form>
+        </div>
+      </div>
+    </div>}
+    
+    {modalScore&&planSel&&<div className="modal-overlay" onClick={()=>setModalScore(false)}>
+      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:'900px',width:'95%'}}>
+        <div className="modal-header">
+          <h2>📊 Informe de Avance - {planSel.nombre}</h2>
+          <div style={{display:'flex',gap:'0.5rem'}}>
+            <button className="btn-primary" style={{width:'auto'}} onClick={()=>window.print()}>🖨️ Imprimir</button>
+            <button className="btn-cerrar" onClick={()=>setModalScore(false)}>×</button>
+          </div>
+        </div>
+        <div className="modal-body">
+          <div style={{background:'#F9FAFB',padding:'1rem',borderRadius:'8px',marginBottom:'1.5rem'}}>
+            <h3 style={{marginTop:0}}>Resumen</h3>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1rem'}}>
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#4F46E5'}}>{actividades.length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>Total</div>
+              </div>
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#059669'}}>{actividades.filter(a=>a.estado==='Completado').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>✅ Completadas</div>
+              </div>
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#3B82F6'}}>{actividades.filter(a=>a.estado==='En Proceso').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>🔄 En Proceso</div>
+              </div>
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#F59E0B'}}>{actividades.filter(a=>a.estado==='Pendiente').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>⏸️ Pendientes</div>
+              </div>
+            </div>
+          </div>
+          <div style={{marginBottom:'2rem'}}>
+            <h3>Avance Global</h3>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.5rem'}}>
+              <span style={{fontSize:'1.1rem',fontWeight:600}}>Cumplimiento</span>
+              <span style={{fontSize:'2rem',fontWeight:700,color:(()=>{const av=actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0;return av>=100?'#059669':av>=50?'#F59E0B':'#DC2626';})()}}>
+                {actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0}%
+              </span>
+            </div>
+            <div style={{width:'100%',height:'30px',background:'#E5E7EB',borderRadius:'15px',overflow:'hidden'}}>
+              <div style={{width:(actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0)+'%',height:'100%',background:(()=>{const av=actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0;return av>=100?'#059669':av>=50?'#F59E0B':'#DC2626';})(),display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:'0.5rem',color:'white',fontWeight:700}}>{actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0}%</div>
+            </div>
+          </div>
+          <div>
+            <h3>Detalle por Estado</h3>
+            {['Completado','En Proceso','Pendiente','Reprogramado'].map(estado=>{
+              const acts=actividades.filter(a=>a.estado===estado);
+              if(acts.length===0)return null;
+              const cols={'Completado':{bg:'#D1FAE5',c:'#065F46'},'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},'Pendiente':{bg:'#FEF3C7',c:'#92400E'},'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}};
+              const col=cols[estado];
+              return(<div key={estado} style={{marginBottom:'1.5rem'}}>
+                <h4 style={{padding:'0.5rem 1rem',background:col.bg,color:col.c,borderRadius:'6px',display:'inline-block'}}>{estado} ({acts.length})</h4>
+                <table className="tabla" style={{fontSize:'0.85rem',marginTop:'0.5rem'}}>
+                  <thead><tr><th>Actividad</th><th>Responsable</th><th>Fechas</th></tr></thead>
+                  <tbody>{acts.map(act=>(<tr key={act.id}>
+                    <td><strong>{act.actividad}</strong>{act.tarea&&<div style={{fontSize:'0.8rem',color:'#6B7280'}}>{act.tarea}</div>}</td>
+                    <td>{act.responsable}</td>
+                    <td style={{fontSize:'0.8rem'}}>{act.fechaInicio} → {act.fechaFin||'-'}</td>
+                  </tr>))}</tbody>
+                </table>
+              </div>);
+            })}
+          </div>
+        </div>
+      </div>
+    </div>}
 
-useEffect(()=>{
-if(!entidad||!objetivoSel)return;
-const ref=db.collection(prefijo+'_datos').doc(entidad.id).collection('plan_operativo');
-const unsub=ref.where('objetivoId','==',objetivoSel).where('anio','==',anioSel).onSnapshot(s=>{
-const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
-d.sort((a,b)=>new Date(a.fechaInicio)-new Date(b.fechaInicio));
-setActividades(d);
-});
-return()=>unsub();
-},[entidad,objetivoSel,anioSel]);
+  </div>);
+};
 
-if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona entidad</h3></div>;
-const{ejes=[],objetivos=[],indicadores=[]}=datos;
-const formVacio={objetivoId:objetivoSel,anio:anioSel,actividad:'',tarea:'',responsable:'',meta:'',presupuesto:'',fechaInicio:'',fechaFin:'',avance:0,estado:'pendiente',observaciones:''};
-
-const guardar=async(e)=>{
-e.preventDefault();setLoading(true);
-try{
-const data={...form,avance:parseInt(form.avance||0),presupuesto:parseFloat(form.presupuesto||0)};
-const ref=db.collection(prefijo+'_datos').doc(entidad.id).collection('plan_operativo');
-if(itemEdit){await ref.doc(itemEdit.id).update(data);}
-else{await ref.add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
-setModal(false);setForm({});setItemEdit(null);
-}catch(err){alert('Error: '+err.message);}
-finally{setLoading(false);}};
-
-const eliminar=async(id)=>{if(!window.confirm('Eliminar?'))return;
-await db.collection(prefijo+'_datos').doc(entidad.id).collection('plan_operativo').doc(id).delete();};
-const editar=(act)=>{setItemEdit(act);setForm({...act});setModal(true);};
-
-const objetivoActual=objetivos.find(o=>o.id===objetivoSel);
-const ejeActual=ejes.find(e=>e.id===objetivoActual?.ejeId);
-const indsObjetivo=indicadores.filter(i=>i.objetivoId===objetivoSel);
-const totalPresupuesto=actividades.reduce((s,a)=>s+(parseFloat(a.presupuesto)||0),0);
-const completadas=actividades.filter(a=>a.estado==='completado').length;
-const avancePromedio=actividades.length>0?Math.round(actividades.reduce((s,a)=>s+(a.avance||0),0)/actividades.length):0;
-const objetivosFiltrados=objetivos.filter(o=>{const eje=ejes.find(e=>e.id===o.ejeId);return(o.nombre+' '+(eje?.nombre||'')).toLowerCase().includes(busqueda.toLowerCase());});
-
-const colorEst=(e)=>{if(e==='completado')return{bg:'#D1FAE5',color:'#065F46'};if(e==='en_proceso')return{bg:'#DBEAFE',color:'#1E40AF'};if(e==='cancelado')return{bg:'#FEE2E2',color:'#991B1B'};return{bg:'#F3F4F6',color:'#374151'};};
-const labelEst=(e)=>{if(e==='completado')return'Completado';if(e==='en_proceso')return'En Proceso';if(e==='cancelado')return'Cancelado';return'Pendiente';};
-
-return(<div>
-<div className="page-header">
-<h1>Plan Operativo Anual</h1>
-{objetivoSel&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({...formVacio});setModal(true);}}>+ Nueva Actividad</button>}
-</div>
-<div className="card">
-<div className="form-row">
-<div className="form-group">
-<label>Buscar Objetivo</label>
-<input type="text" value={busqueda} onChange={e=>setBusqueda(e.target.value)} placeholder="Filtrar..." style={{marginBottom:'0.5rem'}}/>
-<select value={objetivoSel} onChange={e=>setObjetivoSel(e.target.value)} size={Math.min(6,objetivosFiltrados.length+1)} style={{height:'auto',minHeight:'80px'}}>
-<option value="">Seleccionar objetivo...</option>
-{objetivosFiltrados.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}
-</select>
-</div>
-<div className="form-group">
-<label>Año</label>
-<select value={anioSel} onChange={e=>setAnioSel(e.target.value)} style={{padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem',width:'100%'}}>
-{['2024','2025','2026','2027','2028'].map(a=><option key={a} value={a}>{a}</option>)}
-</select>
-{objetivoActual&&<div style={{marginTop:'1rem',background:'#EEF2FF',padding:'0.75rem',borderRadius:'8px',borderLeft:'4px solid #4F46E5'}}>
-<div style={{fontWeight:700,color:'#4F46E5',fontSize:'0.8rem'}}>{ejeActual?.nombre}</div>
-<div style={{fontSize:'0.875rem'}}>{objetivoActual.nombre}</div>
-{indsObjetivo.length>0&&<div style={{fontSize:'0.75rem',color:'#6B7280',marginTop:'0.25rem'}}>{indsObjetivo.length} indicador(es)</div>}
-</div>}
-</div>
-</div>
-</div>
-{!objetivoSel&&<div className="empty-state"><h3>Selecciona un objetivo para ver su POA</h3></div>}
-{objetivoSel&&actividades.length>0&&<div className="grid" style={{gridTemplateColumns:'repeat(4,1fr)'}}>
-<div className="stat-card"><div className="stat-label">Actividades</div><div className="stat-value">{actividades.length}</div></div>
-<div className="stat-card" style={{borderLeftColor:'#059669'}}><div className="stat-label">Completadas</div><div className="stat-value">{completadas}</div></div>
-<div className="stat-card" style={{borderLeftColor:'#F59E0B'}}><div className="stat-label">Avance Prom.</div><div className="stat-value">{avancePromedio}%</div></div>
-<div className="stat-card" style={{borderLeftColor:'#7C3AED'}}><div className="stat-label">Presupuesto</div><div className="stat-value" style={{fontSize:'1.2rem'}}>${totalPresupuesto.toLocaleString()}</div></div>
-</div>}
-{objetivoSel&&<div className="card">
-<h3>Actividades {anioSel}</h3>
-{actividades.length===0?<div className="empty-state" style={{padding:'1.5rem'}}><p>No hay actividades. Click en + Nueva Actividad.</p></div>:
-<div style={{overflowX:'auto'}}><table className="tabla"><thead><tr><th>Actividad</th><th>Responsable</th><th>Fechas</th><th>Presupuesto</th><th>Avance</th><th>Estado</th><th>Obs.</th><th></th></tr></thead>
-<tbody>{actividades.map(act=>{const est=colorEst(act.estado);return(
-<tr key={act.id}>
-<td><strong>{act.actividad}</strong><div style={{fontSize:'0.8rem',color:'#6B7280'}}>{act.tarea}</div></td>
-<td>{act.responsable}</td>
-<td style={{fontSize:'0.8rem',whiteSpace:'nowrap'}}>{act.fechaInicio&&<div>{act.fechaInicio}</div>}{act.fechaFin&&<div>{act.fechaFin}</div>}</td>
-<td>${(parseFloat(act.presupuesto)||0).toLocaleString()}</td>
-<td><div style={{display:'flex',alignItems:'center',gap:'0.3rem'}}>
-<div style={{width:'50px',background:'#E5E7EB',borderRadius:'4px',height:'8px'}}><div style={{width:(act.avance||0)+'%',background:'#4F46E5',height:'8px',borderRadius:'4px'}}></div></div>
-<span style={{fontSize:'0.8rem',fontWeight:'bold'}}>{act.avance||0}%</span>
-</div></td>
-<td><span style={{padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:700,background:est.bg,color:est.color}}>{labelEst(act.estado)}</span></td>
-<td style={{maxWidth:'120px',fontSize:'0.8rem',color:'#6B7280'}}>{act.observaciones}</td>
-<td><button className="btn-edit" onClick={()=>editar(act)}>Editar</button> <button className="btn-secondary" style={{padding:'0.3rem 0.5rem',fontSize:'0.8rem'}} onClick={()=>eliminar(act.id)}>Borrar</button></td>
-</tr>);})}</tbody></table></div>}
-</div>}
-{modal&&<div className="modal-overlay" onClick={()=>setModal(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
-<div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Actividad - {anioSel}</h2><button className="btn-cerrar" onClick={()=>setModal(false)}>x</button></div>
-<div className="modal-body">
-{objetivoActual&&<div style={{background:'#EEF2FF',padding:'0.5rem 0.75rem',borderRadius:'6px',marginBottom:'0.75rem',fontSize:'0.875rem',color:'#4F46E5'}}>{ejeActual?.nombre} - {objetivoActual.nombre}</div>}
-<form onSubmit={guardar}>
-<div className="form-row">
-<div className="form-group"><label>Año</label><select value={form.anio||anioSel} onChange={e=>setForm({...form,anio:e.target.value})}>{['2024','2025','2026','2027','2028'].map(a=><option key={a} value={a}>{a}</option>)}</select></div>
-<div className="form-group"><label>Estado</label><select value={form.estado||'pendiente'} onChange={e=>setForm({...form,estado:e.target.value})}><option value="pendiente">Pendiente</option><option value="en_proceso">En Proceso</option><option value="completado">Completado</option><option value="cancelado">Cancelado</option></select></div>
-</div>
-<div className="form-group"><label>Actividad *</label><input type="text" value={form.actividad||''} onChange={e=>setForm({...form,actividad:e.target.value})} required/></div>
-<div className="form-group"><label>Tarea</label><input type="text" value={form.tarea||''} onChange={e=>setForm({...form,tarea:e.target.value})}/></div>
-<div className="form-row">
-<div className="form-group"><label>Responsable *</label><input type="text" value={form.responsable||''} onChange={e=>setForm({...form,responsable:e.target.value})} required/></div>
-<div className="form-group"><label>Meta</label><input type="text" value={form.meta||''} onChange={e=>setForm({...form,meta:e.target.value})}/></div>
-</div>
-<div className="form-row">
-<div className="form-group"><label>Fecha Inicio</label><input type="date" value={form.fechaInicio||''} onChange={e=>setForm({...form,fechaInicio:e.target.value})}/></div>
-<div className="form-group"><label>Fecha Fin</label><input type="date" value={form.fechaFin||''} onChange={e=>setForm({...form,fechaFin:e.target.value})}/></div>
-</div>
-<div className="form-row">
-<div className="form-group"><label>Presupuesto</label><input type="number" value={form.presupuesto||''} onChange={e=>setForm({...form,presupuesto:e.target.value})}/></div>
-<div className="form-group"><label>Avance: {form.avance||0}%</label><input type="range" min="0" max="100" step="5" value={form.avance||0} onChange={e=>setForm({...form,avance:parseInt(e.target.value)})} style={{width:'100%',marginTop:'0.5rem'}}/></div>
-</div>
-<div className="form-group"><label>Observaciones</label><textarea value={form.observaciones||''} onChange={e=>setForm({...form,observaciones:e.target.value})} rows={2}/></div>
-<button type="submit" className="btn-primary" disabled={loading}>{loading?'Guardando...':'Guardar'}</button>
-</form></div></div></div>}
-</div>);};const VistaSeguimiento=({user,entidad,datos})=>{
+const VistaSeguimiento=({user,entidad,datos})=>{
   const[indicadorSel,setIndicadorSel]=useState(null);
   const[busquedaSeg,setBusquedaSeg]=useState('');
   const[segEdit,setSegEdit]=useState(null);
