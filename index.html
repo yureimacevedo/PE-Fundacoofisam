@@ -72,8 +72,8 @@ const App=()=>{
     const unsub=auth.onAuthStateChanged(async(u)=>{
       setUser(u);
       if(u){
-        await migrarDatosACompartido(u.uid,'coosanroque');
-        const doc=await db.collection('coosanroque_usuarios').doc(u.uid).get();
+        await migrarDatosACompartido(u.uid,'fundacoofisam');
+        const doc=await db.collection('fundacoofisam_usuarios').doc(u.uid).get();
         if(doc.exists)setUserRol(doc.data().rol||'admin');
         else setUserRol('admin');
       }else{setUserRol(null);}
@@ -115,7 +115,7 @@ const MainApp=({user,userRol})=>{
   return(<div className="app-container">
     <nav className="sidebar">
       <div className="sidebar-header">
-        <h2>COOSANROQUE</h2>
+        <h2>FUNDACOOFISAM</h2>
         <p style={{fontSize:'0.875rem',opacity:0.9}}>Planeación Estratégica</p>
       </div>
       <div className="selector-entidad">
@@ -1007,7 +1007,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
 
   useEffect(()=>{
     if(!entidad)return;
-    const unsub=db.collection('coosanroque_usuarios').onSnapshot(s=>{
+    const unsub=db.collection('fundacoofisam_usuarios').onSnapshot(s=>{
       const d=[];
       s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>(a.nombre||a.email).localeCompare(b.nombre||b.email));
@@ -1020,12 +1020,12 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     e.preventDefault();setLoading(true);setMensaje({texto:'',tipo:''});
     try{
       if(usuarioEdit){
-        await db.collection('coosanroque_usuarios').doc(usuarioEdit.id).update({nombre:form.nombre||form.email,rol:form.rol});
+        await db.collection('fundacoofisam_usuarios').doc(usuarioEdit.id).update({nombre:form.nombre||form.email,rol:form.rol});
         setMensaje({texto:'Actualizado.',tipo:'ok'});
         setModal(false);setForm({email:'',password:'',rol:'seguimiento',nombre:''});setUsuarioEdit(null);
         setLoading(false);return;
       }
-      const existing=await db.collection('coosanroque_usuarios').where('email','==',form.email).get();
+      const existing=await db.collection('fundacoofisam_usuarios').where('email','==',form.email).get();
       if(!existing.empty){
         await existing.docs[0].ref.update({nombre:form.nombre||form.email,rol:form.rol});
         setMensaje({texto:'Usuario actualizado.',tipo:'ok'});
@@ -1033,7 +1033,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
         const _app=firebase.initializeApp(firebase.app().options,'sec'+Date.now());
         const _auth=_app.auth();
         const cred=await _auth.createUserWithEmailAndPassword(form.email,form.password);
-        await db.collection('coosanroque_usuarios').doc(cred.user.uid).set({
+        await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).set({
           email:form.email,nombre:form.nombre||form.email,rol:form.rol,
           entidadId:'general',creadoPor:user.uid,
           createdAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -1053,7 +1053,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
   };
 
   const cambiarRol=async(uid,nuevoRol)=>{
-    await db.collection('coosanroque_usuarios').doc(uid).update({rol:nuevoRol});
+    await db.collection('fundacoofisam_usuarios').doc(uid).update({rol:nuevoRol});
   };
 
   const resetPassword=async(email)=>{
@@ -1066,7 +1066,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
 
   const eliminarUsuario=async(uid,email)=>{
     if(!window.confirm('Eliminar usuario '+email+'?'))return;
-    await db.collection('coosanroque_usuarios').doc(uid).delete();
+    await db.collection('fundacoofisam_usuarios').doc(uid).delete();
   };
 
   const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
