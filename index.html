@@ -72,8 +72,8 @@ const App=()=>{
     const unsub=auth.onAuthStateChanged(async(u)=>{
       setUser(u);
       if(u){
-        await migrarDatosACompartido(u.uid,'fundacoofisam');
-        const doc=await db.collection('fundacoofisam_usuarios').doc(u.uid).get();
+        await migrarDatosACompartido(u.uid,'coosanroque');
+        const doc=await db.collection('coosanroque_usuarios').doc(u.uid).get();
         if(doc.exists)setUserRol(doc.data().rol||'admin');
         else setUserRol('admin');
       }else{setUserRol(null);}
@@ -550,7 +550,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
       <div className="card">
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
           <h3>Actividades ({actividades.length})</h3>
-          <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}} disabled={!isAdmin}>+ Nueva Actividad</button>
+          <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>
         </div>
         {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
         <table className="tabla">
@@ -1007,7 +1007,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
 
   useEffect(()=>{
     if(!entidad)return;
-    const unsub=db.collection('fundacoofisam_usuarios').onSnapshot(s=>{
+    const unsub=db.collection('coosanroque_usuarios').onSnapshot(s=>{
       const d=[];
       s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>(a.nombre||a.email).localeCompare(b.nombre||b.email));
@@ -1020,12 +1020,12 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     e.preventDefault();setLoading(true);setMensaje({texto:'',tipo:''});
     try{
       if(usuarioEdit){
-        await db.collection('fundacoofisam_usuarios').doc(usuarioEdit.id).update({nombre:form.nombre||form.email,rol:form.rol});
+        await db.collection('coosanroque_usuarios').doc(usuarioEdit.id).update({nombre:form.nombre||form.email,rol:form.rol});
         setMensaje({texto:'Actualizado.',tipo:'ok'});
         setModal(false);setForm({email:'',password:'',rol:'seguimiento',nombre:''});setUsuarioEdit(null);
         setLoading(false);return;
       }
-      const existing=await db.collection('fundacoofisam_usuarios').where('email','==',form.email).get();
+      const existing=await db.collection('coosanroque_usuarios').where('email','==',form.email).get();
       if(!existing.empty){
         await existing.docs[0].ref.update({nombre:form.nombre||form.email,rol:form.rol});
         setMensaje({texto:'Usuario actualizado.',tipo:'ok'});
@@ -1033,7 +1033,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
         const _app=firebase.initializeApp(firebase.app().options,'sec'+Date.now());
         const _auth=_app.auth();
         const cred=await _auth.createUserWithEmailAndPassword(form.email,form.password);
-        await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).set({
+        await db.collection('coosanroque_usuarios').doc(cred.user.uid).set({
           email:form.email,nombre:form.nombre||form.email,rol:form.rol,
           entidadId:'general',creadoPor:user.uid,
           createdAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -1053,7 +1053,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
   };
 
   const cambiarRol=async(uid,nuevoRol)=>{
-    await db.collection('fundacoofisam_usuarios').doc(uid).update({rol:nuevoRol});
+    await db.collection('coosanroque_usuarios').doc(uid).update({rol:nuevoRol});
   };
 
   const resetPassword=async(email)=>{
@@ -1066,7 +1066,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
 
   const eliminarUsuario=async(uid,email)=>{
     if(!window.confirm('Eliminar usuario '+email+'?'))return;
-    await db.collection('fundacoofisam_usuarios').doc(uid).delete();
+    await db.collection('coosanroque_usuarios').doc(uid).delete();
   };
 
   const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
