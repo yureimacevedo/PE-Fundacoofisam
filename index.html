@@ -274,7 +274,7 @@ const VistaDashboard=({entidad,datos})=>{
             <td><div className="badge" style={{background:ind.eje?.color||'#6B7280',color:'white',padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem'}}>{ind.eje?.nombre||'-'}</div></td>
             <td style={{fontSize:'0.8rem',color:'#6B7280',maxWidth:'120px'}}>{ind.objetivo?.nombre}</td>
             <td><strong>{ind.nombre}</strong>{!ind.enPeriodo&&s&&<span style={{fontSize:'0.7rem',color:'#9CA3AF',marginLeft:'0.3rem'}}>(último: {s.mes} {s.anio})</span>}</td>
-            <td>{s?(ind.metaAcum||s.metaAnual||ind.meta)+' '+(ind.unidad||''):'-'}</td>
+            <td>{s?(ind.metaAcum||ind.meta||s.metaAnual)+' '+(ind.unidad||''):'-'}</td>
             <td>{s?<div><div><strong>{ind.avanceAcum.toFixed(2)}</strong> {ind.unidad||''}</div>{ind.tipoMeta==='acumulativa'&&<div style={{fontSize:'0.7rem',color:'#6B7280'}}>📈 Acumulado</div>}</div>:'-'}</td>
             <td>{s?<strong>{((ind.avanceAcum||0)/(ind.metaAcum||1)*100).toFixed(1)}%</strong>:'-'}</td>
             <td>{s?<span style={{padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.8rem',fontWeight:700,background:sc.bg,color:sc.c}}>{sc.icon} {s.score==='optimo'?'Óptimo':s.score==='precaucion'?'Precaución':s.score==='critico'?'Crítico':'Sin meta'}</span>:'-'}</td>
@@ -927,7 +927,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
             <tbody>{seguimientos.map(seg=>(
               <tr key={seg.id}>
                 <td><strong>{seg.mes} {seg.anio}</strong></td>
-                <td>{seg.metaAnual||indicador.meta} {indicador.unidad}</td>
+                <td>{indicador.meta||seg.metaAnual} {indicador.unidad}</td>
                 <td>{seg.metaMes} {indicador.unidad}</td>
                 <td>{seg.avance} {indicador.unidad}</td>
                 <td><strong>{seg.rendimiento.toFixed(2)}%</strong></td>
