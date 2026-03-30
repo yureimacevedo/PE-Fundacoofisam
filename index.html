@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planeación Estratégica - Sistema Completo</title>
@@ -29,7 +32,8 @@
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
+<script type="text/babel">/* VERSIÓN: 1774052406 - Sin caché *//* VERSION: 1774050522 - Meta actualizada */
+
 
 
 
@@ -73,7 +77,7 @@ const App=()=>{
       setUser(u);
       if(u){
         await migrarDatosACompartido(u.uid,'coosanroque');
-        const doc=await db.collection('coosanroque_usuarios').doc(u.uid).get();
+        const doc=await db.collection('fundacoofisam_usuarios').doc(u.uid).get();
         if(doc.exists)setUserRol(doc.data().rol||'admin');
         else setUserRol('admin');
       }else{setUserRol(null);}
@@ -85,7 +89,8 @@ const App=()=>{
   if(!user)return <AuthScreen/>;
   return <MainApp user={user} userRol={userRol}/>;
 };
-const AuthScreen=()=>{const[isLogin,setIsLogin]=useState(true);const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[error,setError]=useState('');const[loading,setLoading]=useState(false);const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin)await auth.signInWithEmailAndPassword(email,password);else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🎯 Planeación Estratégica</h1><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div></div></div>);};
+const AuthScreen=()=>{const[isLogin,setIsLogin]=useState(true);const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[error,setError]=useState('');const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin)await auth.signInWithEmailAndPassword(email,password);else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🎯 Planeación Estratégica</h1><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div></div></div>);};
 const MainApp=({user,userRol})=>{
   const isAdmin=userRol==='admin'||userRol===null;
   const[vista,setVista]=useState('entidades');
@@ -150,7 +155,8 @@ const MainApp=({user,userRol})=>{
     </main>
   </div>);
 };
-const VistaEntidades=({user,entidades,entidadActiva})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,nit:form.nit,periodo:form.periodo,vision:form.vision||'',scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y todos sus datos?'))return;try{await db.collection('fundacoofisam_datos').doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,nit:ent.nit,periodo:ent.periodo,vision:ent.vision||'',criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};return(<div><div className="page-header"><h1>Mis Entidades</h1><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',nit:'',periodo:'',vision:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nueva Entidad</button></div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay entidades</h3><p>Crea tu primera entidad</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><p style={{color:'#6B7280',marginBottom:'0.5rem'}}>NIT: {ent.nit}</p><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.vision&&<p style={{color:'#4F46E5',fontSize:'0.875rem',marginBottom:'0.5rem'}}>🎯 {ent.vision}</p>}{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div></div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Entidad</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>NIT *</label><input type="text" value={form.nit} onChange={e=>setForm({...form,nit:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><div className="form-group"><label>Visión</label><textarea value={form.vision} onChange={e=>setForm({...form,vision:e.target.value})} rows={3}/></div><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de esta entidad</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
+const VistaEntidades=({user,entidades,entidadActiva})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,nit:form.nit,periodo:form.periodo,vision:form.vision||'',scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y todos sus datos?'))return;try{await db.collection('fundacoofisam_datos').doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,nit:ent.nit,periodo:ent.periodo,vision:ent.vision||'',criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};return(<div><div className="page-header"><h1>Mis Entidades</h1><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',nit:'',periodo:'',vision:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nueva Entidad</button></div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay entidades</h3><p>Crea tu primera entidad</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><p style={{color:'#6B7280',marginBottom:'0.5rem'}}>NIT: {ent.nit}</p><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.vision&&<p style={{color:'#4F46E5',fontSize:'0.875rem',marginBottom:'0.5rem'}}>🎯 {ent.vision}</p>}{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div></div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Entidad</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>NIT *</label><input type="text" value={form.nit} onChange={e=>setForm({...form,nit:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><div className="form-group"><label>Visión</label><textarea value={form.vision} onChange={e=>setForm({...form,vision:e.target.value})} rows={3}/></div><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de esta entidad</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
 const VistaDashboard=({entidad,datos})=>{
   const[anioSel,setAnioSel]=useState('');
   const[mesSel,setMesSel]=useState('');
@@ -286,7 +292,8 @@ const VistaDashboard=({entidad,datos})=>{
     {modalInforme&&<ModalImpresionDashboard entidad={entidad} datos={datos} periodo={periodoLabel} onClose={()=>setModalInforme(false)}/>}
   </div>);
 };
-const VistaConfig=({user,entidad,datos,isAdmin})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);const[modalPrint,setModalPrint]=useState(false);if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;const{ejes=[],objetivos=[],indicadores=[]}=datos;const ref=db.collection('fundacoofisam_datos').doc(entidad.id);const scoreConfig=entidad.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};const guardarEje=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('ejes').doc(itemEdit.id).update(form);}else{await ref.collection('ejes').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarObjetivo=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('objetivos').doc(itemEdit.id).update(form);}else{await ref.collection('objetivos').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarIndicador=async(e)=>{
+const VistaConfig=({user,entidad,datos,isAdmin})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');const[modalPrint,setModalPrint]=useState(false);if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;const{ejes=[],objetivos=[],indicadores=[]}=datos;const ref=db.collection('fundacoofisam_datos').doc(entidad.id);const scoreConfig=entidad.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};const guardarEje=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('ejes').doc(itemEdit.id).update(form);}else{await ref.collection('ejes').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarObjetivo=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('objetivos').doc(itemEdit.id).update(form);}else{await ref.collection('objetivos').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarIndicador=async(e)=>{
   e.preventDefault();
   setLoading(true);
   try{
@@ -375,6 +382,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
   const[formActividad,setFormActividad]=useState({});
   const[itemEdit,setItemEdit]=useState(null);
   const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');
+  const planesFiltrados=planes.filter(p=>p.nombre.toLowerCase().includes(busquedaPOA.toLowerCase()));
   
   
   
@@ -496,10 +505,19 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
     {!planSel?
     <div>
       <div className="card">
-        <h3>Planes Operativos ({planes.length})</h3>
-        {planes.length===0?<p style={{color:'#9CA3AF'}}>No hay planes. Crea el primero.</p>:
+        <div style={{marginBottom:'1rem'}}>
+          <input 
+            type="text" 
+            placeholder="🔍 Buscar plan por nombre..." 
+            value={busquedaPOA} 
+            onChange={e=>setBusquedaPOA(e.target.value)}
+            style={{width:'100%',padding:'0.75rem',border:'1px solid #D1D5DB',borderRadius:'8px',fontSize:'0.95rem'}}
+          />
+        </div>
+        <h3>Planes Operativos ({planesFiltrados.length})</h3>
+        {planesFiltrados.length===0?<p style={{color:'#9CA3AF'}}>No hay planes. Crea el primero.</p>:
         <div style={{display:'grid',gap:'1rem'}}>
-          {planes.map(plan=>{
+          {planesFiltrados.map(plan=>{
             const actsPlan=todasActividades.filter(a=>a.planId===plan.id);
             const completadas=actsPlan.filter(a=>a.estado==='Completado').length;
             const total=actsPlan.length;
@@ -809,6 +827,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
   const[modal,setModal]=useState(false);
   const[form,setForm]=useState({});
   const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');
   const[seguimientos,setSeguimientos]=useState([]);
 
   useEffect(()=>{
@@ -1003,11 +1022,12 @@ const VistaSeguimiento=({user,entidad,datos})=>{
   const[form,setForm]=useState({email:'',password:'',rol:'seguimiento',nombre:''});
   const[usuarioEdit,setUsuarioEdit]=useState(null);
   const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');
   const[mensaje,setMensaje]=useState({texto:'',tipo:''});
 
   useEffect(()=>{
     if(!entidad)return;
-    const unsub=db.collection('coosanroque_usuarios').onSnapshot(s=>{
+    const unsub=db.collection('fundacoofisam_usuarios').onSnapshot(s=>{
       const d=[];
       s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>(a.nombre||a.email).localeCompare(b.nombre||b.email));
@@ -1020,12 +1040,12 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     e.preventDefault();setLoading(true);setMensaje({texto:'',tipo:''});
     try{
       if(usuarioEdit){
-        await db.collection('coosanroque_usuarios').doc(usuarioEdit.id).update({nombre:form.nombre||form.email,rol:form.rol});
+        await db.collection('fundacoofisam_usuarios').doc(usuarioEdit.id).update({nombre:form.nombre||form.email,rol:form.rol});
         setMensaje({texto:'Actualizado.',tipo:'ok'});
         setModal(false);setForm({email:'',password:'',rol:'seguimiento',nombre:''});setUsuarioEdit(null);
         setLoading(false);return;
       }
-      const existing=await db.collection('coosanroque_usuarios').where('email','==',form.email).get();
+      const existing=await db.collection('fundacoofisam_usuarios').where('email','==',form.email).get();
       if(!existing.empty){
         await existing.docs[0].ref.update({nombre:form.nombre||form.email,rol:form.rol});
         setMensaje({texto:'Usuario actualizado.',tipo:'ok'});
@@ -1033,7 +1053,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
         const _app=firebase.initializeApp(firebase.app().options,'sec'+Date.now());
         const _auth=_app.auth();
         const cred=await _auth.createUserWithEmailAndPassword(form.email,form.password);
-        await db.collection('coosanroque_usuarios').doc(cred.user.uid).set({
+        await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).set({
           email:form.email,nombre:form.nombre||form.email,rol:form.rol,
           entidadId:'general',creadoPor:user.uid,
           createdAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -1053,7 +1073,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
   };
 
   const cambiarRol=async(uid,nuevoRol)=>{
-    await db.collection('coosanroque_usuarios').doc(uid).update({rol:nuevoRol});
+    await db.collection('fundacoofisam_usuarios').doc(uid).update({rol:nuevoRol});
   };
 
   const resetPassword=async(email)=>{
@@ -1066,7 +1086,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
 
   const eliminarUsuario=async(uid,email)=>{
     if(!window.confirm('Eliminar usuario '+email+'?'))return;
-    await db.collection('coosanroque_usuarios').doc(uid).delete();
+    await db.collection('fundacoofisam_usuarios').doc(uid).delete();
   };
 
   const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
