@@ -1,4 +1,38 @@
 <!DOCTYPE html>
+<!--
+════════════════════════════════════════════════════════════════════════════════
+  AVISO LEGAL DE PROPIEDAD INTELECTUAL
+════════════════════════════════════════════════════════════════════════════════
+
+  © 2025-2026 Yureima Acevedo Arango
+  Consultora en Gestión Empresarial
+  
+  TODOS LOS DERECHOS RESERVADOS
+  
+  Este software es propiedad exclusiva de Yureima Acevedo Arango.
+  
+  LICENCIA DE USO:
+  El uso de este software por parte de las entidades es únicamente en el marco
+  de la prestación de servicios de consultoría empresarial contratados.
+  
+  RESTRICCIONES:
+  • Queda prohibida la reproducción, distribución, modificación o uso comercial
+    de este software sin autorización expresa y por escrito del propietario.
+  • Este software se proporciona "tal cual" bajo contrato de servicios.
+  • No se ceden derechos de propiedad intelectual, derechos de autor, ni 
+    autonomía sobre el software a ninguna entidad usuaria.
+  • El código fuente, estructura, diseño y funcionalidades son propiedad
+    exclusiva de Yureima Acevedo Arango.
+  
+  CONTACTO:
+  Para consultas sobre licencias o permisos adicionales, contacte directamente
+  con Yureima Acevedo Arango.
+  
+  Queda prohibido el uso no autorizado de este software.
+  
+════════════════════════════════════════════════════════════════════════════════
+-->
+
 <html lang="es">
 <head>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -28,6 +62,35 @@
   h3{font-size:12pt}
   .badge{font-size:7pt;padding:2px}
 }@media(max-width:768px){.sidebar{width:100%}.app-container{flex-direction:column}.grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}}
+.app-footer{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(10px);
+  border-top:1px solid #E5E7EB;
+  padding:0.75rem 1rem;
+  text-align:center;
+  font-size:0.75rem;
+  color:#6B7280;
+  z-index:100;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.05);
+}
+.app-footer a{
+  color:#4F46E5;
+  text-decoration:none;
+  font-weight:600;
+}
+.app-footer a:hover{
+  text-decoration:underline;
+}
+.main-content{
+  padding-bottom:4rem;
+}
+@media print{
+  .app-footer{display:none!important}
+}
 </style>
 </head>
 <body>
@@ -90,7 +153,14 @@ const App=()=>{
   return <MainApp user={user} userRol={userRol}/>;
 };
 const AuthScreen=()=>{const[isLogin,setIsLogin]=useState(true);const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[error,setError]=useState('');const[loading,setLoading]=useState(false);
-  const[busquedaPOA,setBusquedaPOA]=useState('');const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin)await auth.signInWithEmailAndPassword(email,password);else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🎯 Planeación Estratégica</h1><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div></div></div>);};
+  const[busquedaPOA,setBusquedaPOA]=useState('');const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin){
+        const cred=await auth.signInWithEmailAndPassword(email,password);
+        const doc=await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).get();
+        if(doc.exists&&doc.data().activo===false){
+          await auth.signOut();
+          throw new Error('Usuario desactivado. Contacta al administrador.');
+        }
+      }else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🎯 Planeación Estratégica</h1><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div></div></div>);};
 const MainApp=({user,userRol})=>{
   const isAdmin=userRol==='admin'||userRol===null;
   const[vista,setVista]=useState('entidades');
@@ -120,7 +190,7 @@ const MainApp=({user,userRol})=>{
   return(<div className="app-container">
     <nav className="sidebar">
       <div className="sidebar-header">
-        <h2>FUNDACOOFISAM</h2>
+        <h2>COOSANROQUE</h2>
         <p style={{fontSize:'0.875rem',opacity:0.9}}>Planeación Estratégica</p>
       </div>
       <div className="selector-entidad">
@@ -1017,11 +1087,14 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     </div>)}
   </div>);
 };const VistaUsuarios=({user,userRol,entidad})=>{
+  const isAdmin=userRol==='admin';
   const[usuarios,setUsuarios]=useState([]);
   const[modal,setModal]=useState(false);
   const[form,setForm]=useState({email:'',password:'',rol:'seguimiento',nombre:''});
   const[usuarioEdit,setUsuarioEdit]=useState(null);
   const[loading,setLoading]=useState(false);
+  const[modalPassword,setModalPassword]=useState(null);
+  const[nuevaPassword,setNuevaPassword]=useState('');
   const[busquedaPOA,setBusquedaPOA]=useState('');
   const[mensaje,setMensaje]=useState({texto:'',tipo:''});
 
@@ -1053,7 +1126,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
         const _app=firebase.initializeApp(firebase.app().options,'sec'+Date.now());
         const _auth=_app.auth();
         const cred=await _auth.createUserWithEmailAndPassword(form.email,form.password);
-        await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).set({
+        await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).set({activo:true,
           email:form.email,nombre:form.nombre||form.email,rol:form.rol,
           entidadId:'general',creadoPor:user.uid,
           createdAt:firebase.firestore.FieldValue.serverTimestamp()
@@ -1084,18 +1157,52 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     }catch(err){setMensaje({texto:'Error: '+err.message,tipo:'error'});}
   };
 
-  const eliminarUsuario=async(uid,email)=>{
-    if(!window.confirm('Eliminar usuario '+email+'?'))return;
-    await db.collection('fundacoofisam_usuarios').doc(uid).delete();
+  const toggleActivoUsuario=async(uid,activoActual)=>{
+    try{
+      const nuevoEstado=(activoActual===false)?true:false;
+      await db.collection('fundacoofisam_usuarios').doc(uid).update({activo:nuevoEstado});
+    }catch(error){
+      alert('Error: '+error.message);
+    }
   };
 
   const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
 
+  
+  const cambiarPassword=async(e)=>{
+    e.preventDefault();
+    if(!nuevaPassword||nuevaPassword.length<6){
+      alert('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    setLoading(true);
+    try{
+      const userEmail=modalPassword.email;
+      const user=firebase.auth().currentUser;
+      
+      // Si es el mismo usuario, cambiar directamente
+      if(user&&user.email===userEmail){
+        await user.updatePassword(nuevaPassword);
+        alert('✅ Contraseña actualizada');
+      }else{
+        // Si es admin cambiando password de otro usuario
+        alert('⚠️ Para cambiar la contraseña de otro usuario, ese usuario debe iniciar sesión y cambiarla desde su perfil');
+      }
+      
+      setModalPassword(null);
+      setNuevaPassword('');
+    }catch(error){
+      alert('Error: '+error.message);
+    }finally{
+      setLoading(false);
+    }
+  };
   return(<div>
     <div className="page-header">
       <h1>Usuarios</h1>
       <button className="btn-primary" style={{width:'auto'}}
-        onClick={()=>{setUsuarioEdit(null);setForm({email:'',password:'',rol:'seguimiento',nombre:''});setModal(true);}}>
+        onClick={()=>{setUsuarioEdit(null);setForm({email:'',password:'',rol:'seguimiento',nombre:''});setModal(true);}}
+        disabled={!isAdmin}>
         + Nuevo Usuario
       </button>
     </div>
@@ -1109,7 +1216,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
           return(
             <tr key={u.id}>
               <td>
-                <strong>{u.nombre||u.email}</strong>
+                <strong style={{textDecoration:u.activo===false?'line-through':'none',color:u.activo===false?'#9CA3AF':'#111827'}}>{u.nombre||u.email}{u.activo===false?' (Desactivado)':''}</strong>
                 {esTu&&<span style={{marginLeft:'0.5rem',fontSize:'0.75rem',color:'#6B7280'}}>(Tu)</span>}
                 <div style={{fontSize:'0.8rem',color:'#6B7280'}}>{u.email}</div>
               </td>
@@ -1126,8 +1233,15 @@ const VistaSeguimiento=({user,entidad,datos})=>{
                   <button className="btn-edit" onClick={()=>abrirEditar(u)}>Editar</button>
                   <button style={{padding:'0.4rem 0.6rem',fontSize:'0.8rem',background:'#FEF3C7',color:'#92400E',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer'}}
                     onClick={()=>resetPassword(u.email)}>Reset Clave</button>
-                  <button className="btn-secondary" style={{padding:'0.4rem 0.6rem',fontSize:'0.8rem'}}
-                    onClick={()=>eliminarUsuario(u.id,u.email)}>Eliminar</button>
+                  <button style={{padding:'0.4rem 0.6rem',fontSize:'0.8rem',background:'#EEF2FF',color:'#4F46E5',border:'1px solid #4F46E5',borderRadius:'6px',cursor:'pointer'}}
+                    onClick={()=>{setModalPassword(u);setNuevaPassword('');}}>🔑 Cambiar Clave</button>
+                  {u.activo!==false?
+                    <button style={{padding:'0.4rem 0.6rem',fontSize:'0.8rem',background:'#FEF3C7',color:'#92400E',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer'}}
+                      onClick={()=>toggleActivoUsuario(u.id,u.activo!==false)}>⏸️ Desactivar</button>
+                  :
+                    <button style={{padding:'0.4rem 0.6rem',fontSize:'0.8rem',background:'#D1FAE5',color:'#065F46',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer'}}
+                      onClick={()=>toggleActivoUsuario(u.id,u.activo!==false)}>▶️ Activar</button>
+                  }
                 </div>
               )}</td>
             </tr>
@@ -1173,6 +1287,32 @@ const VistaSeguimiento=({user,entidad,datos})=>{
       </div>
     </div>}
   </div>);
+    {modalPassword&&<div className="modal-overlay" onClick={()=>setModalPassword(null)}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>🔑 Cambiar Contraseña</h2>
+          <button className="btn-cerrar" onClick={()=>setModalPassword(null)}>×</button>
+        </div>
+        <div className="modal-body">
+          <form onSubmit={cambiarPassword}>
+            <div className="form-group">
+              <label>Usuario</label>
+              <input type="text" value={modalPassword.nombre||modalPassword.email} disabled style={{background:'#F3F4F6'}}/>
+            </div>
+            <div className="form-group">
+              <label>Nueva Contraseña *</label>
+              <input type="password" value={nuevaPassword} onChange={e=>setNuevaPassword(e.target.value)} required placeholder="Mínimo 6 caracteres"/>
+            </div>
+            <div style={{background:'#FEF3C7',padding:'1rem',borderRadius:'6px',marginBottom:'1rem'}}>
+              <p style={{fontSize:'0.85rem',color:'#92400E',margin:0}}>
+                ⚠️ <strong>Importante:</strong> Solo puedes cambiar tu propia contraseña. Para otros usuarios usa "Reset Clave".
+              </p>
+            </div>
+            <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Cambiar'}</button>
+          </form>
+        </div>
+      </div>
+    </div>}
 };const ModalImpresionDashboard=({entidad,datos,onClose})=>{
   const{ejes=[],objetivos=[],indicadores=[],seguimientos=[]}=datos;
   return(<div className="modal-overlay"><div className="modal" style={{maxWidth:'900px',width:'95%',maxHeight:'90vh',overflow:'auto'}}>
@@ -1238,5 +1378,9 @@ const VistaSeguimiento=({user,entidad,datos})=>{
 };
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
+
+<div class="app-footer">
+  Sistema de Planeación Estratégica © 2026 <strong>Yureima Acevedo Arango</strong> - Consultoría en Gestión Empresarial | Todos los derechos reservados
+</div>
 </body>
 </html>
