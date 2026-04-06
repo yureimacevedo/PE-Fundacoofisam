@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- AVISO LEGAL -->
+<!-- Este sistema fue desarrollado por Yureima Acevedo Arango -->
+<!-- Propiedad Intelectual protegida - Todos los derechos reservados -->
+<!-- Cualquier uso, modificación o distribución no autorizada está prohibida -->
+
 <!--
 ════════════════════════════════════════════════════════════════════════════════
   AVISO LEGAL DE PROPIEDAD INTELECTUAL
@@ -228,6 +233,131 @@ const MainApp=({user,userRol})=>{
 const VistaEntidades=({user,entidades,entidadActiva})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
   const[busquedaPOA,setBusquedaPOA]=useState('');const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,nit:form.nit,periodo:form.periodo,vision:form.vision||'',scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y todos sus datos?'))return;try{await db.collection('fundacoofisam_datos').doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,nit:ent.nit,periodo:ent.periodo,vision:ent.vision||'',criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};return(<div><div className="page-header"><h1>Mis Entidades</h1><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',nit:'',periodo:'',vision:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nueva Entidad</button></div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay entidades</h3><p>Crea tu primera entidad</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><p style={{color:'#6B7280',marginBottom:'0.5rem'}}>NIT: {ent.nit}</p><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.vision&&<p style={{color:'#4F46E5',fontSize:'0.875rem',marginBottom:'0.5rem'}}>🎯 {ent.vision}</p>}{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div></div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Entidad</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>NIT *</label><input type="text" value={form.nit} onChange={e=>setForm({...form,nit:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><div className="form-group"><label>Visión</label><textarea value={form.vision} onChange={e=>setForm({...form,vision:e.target.value})} rows={3}/></div><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de esta entidad</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
 const VistaDashboard=({entidad,datos})=>{
+  const[seguimientosRecurrentes,setSeguimientosRecurrentes]=useState({});
+  const[hitosPorActividad,setHitosPorActividad]=useState({});
+  
+  useEffect(()=>{
+    if(!entidad)return;
+    
+    // Cargar seguimientos recurrentes
+    const unsubRec=db.collection('fundacoofisam_datos').doc(entidad.id)
+      .collection('poa_seguimiento_recurrente').onSnapshot(snap=>{
+        const data={};
+        snap.forEach(doc=>{
+          const d=doc.data();
+          if(!data[d.actividadId])data[d.actividadId]=[];
+          data[d.actividadId].push(d);
+        });
+        setSeguimientosRecurrentes(data);
+      });
+    
+    // Cargar hitos
+    const unsubHitos=db.collection('fundacoofisam_datos').doc(entidad.id)
+      .collection('poa_hitos').onSnapshot(snap=>{
+        const data={};
+        snap.forEach(doc=>{
+          const d=doc.data();
+          if(!data[d.actividadId])data[d.actividadId]=[];
+          data[d.actividadId].push(d);
+        });
+        setHitosPorActividad(data);
+      });
+    
+    return()=>{unsubRec();unsubHitos();};
+  },[entidad]);
+  
+  const calcularAvanceActividad=(actividad)=>{
+    const tipo=actividad.tipoSeguimiento||'hitos';
+    
+    if(tipo==='recurrente'){
+      const seguimientos=seguimientosRecurrentes[actividad.id]||[];
+      const mesActual=new Date().getMonth();
+      let transcurridos=0;
+      let ejecutados=0;
+      
+      for(let i=0;i<=mesActual;i++){
+        transcurridos++;
+        const seg=seguimientos.find(s=>s.mesIdx===i);
+        if(seg&&seg.estado==='hecho'){
+          ejecutados++;
+        }
+      }
+      
+      return transcurridos>0?Math.round((ejecutados/transcurridos)*100):0;
+    }else{
+      const hitos=hitosPorActividad[actividad.id]||[];
+      if(hitos.length===0)return 0;
+      const completados=hitos.filter(h=>h.estado==='completado').length;
+      return Math.round((completados/hitos.length)*100);
+    }
+  };
+  
+  const calcularAvancePOA=async(actividades,entidadId,prefijo)=>{
+    if(!actividades||actividades.length===0)return 0;
+    
+    const mesActual=new Date().getMonth();
+    let totalAvance=0;
+    
+    for(const act of actividades){
+      const tipo=act.tipoSeguimiento||'hitos';
+      let avanceAct=0;
+      
+      if(tipo==='recurrente'){
+        // Calcular basado en seguimiento mensual
+        try{
+          const snap=await db.collection('fundacoofisam_datos').doc(entidadId)
+            .collection('poa_seguimiento_recurrente')
+            .where('actividadId','==',act.id).get();
+          
+          let transcurridos=mesActual+1;
+          let ejecutados=0;
+          
+          snap.forEach(doc=>{
+            const data=doc.data();
+            if(data.estado==='hecho'){
+              ejecutados++;
+            }
+          });
+          
+          avanceAct=transcurridos>0?(ejecutados/transcurridos)*100:0;
+        }catch(err){
+          console.error('Error calculando avance recurrente:',err);
+        }
+      }else{
+        // Calcular basado en hitos
+        try{
+          const snap=await db.collection('fundacoofisam_datos').doc(entidadId)
+            .collection('poa_hitos')
+            .where('actividadId','==',act.id).get();
+          
+          let totalHitos=0;
+          let completados=0;
+          
+          snap.forEach(doc=>{
+            totalHitos++;
+            const data=doc.data();
+            if(data.estado==='completado'){
+              completados++;
+            }
+          });
+          
+          if(totalHitos>0){
+            avanceAct=(completados/totalHitos)*100;
+          }else{
+            // Si no tiene hitos, usar estado de la actividad
+            avanceAct=act.estado==='Completado'?100:act.estado==='En Proceso'?50:0;
+          }
+        }catch(err){
+          console.error('Error calculando avance hitos:',err);
+        }
+      }
+      
+      totalAvance+=avanceAct;
+    }
+    
+    return Math.round(totalAvance/actividades.length);
+  };
+
   const[anioSel,setAnioSel]=useState('');
   const[mesSel,setMesSel]=useState('');
   const[modalInforme,setModalInforme]=useState(false);
@@ -295,6 +425,18 @@ const VistaDashboard=({entidad,datos})=>{
     return todosSegs.some(s=>mesesOrdenLocal.indexOf(s.mes)<=indiceMes);
   });
 
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
+  
   return(<div>
     <div className="page-header">
       <div>
@@ -304,6 +446,26 @@ const VistaDashboard=({entidad,datos})=>{
       <button className="btn-primary" style={{width:'auto'}} onClick={()=>window.print()}>🖨️ Imprimir Dashboard</button>
     </div>
 
+    <div className="card" style={{marginBottom:'1.5rem',background:'linear-gradient(135deg,#667eea 0%,#764ba2 100%)',color:'white'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'1.5rem'}}>
+        <div style={{textAlign:'center',padding:'1.5rem',background:'rgba(255,255,255,0.1)',borderRadius:'8px'}}>
+          <div style={{fontSize:'0.9rem',marginBottom:'0.5rem',opacity:0.9}}>SCORE GENERAL</div>
+          <div style={{fontSize:'3rem',fontWeight:800}}>{scoreGeneral}%</div>
+          <div style={{fontSize:'0.85rem',marginTop:'0.5rem',opacity:0.8}}>Desempeño global</div>
+        </div>
+        <div style={{textAlign:'center',padding:'1.5rem',background:'rgba(255,255,255,0.1)',borderRadius:'8px'}}>
+          <div style={{fontSize:'0.9rem',marginBottom:'0.5rem',opacity:0.9}}>📊 INDICADORES</div>
+          <div style={{fontSize:'3rem',fontWeight:800}}>{scoreIndicadores}%</div>
+          <div style={{fontSize:'0.85rem',marginTop:'0.5rem',opacity:0.8}}>{indicadoresConEstado.length} indicadores</div>
+        </div>
+        <div style={{textAlign:'center',padding:'1.5rem',background:'rgba(255,255,255,0.1)',borderRadius:'8px'}}>
+          <div style={{fontSize:'0.9rem',marginBottom:'0.5rem',opacity:0.9}}>📋 POA</div>
+          <div style={{fontSize:'3rem',fontWeight:800}}>{scorePOA}%</div>
+          <div style={{fontSize:'0.85rem',marginTop:'0.5rem',opacity:0.8}}>{actividadesPOA.length} actividades</div>
+        </div>
+      </div>
+    </div>
+    
     <div className="card" style={{marginBottom:'1rem'}}>
       <div style={{display:'flex',gap:'1rem',alignItems:'flex-end',flexWrap:'wrap'}}>
         <div className="form-group" style={{margin:0,minWidth:'140px'}}>
@@ -331,7 +493,53 @@ const VistaDashboard=({entidad,datos})=>{
       </div>
     </div>
 
-    <div className="grid">
+    
+      {actividades&&actividades.length>0&&(<div className="card" style={{marginBottom:'1.5rem'}}>
+        <h3>📋 Avance POA</h3>
+        {Object.keys(avancesPOA).length>0&&(()=>{
+          const avances=Object.values(avancesPOA);
+          const scorePOA=avances.length>0?Math.round(avances.reduce((sum,a)=>sum+a.avance,0)/avances.length):0;
+          const recurrentes=avances.filter(a=>a.tipo==='recurrente');
+          const hitos=avances.filter(a=>a.tipo==='hitos');
+          const scoreRecurrentes=recurrentes.length>0?Math.round(recurrentes.reduce((sum,a)=>sum+a.avance,0)/recurrentes.length):0;
+          const scoreHitos=hitos.length>0?Math.round(hitos.reduce((sum,a)=>sum+a.avance,0)/hitos.length):0;
+          const colorScore=scorePOA>=70?'#059669':scorePOA>=50?'#F59E0B':'#DC2626';
+          
+          return(<>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+              <span>Score General POA</span>
+              <span style={{fontSize:'2rem',fontWeight:700,color:colorScore}}>{scorePOA}%</span>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+              {recurrentes.length>0&&<div style={{padding:'1rem',background:'#F0F9FF',borderRadius:'8px',border:'1px solid #BAE6FD'}}>
+                <div style={{fontSize:'0.85rem',color:'#0369A1',marginBottom:'0.5rem'}}>📅 Recurrentes</div>
+                <div style={{fontSize:'1.5rem',fontWeight:700,color:'#0369A1'}}>{scoreRecurrentes}%</div>
+                <div style={{fontSize:'0.75rem',color:'#0369A1',marginTop:'0.25rem'}}>{recurrentes.length} actividad{recurrentes.length>1?'es':''}</div>
+              </div>}
+              {hitos.length>0&&<div style={{padding:'1rem',background:'#FEF3C7',borderRadius:'8px',border:'1px solid #FCD34D'}}>
+                <div style={{fontSize:'0.85rem',color:'#92400E',marginBottom:'0.5rem'}}>🎯 Por hitos</div>
+                <div style={{fontSize:'1.5rem',fontWeight:700,color:'#92400E'}}>{scoreHitos}%</div>
+                <div style={{fontSize:'0.75rem',color:'#92400E',marginTop:'0.25rem'}}>{hitos.length} actividad{hitos.length>1?'es':''}</div>
+              </div>}
+            </div>
+          </>);
+        })()}
+      </div>)}
+      
+      <div className="grid">
+      <div className="stat-card" style={{borderLeft:'4px solid #4F46E5',gridColumn:'1/-1'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <div>
+            <div className="stat-label">🏆 Score General Entidad</div>
+            <div style={{fontSize:'0.85rem',color:'#6B7280',marginTop:'0.5rem'}}>
+              📊 Indicadores: {scoreIndicadores}% | 📋 POA: {scorePOA}%
+            </div>
+          </div>
+          <div style={{fontSize:'3rem',fontWeight:800,color:scoreGeneral>=70?'#059669':scoreGeneral>=50?'#F59E0B':'#DC2626'}}>
+            {scoreGeneral}%
+          </div>
+        </div>
+      </div>
       <div className="stat-card"><div className="stat-label">Ejes</div><div className="stat-value">{ejes.length}</div></div>
       <div className="stat-card"><div className="stat-label">Indicadores</div><div className="stat-value">{indicadores.length}</div></div>
       <div className="stat-card" style={{borderLeftColor:'#059669'}}><div className="stat-label">🟢 Óptimos</div><div className="stat-value">{porScore.optimo}</div></div>
@@ -413,11 +621,35 @@ const formatearTareas=(texto,limite=null)=>{
   if(limite&&tareas.length>limite){
     const mostrar=tareas.slice(0,limite);
     const resto=tareas.length-limite;
-    return(<div>
+    // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
+  
+  return(<div>
       {mostrar.map((t,i)=><div key={i} style={{fontSize:'0.85rem',color:'#6B7280',marginBottom:'0.15rem'}}>• {t}</div>)}
       <div style={{fontSize:'0.75rem',color:'#9CA3AF',marginTop:'0.25rem'}}>... (+{resto} más)</div>
     </div>);
   }
+  
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
   
   return(<div>
     {tareas.map((t,i)=><div key={i} style={{fontSize:'0.85rem',color:'#6B7280',marginBottom:'0.25rem'}}>• {t}</div>)}
@@ -438,14 +670,481 @@ const formatearTareasCheckbox=(texto)=>{
   </div>);
 };
 
+
+  const calcularAvanceActividad=async(actividad,entidadId,prefijo)=>{
+  const tipo=actividad.tipoSeguimiento||'hitos';
+  
+  if(tipo==='recurrente'){
+    // Calcular basado en seguimiento mensual
+    try{
+      const snap=await db.collection('fundacoofisam_datos').doc(entidadId)
+        .collection('poa_seguimiento_recurrente')
+        .where('actividadId','==',actividad.id).get();
+      
+      const mesActual=new Date().getMonth();
+      let transcurridos=0;
+      let ejecutados=0;
+      
+      const seguimiento={};
+      snap.forEach(doc=>{
+        const d=doc.data();
+        seguimiento[d.mesIdx]=d;
+      });
+      
+      for(let i=0;i<=mesActual;i++){
+        transcurridos++;
+        if(seguimiento[i]&&seguimiento[i].estado==='hecho'){
+          ejecutados++;
+        }
+      }
+      
+      return transcurridos>0?Math.round((ejecutados/transcurridos)*100):0;
+    }catch(err){
+      console.error('Error calculando avance recurrente:',err);
+      return 0;
+    }
+  }else if(tipo==='hitos'){
+    // Calcular basado en hitos
+    try{
+      const snap=await db.collection('fundacoofisam_datos').doc(entidadId)
+        .collection('poa_hitos')
+        .where('actividadId','==',actividad.id).get();
+      
+      if(snap.empty)return 0;
+      
+      let total=0;
+      let completados=0;
+      
+      snap.forEach(doc=>{
+        total++;
+        const d=doc.data();
+        if(d.estado==='completado'){
+          completados++;
+        }
+      });
+      
+      return total>0?Math.round((completados/total)*100):0;
+    }catch(err){
+      console.error('Error calculando avance hitos:',err);
+      return 0;
+    }
+  }else{
+    // Compatibilidad: usar estado simple
+    if(actividad.estado==='Completado')return 100;
+    if(actividad.estado==='En Proceso')return 50;
+    return 0;
+  }
+};
+
+
+const GestionHitos=({actividad,entidadId,prefijo})=>{
+  const[hitos,setHitos]=useState([]);
+  const[nuevoHito,setNuevoHito]=useState({nombre:'',fecha:'',estado:'programado'});
+  const[editando,setEditando]=useState(null);
+  const[loading,setLoading]=useState(false);
+  
+  
+  const[avancesPOA,setAvancesPOA]=useState({});
+  
+  const calcularAvancePOA=async(actividades)=>{
+    if(!entidad||!actividades||actividades.length===0)return{};
+    
+    const avances={};
+    const mesActual=new Date().getMonth();
+    
+    for(const act of actividades){
+      const tipo=act.tipoSeguimiento||'hitos';
+      
+      if(tipo==='recurrente'){
+        // Calcular avance por meses ejecutados
+        try{
+          const segRef=db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_seguimiento_recurrente');
+          const segSnap=await segRef.where('actividadId','==',act.id).get();
+          
+          let transcurridos=mesActual+1;
+          let ejecutados=0;
+          
+          segSnap.forEach(doc=>{
+            const seg=doc.data();
+            if(seg.estado==='hecho'){
+              ejecutados++;
+            }
+          });
+          
+          avances[act.id]={
+            tipo:'recurrente',
+            avance:transcurridos>0?Math.round((ejecutados/transcurridos)*100):0,
+            ejecutados,
+            total:transcurridos
+          };
+        }catch(err){
+          avances[act.id]={tipo:'recurrente',avance:0,ejecutados:0,total:12};
+        }
+      }else{
+        // Calcular avance por hitos completados
+        try{
+          const hitosRef=db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_hitos');
+          const hitosSnap=await hitosRef.where('actividadId','==',act.id).get();
+          
+          let total=0;
+          let completados=0;
+          
+          hitosSnap.forEach(doc=>{
+            total++;
+            const hito=doc.data();
+            if(hito.estado==='completado'){
+              completados++;
+            }
+          });
+          
+          avances[act.id]={
+            tipo:'hitos',
+            avance:total>0?Math.round((completados/total)*100):0,
+            completados,
+            total
+          };
+        }catch(err){
+          avances[act.id]={tipo:'hitos',avance:0,completados:0,total:0};
+        }
+      }
+    }
+    
+    return avances;
+  };
+
+  useEffect(()=>{
+    if(!actividad||!entidadId)return;
+    const ref=db.collection('fundacoofisam_datos').doc(entidadId).collection('poa_hitos');
+    const unsub=ref.where('actividadId','==',actividad.id).orderBy('orden','asc').onSnapshot(snap=>{
+      const data=[];
+      snap.forEach(doc=>data.push({id:doc.id,...doc.data()}));
+      setHitos(data);
+    });
+    return()=>unsub();
+  },[actividad,entidadId,prefijo]);
+  
+  const agregarHito=async()=>{
+    if(!nuevoHito.nombre||!nuevoHito.fecha)return;
+    setLoading(true);
+    try{
+      const ref=db.collection('fundacoofisam_datos').doc(entidadId).collection('poa_hitos');
+      await ref.add({
+        actividadId:actividad.id,
+        nombre:nuevoHito.nombre,
+        fecha:nuevoHito.fecha,
+        estado:nuevoHito.estado||'programado',
+        orden:hitos.length,
+        observaciones:'',
+        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
+      setNuevoHito({nombre:'',fecha:'',estado:'programado'});
+    }catch(err){
+      alert('Error: '+err.message);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  useEffect(()=>{
+    if(actividades&&actividades.length>0){
+      calcularAvancePOA(actividades).then(setAvancesPOA);
+    }
+  },[actividades,entidad]);
+  
+  
+  
+  const actualizarHito=async(hitoId,campo,valor)=>{
+    try{
+      const ref=db.collection('fundacoofisam_datos').doc(entidadId).collection('poa_hitos');
+      await ref.doc(hitoId).update({[campo]:valor});
+    }catch(err){
+      alert('Error: '+err.message);
+    }
+  };
+  
+  const eliminarHito=async(hitoId)=>{
+    if(!window.confirm('¿Eliminar este hito?'))return;
+    try{
+      const ref=db.collection('fundacoofisam_datos').doc(entidadId).collection('poa_hitos');
+      await ref.doc(hitoId).delete();
+    }catch(err){
+      alert('Error: '+err.message);
+    }
+  };
+  
+  const calcularAvance=()=>{
+    if(hitos.length===0)return 0;
+    const completados=hitos.filter(h=>h.estado==='completado').length;
+    return Math.round((completados/hitos.length)*100);
+  };
+  
+  const avance=calcularAvance();
+  const colorAvance=avance>=70?'#059669':avance>=50?'#F59E0B':'#DC2626';
+  
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
+  
+  return(<div>
+    <div style={{background:'#F9FAFB',padding:'1rem',borderRadius:'8px',marginBottom:'1rem',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+      <div>
+        <strong>Avance por hitos:</strong>
+        <p style={{fontSize:'0.85rem',color:'#6B7280',margin:'0.25rem 0 0 0'}}>
+          {hitos.filter(h=>h.estado==='completado').length} de {hitos.length} hitos completados
+        </p>
+      </div>
+      <div style={{fontSize:'2rem',fontWeight:700,color:colorAvance}}>
+        {avance}%
+      </div>
+    </div>
+    
+    <table className="tabla">
+      <thead>
+        <tr>
+          <th>Hito / Entregable</th>
+          <th style={{width:'120px'}}>Fecha</th>
+          <th style={{width:'150px'}}>Estado</th>
+          <th style={{width:'80px'}}>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {hitos.map(h=>(<tr key={h.id}>
+          <td>
+            {editando===h.id?
+              <input type="text" value={h.nombre} 
+                onChange={e=>setHitos(hitos.map(hi=>hi.id===h.id?{...hi,nombre:e.target.value}:hi))}
+                onBlur={e=>actualizarHito(h.id,'nombre',e.target.value)}
+                style={{width:'100%',padding:'0.5rem',border:'1px solid #E5E7EB',borderRadius:'6px'}}/>
+            :
+              <span onDoubleClick={()=>setEditando(h.id)}>{h.nombre}</span>
+            }
+          </td>
+          <td>
+            <input type="date" value={h.fecha}
+              onChange={e=>actualizarHito(h.id,'fecha',e.target.value)}
+              style={{width:'100%',padding:'0.4rem',border:'1px solid #E5E7EB',borderRadius:'6px'}}/>
+          </td>
+          <td>
+            <select value={h.estado}
+              onChange={e=>actualizarHito(h.id,'estado',e.target.value)}
+              style={{width:'100%',padding:'0.5rem',borderRadius:'6px',border:'2px solid #E5E7EB',
+                background:h.estado==='completado'?'#D1FAE5':h.estado==='en_proceso'?'#DBEAFE':'white'}}>
+              <option value="programado">⏸️ Programado</option>
+              <option value="en_proceso">🔄 En proceso</option>
+              <option value="completado">✅ Completado</option>
+            </select>
+          </td>
+          <td>
+            <button onClick={()=>eliminarHito(h.id)}
+              style={{padding:'0.4rem 0.6rem',fontSize:'0.8rem',background:'#FEE2E2',color:'#DC2626',border:'none',borderRadius:'6px',cursor:'pointer'}}>
+              🗑️
+            </button>
+          </td>
+        </tr>))}
+        
+        <tr style={{background:'#F9FAFB'}}>
+          <td>
+            <input type="text" value={nuevoHito.nombre}
+              onChange={e=>setNuevoHito({...nuevoHito,nombre:e.target.value})}
+              placeholder="Nombre del nuevo hito..."
+              style={{width:'100%',padding:'0.5rem',border:'1px solid #E5E7EB',borderRadius:'6px'}}/>
+          </td>
+          <td>
+            <input type="date" value={nuevoHito.fecha}
+              onChange={e=>setNuevoHito({...nuevoHito,fecha:e.target.value})}
+              style={{width:'100%',padding:'0.4rem',border:'1px solid #E5E7EB',borderRadius:'6px'}}/>
+          </td>
+          <td colSpan="2">
+            <button onClick={agregarHito} disabled={loading||!nuevoHito.nombre||!nuevoHito.fecha}
+              style={{padding:'0.5rem 1rem',background:'#4F46E5',color:'white',border:'none',borderRadius:'6px',cursor:'pointer',width:'100%',fontWeight:600}}>
+              + Agregar Hito
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p style={{fontSize:'0.85rem',color:'#6B7280',marginTop:'1rem'}}>
+      💡 Doble clic en el nombre para editar
+    </p>
+  </div>);
+};
+
+
+const SeguimientoMensualTabla=({actividad,entidadId,prefijo})=>{
+  const[seguimientoMeses,setSeguimientoMeses]=useState({});
+  const[loading,setLoading]=useState(false);
+  const meses=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const mesActual=new Date().getMonth();
+  
+  useEffect(()=>{
+    if(!actividad||!entidadId)return;
+    const ref=db.collection('fundacoofisam_datos').doc(entidadId).collection('poa_seguimiento_recurrente');
+    const unsub=ref.where('actividadId','==',actividad.id).onSnapshot(snap=>{
+      const data={};
+      snap.forEach(doc=>{
+        const d=doc.data();
+        data[d.mesIdx]={id:doc.id,...d};
+      });
+      setSeguimientoMeses(data);
+    });
+    return()=>unsub();
+  },[actividad,entidadId,prefijo]);
+  
+  const guardarMes=async(mesIdx,estado,observaciones)=>{
+    setLoading(true);
+    try{
+      const ref=db.collection('fundacoofisam_datos').doc(entidadId).collection('poa_seguimiento_recurrente');
+      const data={
+        actividadId:actividad.id,
+        mesIdx,
+        mes:meses[mesIdx],
+        estado,
+        observaciones:observaciones||'',
+        updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
+      if(seguimientoMeses[mesIdx]?.id){
+        await ref.doc(seguimientoMeses[mesIdx].id).update(data);
+      }else{
+        await ref.add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      }
+    }catch(err){
+      alert('Error: '+err.message);
+    }finally{
+      setLoading(false);
+    }
+  };
+  
+  const calcularAvance=()=>{
+    let transcurridos=0;
+    let ejecutados=0;
+    for(let i=0;i<=mesActual;i++){
+      transcurridos++;
+      if(seguimientoMeses[i]&&seguimientoMeses[i].estado==='hecho'){
+        ejecutados++;
+      }
+    }
+    return transcurridos>0?Math.round((ejecutados/transcurridos)*100):0;
+  };
+  
+  const avance=calcularAvance();
+  const colorAvance=avance>=70?'#059669':avance>=50?'#F59E0B':'#DC2626';
+  
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
+  
+  return(<div>
+    <div style={{background:'#F9FAFB',padding:'1rem',borderRadius:'8px',marginBottom:'1rem',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+      <div>
+        <strong>Avance general:</strong>
+        <p style={{fontSize:'0.85rem',color:'#6B7280',margin:'0.25rem 0 0 0'}}>
+          Meses ejecutados vs transcurridos
+        </p>
+      </div>
+      <div style={{fontSize:'2rem',fontWeight:700,color:colorAvance}}>
+        {avance}%
+      </div>
+    </div>
+    
+    <table className="tabla">
+      <thead>
+        <tr>
+          <th>Mes</th>
+          <th>Estado</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {meses.map((mes,idx)=>{
+          const seg=seguimientoMeses[idx]||{};
+          const esFuturo=idx>mesActual;
+          const estadoActual=seg.estado||'programada';
+          
+          return(<tr key={idx} style={{background:esFuturo?'#F9FAFB':'white',opacity:esFuturo?0.6:1}}>
+            <td><strong>{mes}</strong></td>
+            <td>
+              <select 
+                value={estadoActual}
+                onChange={e=>guardarMes(idx,e.target.value,seg.observaciones)}
+                disabled={loading||esFuturo}
+                style={{width:'100%',padding:'0.5rem',borderRadius:'6px',border:'2px solid #E5E7EB',
+                  background:estadoActual==='hecho'?'#D1FAE5':estadoActual==='no'?'#FEE2E2':'white'}}>
+                <option value="programada">⏸️ Programada</option>
+                <option value="hecho">✅ Hecho</option>
+                <option value="no">❌ No hecho</option>
+              </select>
+            </td>
+            <td>
+              <input type="text"
+                value={seg.observaciones||''}
+                onChange={e=>{
+                  const newSeg={...seguimientoMeses};
+                  newSeg[idx]={...seg,observaciones:e.target.value};
+                  setSeguimientoMeses(newSeg);
+                }}
+                onBlur={e=>guardarMes(idx,estadoActual,e.target.value)}
+                disabled={esFuturo}
+                placeholder={esFuturo?'Mes futuro':'Observaciones...'}
+                style={{width:'100%',padding:'0.5rem',border:'1px solid #E5E7EB',borderRadius:'6px'}}/>
+            </td>
+          </tr>);
+        })}
+      </tbody>
+    </table>
+  </div>);
+};
+
+
 const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
+  // Helpers para seguimiento recurrente
+  const getMesesEntreFechas=(fechaInicio,fechaFin)=>{
+    const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const inicio=new Date(fechaInicio);
+    const fin=fechaFin?new Date(fechaFin):new Date();
+    const resultado=[];
+    let actual=new Date(inicio.getFullYear(),inicio.getMonth(),1);
+    const finMes=new Date(fin.getFullYear(),fin.getMonth(),1);
+    while(actual<=finMes){
+      resultado.push({mes:meses[actual.getMonth()],anio:actual.getFullYear(),key:`${actual.getFullYear()}-${actual.getMonth()}`});
+      actual.setMonth(actual.getMonth()+1);
+    }
+    return resultado;
+  };
+  
+  const getMesActual=()=>{
+    const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const hoy=new Date();
+    return{mes:meses[hoy.getMonth()],anio:hoy.getFullYear(),key:`${hoy.getFullYear()}-${hoy.getMonth()}`};
+  };
+
   const[vista,setVista]=useState('planes');
+  const[modalReprogramar,setModalReprogramar]=useState(null);
   const[planSel,setPlanSel]=useState(null);
   const[planes,setPlanes]=useState([]);
   const[actividades,setActividades]=useState([]);
   const[modalPlan,setModalPlan]=useState(false);
   const[modalActividad,setModalActividad]=useState(false);
   const[modalSeguimiento,setModalSeguimiento]=useState(null);
+  const[modalSegRecurrente,setModalSegRecurrente]=useState(null);
+  const[avancesActividades,setAvancesActividades]=useState({});const[modalReprogramar,setModalReprogramar]=useState(null);const[nuevasFechas,setNuevasFechas]=useState({inicio:'',fin:''});
   const[modalScore,setModalScore]=useState(false);
   const[todasActividades,setTodasActividades]=useState([]);
   const[formPlan,setFormPlan]=useState({});
@@ -519,7 +1218,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
       const data={
         ...formActividad,
         planId:planSel.id,
-        estado:formActividad.estado||'Pendiente',
+        estado:formActividad.estado||'Programada',
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       };
       if(itemEdit){
@@ -536,26 +1235,57 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
     if(!window.confirm('¿Eliminar?'))return;
     await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(id).delete();
   };
+  const reprogramarActividad=async(actId)=>{
+    try{
+      const fechaInicio=prompt('Nueva fecha inicio (YYYY-MM-DD):');
+      const fechaFin=prompt('Nueva fecha fin (YYYY-MM-DD):');
+      if(!fechaInicio||!fechaFin)return;
+      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(actId).update({
+        fechaInicio,
+        fechaFin
+      });
+      alert('Fechas actualizadas correctamente');
+    }catch(error){
+      alert('Error al reprogramar: '+error.message);
+    }
+  };
   
   const guardarSeguimiento=async(e)=>{
     e.preventDefault();setLoading(true);
     try{
-      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(modalSeguimiento.id).update({
+      const updateData={
         estado:modalSeguimiento.estado,
         observacionesSeguimiento:modalSeguimiento.observacionesSeguimiento,
         fechaCambioEstado:new Date().toISOString().split('T')[0]
-      });
+      };
+      if(modalSeguimiento.estado==='Reprogramado'){
+        if(modalSeguimiento.nuevaFechaInicio)updateData.fechaInicio=modalSeguimiento.nuevaFechaInicio;
+        if(modalSeguimiento.nuevaFechaFin)updateData.fechaFin=modalSeguimiento.nuevaFechaFin;
+      }
+      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(modalSeguimiento.id).update(updateData);
       setModalSeguimiento(null);
     }catch(err){alert('Error: '+err.message);}
     finally{setLoading(false);}
   };
   
   const estadoColor={
-    'Pendiente':{bg:'#FEF3C7',c:'#92400E'},
+    'Programada':{bg:'#FEF3C7',c:'#92400E'},
     'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},
     'Completado':{bg:'#D1FAE5',c:'#065F46'},
     'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}
   };
+  
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
   
   return(<div>
     <div className="page-header">
@@ -654,9 +1384,13 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
           </thead>
           <tbody>
             {actividades.map(act=>{
-              const ec=estadoColor[act.estado]||estadoColor['Pendiente'];
+              const ec=estadoColor[act.estado]||estadoColor['Programada'];
               return(<tr key={act.id}>
-                <td><strong>{act.actividad}</strong></td>
+                <td><strong>{act.actividad}</strong>
+                    {' '}
+                    <span style={{fontSize:'0.7rem',padding:'0.15rem 0.5rem',borderRadius:'8px',background:(act.tipoSeguimiento==='recurrente'?'#DBEAFE':'#FEF3C7'),color:(act.tipoSeguimiento==='recurrente'?'#1E40AF':'#92400E'),fontWeight:600}}>
+                      {(act.tipoSeguimiento||'hitos')==='recurrente'?'📅 Recurrente':'🎯 Por hitos'}
+                    </span></td>
                 <td>{act.tarea?formatearTareas(act.tarea,3):<span style={{color:'#9CA3AF',fontSize:'0.85rem'}}>-</span>}</td>
                 <td>{act.responsable}</td>
                 <td style={{fontSize:'0.8rem'}}>{act.fechaInicio} → {act.fechaFin||''}</td>
@@ -678,7 +1412,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
         {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
         <div style={{display:'grid',gap:'1rem'}}>
           {actividades.map(act=>{
-            const ec=estadoColor[act.estado]||estadoColor['Pendiente'];
+            const ec=estadoColor[act.estado]||estadoColor['Programada'];
             return(<div key={act.id} className="card" style={{padding:'1rem',background:'#F9FAFB'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'0.5rem'}}>
                 <div style={{flex:1}}>
@@ -692,10 +1426,35 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
                 <span style={{padding:'0.5rem 0.75rem',borderRadius:'6px',fontWeight:700,fontSize:'0.85rem',background:ec.bg,color:ec.c,whiteSpace:'nowrap'}}>{act.estado}</span>
               </div>
               <div style={{display:'flex',gap:'0.5rem',marginTop:'1rem',paddingTop:'1rem',borderTop:'1px solid #E5E7EB',flexWrap:'wrap'}}>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Pendiente'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Pendiente'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Pendiente'?700:400}}>⏸️ Pendiente</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'En Proceso'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Completado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Reprogramado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>
+                <button onClick={()=>{setModalReprogramar(act);setNuevasFechas({inicio:act.mesInicio,fin:act.mesFin});}} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:'#F3E8FF',color:'#7C3AED',border:'1px solid #7C3AED',borderRadius:'6px',cursor:'pointer',marginRight:'0.5rem'}}>📅 Reprogramar</button>
+                <button onClick={()=>{
+                  if((act.tipoSeguimiento||'hitos')==='recurrente'){
+                    setModalSegRecurrente(act);
+                  }else{
+                    setModalSeguimiento({...act,estado:'Programada'});
+                  }
+                }} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Programada'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Programada'?700:400}}>⏸️ Programada</button>
+                <button onClick={()=>{
+                  if((act.tipoSeguimiento||'hitos')==='recurrente'){
+                    setModalSegRecurrente(act);
+                  }else{
+                    setModalSeguimiento({...act,estado:'En Proceso'});
+                  }
+                }} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>
+                <button onClick={()=>{
+                  if((act.tipoSeguimiento||'hitos')==='recurrente'){
+                    setModalSegRecurrente(act);
+                  }else{
+                    setModalSeguimiento({...act,estado:'Completado'});
+                  }
+                }} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>
+                <button onClick={()=>{
+                  if((act.tipoSeguimiento||'hitos')==='recurrente'){
+                    setModalSegRecurrente(act);
+                  }else{
+                    setModalSeguimiento({...act,estado:'Reprogramado'});
+                  }
+                }} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>
               </div>
             </div>);
           })}
@@ -744,7 +1503,12 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
               <textarea value={formPlan.descripcion||''} onChange={e=>setFormPlan({...formPlan,descripcion:e.target.value})} rows={6}/>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
-          </form>
+            </form>
+            
+            {(modalSeguimiento.tipoSeguimiento||'hitos')==='hitos'&&<div style={{marginTop:'1.5rem',borderTop:'2px solid #E5E7EB',paddingTop:'1.5rem'}}>
+              <h3 style={{marginBottom:'1rem'}}>🎯 Gestión de Hitos</h3>
+              <GestionHitos actividad={modalSeguimiento} entidadId={entidad.id} prefijo="fundacoofisam"/>
+            </div>}
         </div>
       </div>
     </div>}
@@ -760,6 +1524,28 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
             <div className="form-group">
               <label>Actividad *</label>
               <input type="text" value={formActividad.actividad||''} onChange={e=>setFormActividad({...formActividad,actividad:e.target.value})} required placeholder="Nombre de la actividad"/>
+            </div>
+            <div className="form-group">
+              <label>Tipo de Seguimiento *</label>
+              <div style={{display:'flex',gap:'1.5rem',marginTop:'0.5rem'}}>
+                <label style={{display:'flex',alignItems:'center',gap:'0.5rem',cursor:'pointer'}}>
+                  <input type="radio" name="tipoSeguimiento" value="recurrente" 
+                    checked={(formActividad.tipoSeguimiento||'hitos')==='recurrente'}
+                    onChange={e=>setFormActividad({...formActividad,tipoSeguimiento:e.target.value})}/>
+                  <span>📅 Recurrente (mensual, trimestral, etc.)</span>
+                </label>
+                <label style={{display:'flex',alignItems:'center',gap:'0.5rem',cursor:'pointer'}}>
+                  <input type="radio" name="tipoSeguimiento" value="hitos"
+                    checked={(formActividad.tipoSeguimiento||'hitos')==='hitos'}
+                    onChange={e=>setFormActividad({...formActividad,tipoSeguimiento:e.target.value})}/>
+                  <span>🎯 Por hitos (etapas/entregables)</span>
+                </label>
+              </div>
+              <small style={{display:'block',color:'#6B7280',marginTop:'0.5rem'}}>
+                {(formActividad.tipoSeguimiento||'hitos')==='recurrente'
+                  ?'Actividades que se ejecutan periódicamente (ej: reuniones, reportes mensuales)'
+                  :'Actividades con etapas específicas (ej: implementaciones, proyectos)'}
+              </small>
             </div>
             <div className="form-group">
               <label>Tareas (una por línea)</label>
@@ -784,7 +1570,12 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
               <textarea value={formActividad.observaciones||''} onChange={e=>setFormActividad({...formActividad,observaciones:e.target.value})} rows={6}/>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
-          </form>
+            </form>
+            
+            {(modalSeguimiento.tipoSeguimiento||'hitos')==='hitos'&&<div style={{marginTop:'1.5rem',borderTop:'2px solid #E5E7EB',paddingTop:'1.5rem'}}>
+              <h3 style={{marginBottom:'1rem'}}>🎯 Gestión de Hitos</h3>
+              <GestionHitos actividad={modalSeguimiento} entidadId={entidad.id} prefijo="fundacoofisam"/>
+            </div>}
         </div>
       </div>
     </div>}
@@ -797,29 +1588,56 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
         </div>
         <div className="modal-body">
           <form onSubmit={guardarSeguimiento}>
-            <div className="form-group">
-              <label>Actividad</label>
-              <input type="text" value={modalSeguimiento.actividad} disabled style={{background:'#F3F4F6'}}/>
-            </div>
+              <div className="form-group">
+                <label>Actividad</label>
+                <input type="text" value={modalSeguimiento.actividad} disabled style={{background:'#F3F4F6'}}/>
+              </div>
             <div className="form-group">
               <label>Nuevo Estado *</label>
               <select value={modalSeguimiento.estado} onChange={e=>setModalSeguimiento({...modalSeguimiento,estado:e.target.value})} required>
-                <option value="Pendiente">⏸️ Pendiente</option>
+                <option value="Programada">⏸️ Programada</option>
                 <option value="En Proceso">🔄 En Proceso</option>
                 <option value="Completado">✅ Completado</option>
                 <option value="Reprogramado">🔁 Reprogramado</option>
               </select>
             </div>
+            {modalSeguimiento.estado==='Reprogramado'&&(<>
+              <div className="form-group">
+                <label>Nueva Fecha Inicio *</label>
+                <input type="date" value={modalSeguimiento.nuevaFechaInicio||modalSeguimiento.fechaInicio} onChange={e=>setModalSeguimiento({...modalSeguimiento,nuevaFechaInicio:e.target.value})} required/>
+              </div>
+              <div className="form-group">
+                <label>Nueva Fecha Fin *</label>
+                <input type="date" value={modalSeguimiento.nuevaFechaFin||modalSeguimiento.fechaFin} onChange={e=>setModalSeguimiento({...modalSeguimiento,nuevaFechaFin:e.target.value})} required/>
+              </div>
+            </>)}
             <div className="form-group">
               <label>Observaciones del Seguimiento</label>
               <textarea value={modalSeguimiento.observacionesSeguimiento||''} onChange={e=>setModalSeguimiento({...modalSeguimiento,observacionesSeguimiento:e.target.value})} rows={3} placeholder="Añade notas sobre el cambio de estado..."/>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
-          </form>
+            </form>
+            
+            {(modalSeguimiento.tipoSeguimiento||'hitos')==='hitos'&&<div style={{marginTop:'1.5rem',borderTop:'2px solid #E5E7EB',paddingTop:'1.5rem'}}>
+              <h3 style={{marginBottom:'1rem'}}>🎯 Gestión de Hitos</h3>
+              <GestionHitos actividad={modalSeguimiento} entidadId={entidad.id} prefijo="fundacoofisam"/>
+            </div>}
         </div>
       </div>
     </div>}
-    
+
+    {modalSegRecurrente&&<div className="modal-overlay" onClick={()=>setModalSegRecurrente(null)}>
+      <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:'900px'}}>
+        <div className="modal-header">
+          <h2>📅 Seguimiento Mensual: {modalSegRecurrente.actividad}</h2>
+          <button className="btn-cerrar" onClick={()=>setModalSegRecurrente(null)}>×</button>
+        </div>
+        <div className="modal-body">
+          <SeguimientoMensualTabla actividad={modalSegRecurrente} entidadId={entidad.id} prefijo="fundacoofisam"/>
+        </div>
+      </div>
+    </div>}
+
     {modalScore&&planSel&&<div className="modal-overlay" onClick={()=>setModalScore(false)}>
       <div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:'900px',width:'95%'}}>
         <div className="modal-header">
@@ -846,8 +1664,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
                 <div style={{fontSize:'0.85rem',color:'#6B7280'}}>🔄 En Proceso</div>
               </div>
               <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
-                <div style={{fontSize:'2rem',fontWeight:700,color:'#F59E0B'}}>{actividades.filter(a=>a.estado==='Pendiente').length}</div>
-                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>⏸️ Pendientes</div>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#F59E0B'}}>{actividades.filter(a=>a.estado==='Programada').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>⏸️ Programadas</div>
               </div>
             </div>
           </div>
@@ -865,17 +1683,21 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
           </div>
           <div>
             <h3>Detalle por Estado</h3>
-            {['Completado','En Proceso','Pendiente','Reprogramado'].map(estado=>{
+            {['Completado','En Proceso','Programada','Reprogramado'].map(estado=>{
               const acts=actividades.filter(a=>a.estado===estado);
               if(acts.length===0)return null;
-              const cols={'Completado':{bg:'#D1FAE5',c:'#065F46'},'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},'Pendiente':{bg:'#FEF3C7',c:'#92400E'},'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}};
+              const cols={'Completado':{bg:'#D1FAE5',c:'#065F46'},'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},'Programada':{bg:'#FEF3C7',c:'#92400E'},'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}};
               const col=cols[estado];
               return(<div key={estado} style={{marginBottom:'1.5rem'}}>
                 <h4 style={{padding:'0.5rem 1rem',background:col.bg,color:col.c,borderRadius:'6px',display:'inline-block'}}>{estado} ({acts.length})</h4>
                 <table className="tabla" style={{fontSize:'0.85rem',marginTop:'0.5rem'}}>
                   <thead><tr><th>Actividad</th><th>Responsable</th><th>Fechas</th></tr></thead>
                   <tbody>{acts.map(act=>(<tr key={act.id}>
-                    <td><strong>{act.actividad}</strong>{act.tarea&&<div style={{fontSize:'0.8rem',color:'#6B7280'}}>{act.tarea}</div>}</td>
+                    <td><strong>{act.actividad}</strong>
+                    {' '}
+                    <span style={{fontSize:'0.7rem',padding:'0.15rem 0.5rem',borderRadius:'8px',background:(act.tipoSeguimiento==='recurrente'?'#DBEAFE':'#FEF3C7'),color:(act.tipoSeguimiento==='recurrente'?'#1E40AF':'#92400E'),fontWeight:600}}>
+                      {(act.tipoSeguimiento||'hitos')==='recurrente'?'📅 Recurrente':'🎯 Por hitos'}
+                    </span>{act.tarea&&<div style={{fontSize:'0.8rem',color:'#6B7280'}}>{act.tarea}</div>}</td>
                     <td>{act.responsable}</td>
                     <td style={{fontSize:'0.8rem'}}>{act.fechaInicio} → {act.fechaFin||'-'}</td>
                   </tr>))}</tbody>
@@ -883,6 +1705,38 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
               </div>);
             })}
           </div>
+        </div>
+      </div>
+    </div>}
+
+  </div>);
+    {modalReprogramar&&<div className="modal-overlay" onClick={()=>setModalReprogramar(null)}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>📅 Reprogramar Actividad</h2>
+          <button className="btn-cerrar" onClick={()=>setModalReprogramar(null)}>×</button>
+        </div>
+        <div className="modal-body">
+          <h4 style={{marginBottom:'1rem'}}>{modalReprogramar.nombre}</h4>
+          <form onSubmit={reprogramarActividad}>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Mes Inicio *</label>
+                <select value={nuevasFechas.inicio} onChange={e=>setNuevasFechas({...nuevasFechas,inicio:e.target.value})} required>
+                  <option value="">Seleccionar...</option>
+                  {['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'].map(m=><option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Mes Fin *</label>
+                <select value={nuevasFechas.fin} onChange={e=>setNuevasFechas({...nuevasFechas,fin:e.target.value})} required>
+                  <option value="">Seleccionar...</option>
+                  {['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'].map(m=><option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+            </div>
+            <button type="submit" className="btn-primary">💾 Guardar Cambios</button>
+          </form>
         </div>
       </div>
     </div>}
@@ -956,6 +1810,18 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     return(i.nombre+' '+(ej?.nombre||'')).toLowerCase().includes(busquedaSeg.toLowerCase());
   });
 
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
+  
   return(<div>
     <div className="page-header" style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
       <h1>📋 Seguimiento de Indicadores</h1>
@@ -1166,7 +2032,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     }
   };
 
-  const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
+  const reprogramarActividad=async(e)=>{e.preventDefault();try{await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa').doc(modalReprogramar.id).update({mesInicio:nuevasFechas.inicio,mesFin:nuevasFechas.fin});setModalReprogramar(null);setNuevasFechas({inicio:'',fin:''});}};const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
 
   
   const cambiarPassword=async(e)=>{
@@ -1197,6 +2063,18 @@ const VistaSeguimiento=({user,entidad,datos})=>{
       setLoading(false);
     }
   };
+  // Calcular Score POA
+  const actividadesPOA=datos?.planes?.flatMap(p=>p.actividades||[])||[];
+  const scorePOA=actividadesPOA.length>0?
+    Math.round(actividadesPOA.map(act=>calcularAvanceActividad(act)).reduce((a,b)=>a+b,0)/actividadesPOA.length):0;
+  
+  // Calcular Score Indicadores
+  const scoreIndicadores=indicadoresConEstado.length>0?
+    Math.round(indicadoresConEstado.map(ind=>ind.avance||0).reduce((a,b)=>a+b,0)/indicadoresConEstado.length):0;
+  
+  // Score General
+  const scoreGeneral=Math.round((scoreIndicadores+scorePOA)/2);
+  
   return(<div>
     <div className="page-header">
       <h1>Usuarios</h1>
@@ -1382,5 +2260,25 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 <div class="app-footer">
   Sistema de Planeación Estratégica © 2026 <strong>Yureima Acevedo Arango</strong> - Consultoría en Gestión Empresarial | Todos los derechos reservados
 </div>
+
+<div style="text-align:center;padding:2rem;color:#6B7280;font-size:0.875rem;border-top:1px solid #E5E7EB;margin-top:4rem">
+  <p>Desarrollado por <strong style="color:#4F46E5">Yureima Acevedo Arango</strong></p>
+  <p style="margin-top:0.5rem">© 2026 - Sistema de Gestión POA e Indicadores</p>
+</div>
+
+
+<footer style="background:#1F2937;color:white;padding:2rem;text-align:center;margin-top:4rem">
+  <div style="max-width:1200px;margin:0 auto">
+    <p style="margin:0;font-size:0.875rem">
+      © 2026 Sistema de Gestión POA e Indicadores
+    </p>
+    <p style="margin:0.5rem 0 0 0;font-size:0.875rem;color:#9CA3AF">
+      Desarrollado por <strong style="color:#4F46E5">Yureima Acevedo Arango</strong>
+    </p>
+    <p style="margin:0.5rem 0 0 0;font-size:0.75rem;color:#6B7280">
+      Propiedad intelectual protegida. Todos los derechos reservados.
+    </p>
+  </div>
+</footer>
 </body>
 </html>
