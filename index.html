@@ -50,24 +50,8 @@ const auth=firebase.auth();
 const db=firebase.firestore();
 const imprimirInforme=()=>{window.print();};
 
-const migrarDatosACompartido=async(uid,prefijo)=>{
-  try{
-    const rutaVieja=db.collection(prefijo+'_usuarios').doc(uid).collection(prefijo+'_entidades');
-    const rutaNueva=db.collection(prefijo+'_datos');
-    const snapViejo=await rutaVieja.get();
-    if(snapViejo.empty)return;
-    for(const entDoc of snapViejo.docs){
-      const nuevaEntRef=rutaNueva.doc(entDoc.id);
-      await nuevaEntRef.set(entDoc.data());
-      for(const sub of ['ejes','objetivos','indicadores','seguimientos','plan_operativo']){
-        const subSnap=await rutaVieja.doc(entDoc.id).collection(sub).get();
-        for(const subDoc of subSnap.docs){
-          await nuevaEntRef.collection(sub).doc(subDoc.id).set(subDoc.data());
-        }
-      }
-    }
-  }catch(e){}
-};
+// Migración desactivada — ya completada
+const migrarDatosACompartido=async(uid,prefijo)=>{return;};
 const AvisoLegal=({modo})=>{
   const[ver,setVer]=React.useState(false);
   const texto=(<div style={{fontSize:'0.78rem',color:'#6B7280',lineHeight:1.6}}>
@@ -406,7 +390,9 @@ const VistaDashboard=({entidad,datos})=>{
       const pctIndConteo=totalInd>0?Math.round((optimosInd/totalInd)*100):0;
       const clIndConteo=totalInd>0?clasificar(pctIndConteo):{label:'Sin datos',icon:'⚪',bg:'#F3F4F6',c:'#6B7280',borde:'#E5E7EB'};
       // Por rendimiento: promedio de rendimientos individuales (cap 100% para no inflar)
-      const pctIndRend=totalInd>0?Math.round(indConSeg.reduce((acc,i)=>acc+Math.min(parseFloat(i.ultimoSeguimiento?.rendimiento||0),100),0)/totalInd):0;
+      // Rendimiento: filtrar infinitos y NaN, cap 100%, ignorar sin meta
+      const indsConRend=indConSeg.filter(i=>{const r=parseFloat(i.ultimoSeguimiento?.rendimiento||0);return isFinite(r)&&!isNaN(r)&&(i.ultimoSeguimiento?.metaMes||0)>0;});
+      const pctIndRend=indsConRend.length>0?Math.round(indsConRend.reduce((acc,i)=>acc+Math.min(Math.max(parseFloat(i.ultimoSeguimiento?.rendimiento||0),0),100),0)/indsConRend.length):0;
       const clIndRend=totalInd>0?clasificar(pctIndRend):{label:'Sin datos',icon:'⚪',bg:'#F3F4F6',c:'#6B7280',borde:'#E5E7EB'};
 
       // ── Semáforo POA ──
