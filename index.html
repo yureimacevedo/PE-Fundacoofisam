@@ -6,7 +6,7 @@
     <meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nórdico — Planeación Estratégica</title>
+<title>Planeación Estratégica - Sistema Completo</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -50,46 +50,24 @@ const auth=firebase.auth();
 const db=firebase.firestore();
 const imprimirInforme=()=>{window.print();};
 
-// Migración desactivada — ya completada
-const migrarDatosACompartido=async(uid,prefijo)=>{return;};
-const AvisoLegal=({modo})=>{
-  const[ver,setVer]=React.useState(false);
-  const texto=(<div style={{fontSize:'0.78rem',color:'#6B7280',lineHeight:1.6}}>
-    <p style={{fontWeight:700,color:'#374151',marginBottom:'0.5rem'}}>© {new Date().getFullYear()} Yureima Acevedo Arango — Todos los derechos reservados</p>
-    <p style={{marginBottom:'0.5rem'}}>Este software de Planeación Estratégica es propiedad intelectual exclusiva de <strong style={{color:'#DA5E84'}}>Yureima Acevedo Arango</strong>, consultora en gestión empresarial, con domicilio en la República de Colombia.</p>
-    <p style={{marginBottom:'0.5rem'}}>Su uso, reproducción, modificación, distribución o explotación comercial sin autorización expresa y escrita de su titular constituye una infracción a los derechos de autor protegidos por:</p>
-    <ul style={{paddingLeft:'1rem',marginBottom:'0.5rem'}}>
-      <li>Ley 23 de 1982 y Ley 44 de 1993 — Derechos de Autor (Colombia)</li>
-      <li>Decisión Andina 351 de 1993 — Régimen Común sobre Derechos de Autor</li>
-      <li>Convenio de Berna para la Protección de las Obras Literarias y Artísticas</li>
-      <li>Acuerdo sobre los ADPIC/TRIPS de la OMC</li>
-    </ul>
-    <p style={{marginBottom:'0.5rem'}}>Las entidades, empresas u organizaciones que hacen uso de este sistema lo hacen en virtud de un <strong>contrato de licencia de uso</strong> suscrito con la titular, el cual delimita el alcance, la duración y las condiciones de utilización. Cualquier uso por fuera de dicho contrato será perseguido por las vías legales correspondientes.</p>
-    <p style={{fontStyle:'italic',color:'#9CA3AF'}}>Para autorizaciones, licencias o contratos: contactar a Yureima Acevedo Arango.</p>
-  </div>);
-  if(modo==='login')return(
-    <div style={{marginTop:'1.5rem',padding:'0.75rem',background:'#F9FAFB',borderRadius:'8px',border:'1px solid #E5E7EB',textAlign:'center'}}>
-      <p style={{fontSize:'0.75rem',color:'#9CA3AF',margin:0}}>
-        © {new Date().getFullYear()} <strong style={{color:'#DA5E84'}}>Yureima Acevedo Arango</strong> — Software propietario.{' '}
-        <button onClick={()=>setVer(!ver)} style={{background:'none',border:'none',color:'#4F46E5',cursor:'pointer',fontSize:'0.75rem',textDecoration:'underline',padding:0}}>
-          {ver?'Ocultar aviso legal':'Ver aviso legal'}
-        </button>
-      </p>
-      {ver&&<div style={{marginTop:'0.75rem',textAlign:'left'}}>{texto}</div>}
-    </div>
-  );
-  return(
-    <div style={{position:'fixed',bottom:0,left:0,right:0,zIndex:9999,borderTop:'1px solid #E5E7EB',background:'rgba(255,255,255,0.97)',fontSize:'0.72rem',color:'#9CA3AF',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'0.25rem',padding:'0.35rem 1.5rem',boxShadow:'0 -2px 8px rgba(0,0,0,0.06)'}}>
-      <span>🧭 <strong style={{color:'#4F46E5'}}>Nórdico</strong> · © {new Date().getFullYear()} <strong style={{color:'#DA5E84'}}>Yureima Acevedo Arango</strong> · Software propietario bajo licencia de uso contractual.</span>
-      <button onClick={()=>setVer(!ver)} style={{background:'none',border:'none',color:'#4F46E5',cursor:'pointer',fontSize:'0.72rem',textDecoration:'underline',padding:0,whiteSpace:'nowrap'}}>
-        {ver?'Ocultar aviso':'⚖️ Aviso legal'}
-      </button>
-      {ver&&<div style={{position:'fixed',bottom:'2rem',left:'1rem',right:'1rem',padding:'1rem',background:'white',borderRadius:'8px',border:'1px solid #E5E7EB',boxShadow:'0 4px 20px rgba(0,0,0,0.12)',zIndex:10000,maxHeight:'60vh',overflowY:'auto'}}>{texto}</div>}
-    </div>
-  );
+const migrarDatosACompartido=async(uid,prefijo)=>{
+  try{
+    const rutaVieja=db.collection(prefijo+'_usuarios').doc(uid).collection(prefijo+'_entidades');
+    const rutaNueva=db.collection(prefijo+'_datos');
+    const snapViejo=await rutaVieja.get();
+    if(snapViejo.empty)return;
+    for(const entDoc of snapViejo.docs){
+      const nuevaEntRef=rutaNueva.doc(entDoc.id);
+      await nuevaEntRef.set(entDoc.data());
+      for(const sub of ['ejes','objetivos','indicadores','seguimientos','plan_operativo']){
+        const subSnap=await rutaVieja.doc(entDoc.id).collection(sub).get();
+        for(const subDoc of subSnap.docs){
+          await nuevaEntRef.collection(sub).doc(subDoc.id).set(subDoc.data());
+        }
+      }
+    }
+  }catch(e){}
 };
-
-
 const App=()=>{
   const[user,setUser]=useState(null);
   const[userRol,setUserRol]=useState(null);
@@ -112,11 +90,10 @@ const App=()=>{
   return <MainApp user={user} userRol={userRol}/>;
 };
 const AuthScreen=()=>{const[isLogin,setIsLogin]=useState(true);const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[error,setError]=useState('');const[loading,setLoading]=useState(false);
-  const[busquedaPOA,setBusquedaPOA]=useState('');const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin)await auth.signInWithEmailAndPassword(email,password);else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🧭 Nórdico</h1><p style={{fontSize:'0.8rem',color:'#6B7280',marginTop:'0.25rem'}}>Planeación Estratégica</p><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div><AvisoLegal modo="login"/></div></div>);};
+  const[busquedaPOA,setBusquedaPOA]=useState('');const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin)await auth.signInWithEmailAndPassword(email,password);else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🎯 Planeación Estratégica</h1><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div></div></div>);};
 const MainApp=({user,userRol})=>{
   const isAdmin=userRol==='admin'||userRol===null;
   const isMonitoreo=userRol==='monitoreo';
-  const isSeguimiento=userRol==='seguimiento';
   const[vista,setVista]=useState('entidades');
   const[entidades,setEntidades]=useState([]);
   const[entidadActiva,setEntidadActiva]=useState(null);
@@ -141,11 +118,11 @@ const MainApp=({user,userRol})=>{
     ];
     return()=>unsubs.forEach(u=>u());
   },[entidadActiva,user]);
-  return(<><div className="app-container">
+  return(<div className="app-container">
     <nav className="sidebar">
       <div className="sidebar-header">
         <h2>FUNDACOOFISAM</h2>
-        <p style={{fontSize:'0.7rem',opacity:0.7,letterSpacing:'0.08em',textTransform:'uppercase'}}>🧭 Nórdico</p><p style={{fontSize:'0.875rem',opacity:0.9}}>Planeación Estratégica</p>
+        <p style={{fontSize:'0.875rem',opacity:0.9}}>Planeación Estratégica</p>
       </div>
       <div className="selector-entidad">
         <select value={entidadActiva?.id||''} onChange={(e)=>setEntidadActiva(entidades.find(en=>en.id===e.target.value)||null)}>
@@ -164,97 +141,28 @@ const MainApp=({user,userRol})=>{
         <button className={`nav-item ${vista==='entidades'?'activo':''}`} onClick={()=>setVista('entidades')}>🏢 Entidades</button>
         {isAdmin&&<button className={`nav-item ${vista==='config'?'activo':''}`} onClick={()=>setVista('config')} disabled={!entidadActiva}>📋 Planeación</button>}
         {!isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📝 Seguimiento</button>}
+        {isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📈 Seguimiento</button>}
         <button className={`nav-item ${vista==='dashboard'?'activo':''}`} onClick={()=>setVista('dashboard')} disabled={!entidadActiva}>📊 Dashboard</button>
         <button className={`nav-item ${vista==='poa'?'activo':''}`} onClick={()=>setVista('poa')} disabled={!entidadActiva}>🗓️ Plan Operativo</button>
-        {isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📈 Seguimiento Indicadores</button>}
         {isAdmin&&<button className={`nav-item ${vista==='usuarios'?'activo':''}`} onClick={()=>setVista('usuarios')} disabled={!entidadActiva}>👥 Usuarios</button>}
       </div>
     </nav>
     <main className="main-content">
-      {vista==='entidades'&&<VistaEntidades user={user} entidades={entidades} entidadActiva={entidadActiva} isAdmin={isAdmin}/>}
+      {vista==='entidades'&&<VistaEntidades user={user} entidades={entidades} entidadActiva={entidadActiva}/>}
       {vista==='config'&&<VistaConfig user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin}/>}
       {vista==='seguimiento'&&<VistaSeguimiento user={user} entidad={entidadActiva} datos={datos} isMonitoreo={isMonitoreo}/>}
       {vista==='dashboard'&&<VistaDashboard entidad={entidadActiva} datos={datos}/>}
       {vista==='poa'&&<VistaPlanOperativo user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin} isMonitoreo={isMonitoreo}/>}
       {isAdmin&&vista==='usuarios'&&<VistaUsuarios user={user} userRol={userRol} entidad={entidadActiva}/>}
     </main>
-  </div>
-  <AvisoLegal/>
-  </>);
+  </div>);
 };
-const VistaEntidades=({user,entidades,entidadActiva,isAdmin})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
-  const[busquedaPOA,setBusquedaPOA]=useState('');const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,nit:form.nit,periodo:form.periodo,vision:form.vision||'',scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y todos sus datos?'))return;try{await db.collection('fundacoofisam_datos').doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,nit:ent.nit,periodo:ent.periodo,vision:ent.vision||'',criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};
-  const[recalcLoading,setRecalcLoading]=useState(null);
-  const recalcularScores=async(ent)=>{
-    if(!ent.scoreConfig){alert('Esta entidad no tiene configuración de score.');return;}
-    if(!window.confirm('¿Recalcular scores de TODOS los registros de "'+ent.nombre+'" según su configuración actual?\n\nCrítico: 0-'+ent.scoreConfig.critico.max+'% | Precaución: '+ent.scoreConfig.precaucion.min+'-'+ent.scoreConfig.precaucion.max+'% | Óptimo: '+ent.scoreConfig.optimo.min+'%+'))return;
-    setRecalcLoading(ent.id);
-    try{
-      const sc=ent.scoreConfig;
-      const calcS=(avance,metaMes,tipo)=>{
-        if(!metaMes||metaMes===0)return'sin_meta';
-        const r=(avance/metaMes)*100;
-        if(tipo==='descendente'){
-          const inv=r===0?100:Math.min((metaMes/avance)*100,200);
-          if(inv>=sc.optimo.min)return'optimo';
-          if(inv>=sc.precaucion.min)return'precaucion';
-          return'critico';
-        }
-        if(r>=sc.optimo.min)return'optimo';
-        if(r>=sc.precaucion.min)return'precaucion';
-        return'critico';
-      };
-      // Obtener todos los seguimientos de la entidad
-      const segsSnap=await db.collection('fundacoofisam_datos').doc(ent.id).collection('seguimientos').get();
-      // Obtener todos los indicadores para saber el tipo
-      const indsSnap=await db.collection('fundacoofisam_datos').doc(ent.id).collection('indicadores').get();
-      const indsMap={};
-      indsSnap.forEach(d=>{indsMap[d.id]={...d.data(),id:d.id};});
-      // Procesar en lotes de 500 (límite de Firestore batch)
-      const docs=segsSnap.docs;
-      let lote=db.batch();
-      let count=0;
-      let total=0;
-      for(const doc of docs){
-        const seg=doc.data();
-        const ind=indsMap[seg.indicadorId];
-        if(!seg.metaMes||!seg.avance)continue;
-        const tipo=ind?.tipo||'ascendente';
-        const nuevoScore=calcS(parseFloat(seg.avance),parseFloat(seg.metaMes),tipo);
-        const av=parseFloat(seg.avance),me=parseFloat(seg.metaMes);
-        const nuevoRendimiento=me>0?(tipo==='descendente'?(av===0?100:Math.min((me/av)*100,200)):(av/me)*100):0;
-        lote.update(doc.ref,{score:nuevoScore,rendimiento:nuevoRendimiento});
-        count++;total++;
-        if(count===499){await lote.commit();lote=db.batch();count=0;}
-      }
-      if(count>0)await lote.commit();
-      alert('✅ '+total+' registros recalculados correctamente con el score de '+ent.nombre);
-    }catch(err){alert('Error: '+err.message);}
-    finally{setRecalcLoading(null);}
-  };return(<div><div className="page-header"><h1>Mis Entidades</h1>{isAdmin&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',nit:'',periodo:'',vision:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nueva Entidad</button>}</div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay entidades</h3><p>Crea tu primera entidad</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><p style={{color:'#6B7280',marginBottom:'0.5rem'}}>NIT: {ent.nit}</p><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.vision&&<p style={{color:'#4F46E5',fontSize:'0.875rem',marginBottom:'0.5rem'}}>🎯 {ent.vision}</p>}{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}{isAdmin&&<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div>}
-              {isAdmin&&<button onClick={()=>recalcularScores(ent)} disabled={recalcLoading===ent.id} style={{marginTop:'0.5rem',width:'100%',padding:'0.5rem',border:'2px solid #4F46E5',borderRadius:'6px',background:'white',color:'#4F46E5',fontWeight:600,cursor:'pointer',fontSize:'0.8rem'}}>
-                {recalcLoading===ent.id?'⏳ Recalculando...':'🔄 Recalcular Scores'}
-              </button>}</div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Entidad</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>NIT *</label><input type="text" value={form.nit} onChange={e=>setForm({...form,nit:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><div className="form-group"><label>Visión</label><textarea value={form.vision} onChange={e=>setForm({...form,vision:e.target.value})} rows={3}/></div><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de esta entidad</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
+const VistaEntidades=({user,entidades,entidadActiva})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,nit:form.nit,periodo:form.periodo,vision:form.vision||'',scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y todos sus datos?'))return;try{await db.collection('fundacoofisam_datos').doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,nit:ent.nit,periodo:ent.periodo,vision:ent.vision||'',criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};return(<div><div className="page-header"><h1>Mis Entidades</h1><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',nit:'',periodo:'',vision:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nueva Entidad</button></div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay entidades</h3><p>Crea tu primera entidad</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><p style={{color:'#6B7280',marginBottom:'0.5rem'}}>NIT: {ent.nit}</p><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.vision&&<p style={{color:'#4F46E5',fontSize:'0.875rem',marginBottom:'0.5rem'}}>🎯 {ent.vision}</p>}{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div></div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Entidad</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>NIT *</label><input type="text" value={form.nit} onChange={e=>setForm({...form,nit:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><div className="form-group"><label>Visión</label><textarea value={form.vision} onChange={e=>setForm({...form,vision:e.target.value})} rows={3}/></div><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de esta entidad</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
 const VistaDashboard=({entidad,datos})=>{
   const[anioSel,setAnioSel]=useState('');
   const[mesSel,setMesSel]=useState('');
   const[modalInforme,setModalInforme]=useState(false);
-  const[actividadesPOA,setActividadesPOA]=useState([]);
-  const[planesPOA,setPlanesPOA]=useState([]);
-
-  useEffect(()=>{
-    if(!entidad)return;
-    const u1=db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').onSnapshot(s=>{
-      const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
-      setActividadesPOA(d);
-    });
-    const u2=db.collection('fundacoofisam_datos').doc(entidad.id).collection('planes_operativos').onSnapshot(s=>{
-      const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
-      d.sort((a,b)=>(b.anio||0)-(a.anio||0));
-      setPlanesPOA(d);
-    });
-    return()=>{u1();u2();};
-  },[entidad]);
 
   if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;
   const{ejes=[],objetivos=[],indicadores=[],seguimientos=[]}=datos;
@@ -262,9 +170,8 @@ const VistaDashboard=({entidad,datos})=>{
   const mesesOrden=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre','Semestral 1','Semestral 2','Anual'];
   const aniosDisp=[...new Set(seguimientos.map(s=>String(s.anio)))].sort();
   const mesesDisp=[...new Set(seguimientos.filter(s=>!anioSel||String(s.anio)===anioSel).map(s=>s.mes))].sort((a,b)=>mesesOrden.indexOf(a)-mesesOrden.indexOf(b));
-  const modoAnio=anioSel&&!mesSel; // "Ver todo el año" cuando hay año seleccionado pero no mes
 
-  // Calcular período de referencia
+  // Filtro: si hay año y mes → ese periodo; si solo año → último mes de ese año; si nada → último periodo global
   const periodos=[...new Set(seguimientos.map(s=>s.mes+'|'+s.anio))].sort((a,b)=>{
     const[mA,aA]=a.split('|');const[mB,aB]=b.split('|');
     if(aA!==aB)return parseInt(aA)-parseInt(aB);
@@ -273,70 +180,52 @@ const VistaDashboard=({entidad,datos})=>{
   const ultimoPeriodo=periodos[periodos.length-1];
   const[ultMes,ultAnio]=ultimoPeriodo?ultimoPeriodo.split('|'):['',''];
 
-  const filtroMes=mesSel||(!modoAnio?ultMes:'');
+  const filtroMes=mesSel||ultMes;
   const filtroAnio=anioSel||ultAnio;
-  const segsFiltrados=modoAnio
-    ? seguimientos.filter(s=>String(s.anio)===String(filtroAnio))
-    : seguimientos.filter(s=>String(s.anio)===String(filtroAnio)&&s.mes===filtroMes);
-  const periodoLabel=modoAnio?`Todo el año ${filtroAnio}`:filtroMes&&filtroAnio?(filtroMes+' '+filtroAnio):'Sin datos';
+  const segsFiltrados=seguimientos.filter(s=>String(s.anio)===String(filtroAnio)&&s.mes===filtroMes);
+  const periodoLabel=filtroMes&&filtroAnio?(filtroMes+' '+filtroAnio):'Sin datos';
 
   const porScore={critico:0,precaucion:0,optimo:0,sin_meta:0};
-  if(modoAnio){
-    indicadores.forEach(ind=>{
-      const segsInd=segsFiltrados.filter(s=>s.indicadorId===ind.id);
-      if(segsInd.length===0)return;
-      const scores=['optimo','precaucion','critico','sin_meta'];
-      const mejor=scores.find(sc=>segsInd.some(s=>s.score===sc))||'sin_meta';
-      if(porScore[mejor]!==undefined)porScore[mejor]++;
-    });
-  }else{
-    segsFiltrados.forEach(s=>{if(s.score&&porScore[s.score]!==undefined)porScore[s.score]++;});
-  }
+  segsFiltrados.forEach(s=>{if(s.score&&porScore[s.score]!==undefined)porScore[s.score]++;});
 
   const indicadoresConEstado=indicadores.map(ind=>{
     const segsInd=segsFiltrados.filter(s=>s.indicadorId===ind.id);
-    const segPeriodo=modoAnio?segsInd[segsInd.length-1]:segsInd[0];
+    const segPeriodo=segsInd[0];
     const segReciente=seguimientos.filter(s=>s.indicadorId===ind.id).sort((a,b)=>{
       if(a.anio!==b.anio)return parseInt(b.anio)-parseInt(a.anio);
       return mesesOrden.indexOf(b.mes)-mesesOrden.indexOf(a.mes);
     })[0];
     const ultSeg=segPeriodo||segReciente;
-    let avanceCalc=0;
-    let metaCalc=0;
-    if(modoAnio){
-      segsInd.forEach(s=>{
-        if(s.avance)avanceCalc+=parseFloat(s.avance);
-        if(s.metaMes)metaCalc+=parseFloat(s.metaMes);
+    let avanceCalc=ultSeg?.avance||0;
+    let metaCalc=ultSeg?.metaMes||ind.meta||0;
+    if(ind.tipoMeta==='acumulativa'){
+      avanceCalc=0;
+      metaCalc=0;
+      // Para acumulativos: obtener TODOS los seguimientos del año hasta el mes seleccionado
+      const todosSegs=seguimientos.filter(s=>s.indicadorId===ind.id&&String(s.anio)===String(filtroAnio));
+      const mesesOrdenLocal=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre','Semestral 1','Semestral 2','Anual'];
+      const indicesMes=mesesOrdenLocal.indexOf(filtroMes);
+      // Sumar solo los meses hasta el mes seleccionado
+      todosSegs.forEach(s=>{
+        const indiceMesSeg=mesesOrdenLocal.indexOf(s.mes);
+        if(indiceMesSeg<=indicesMes){
+          if(s.avance)avanceCalc+=parseFloat(s.avance);
+          if(s.metaMes)metaCalc+=parseFloat(s.metaMes);
+        }
       });
-      if(ind.tipoMeta!=='acumulativa'&&segsInd.length>0){
-        const ult=segsInd[segsInd.length-1];
-        avanceCalc=parseFloat(ult.avance||0);
-        metaCalc=parseFloat(ult.metaMes||ind.meta||0);
-      }
-    }else{
-      avanceCalc=ultSeg?.avance||0;
-      metaCalc=ultSeg?.metaMes||ind.meta||0;
-      if(ind.tipoMeta==='acumulativa'){
-        avanceCalc=0;metaCalc=0;
-        const todosSegs=seguimientos.filter(s=>s.indicadorId===ind.id&&String(s.anio)===String(filtroAnio));
-        const indicesMes=mesesOrden.indexOf(filtroMes);
-        todosSegs.forEach(s=>{
-          if(mesesOrden.indexOf(s.mes)<=indicesMes){
-            if(s.avance)avanceCalc+=parseFloat(s.avance);
-            if(s.metaMes)metaCalc+=parseFloat(s.metaMes);
-          }
-        });
-      }
     }
     const obj=objetivos.find(o=>o.id===ind.objetivoId);
     const eje=ejes.find(e=>e.id===obj?.ejeId);
-    const enPeriodo=modoAnio?segsInd.length>0:!!segPeriodo;
-    const segsAnioOrdenados=modoAnio?[...segsInd].sort((a,b)=>{
-      if(a.anio!==b.anio)return parseInt(a.anio)-parseInt(b.anio);
-      return mesesOrden.indexOf(a.mes)-mesesOrden.indexOf(b.mes);
-    }):[];
-    return{...ind,ultimoSeguimiento:ultSeg,avanceAcum:avanceCalc,metaAcum:metaCalc,enPeriodo,objetivo:obj,eje:eje,segsAnio:segsAnioOrdenados};
-  }).filter(ind=>ind.enPeriodo||(ind.ultimoSeguimiento&&!modoAnio));
+    return{...ind,ultimoSeguimiento:ultSeg,avanceAcum:avanceCalc,metaAcum:metaCalc,enPeriodo:!!segPeriodo,objetivo:obj,eje:eje};
+  }).filter(ind=>{
+    // Para independientes: solo si tiene dato en el período exacto
+    if(ind.tipoMeta!=='acumulativa')return ind.enPeriodo;
+    // Para acumulativos: si tiene cualquier dato hasta el período
+    const todosSegs=seguimientos.filter(s=>s.indicadorId===ind.id&&String(s.anio)===String(filtroAnio));
+    const mesesOrdenLocal=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre','Semestral 1','Semestral 2','Anual'];
+    const indiceMes=mesesOrdenLocal.indexOf(filtroMes);
+    return todosSegs.some(s=>mesesOrdenLocal.indexOf(s.mes)<=indiceMes);
+  });
 
   return(<div>
     <div className="page-header">
@@ -360,124 +249,26 @@ const VistaDashboard=({entidad,datos})=>{
         <div className="form-group" style={{margin:0,minWidth:'160px'}}>
           <label style={{fontSize:'0.85rem',fontWeight:600}}>Mes / Período</label>
           <select value={mesSel} onChange={e=>setMesSel(e.target.value)}
-            style={{padding:'0.4rem 0.5rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'0.9rem',width:'100%'}}
-            disabled={!anioSel&&!mesSel}>
-            <option value="">{anioSel?'📅 Todo el año':'Último disponible'}</option>
+            style={{padding:'0.4rem 0.5rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'0.9rem',width:'100%'}}>
+            <option value="">Último disponible</option>
             {mesesDisp.map(m=><option key={m} value={m}>{m}</option>)}
           </select>
         </div>
         <div style={{paddingBottom:'0.25rem'}}>
-          <span style={{background:modoAnio?'#D1FAE5':'#EEF2FF',color:modoAnio?'#065F46':'#4F46E5',padding:'0.4rem 0.75rem',borderRadius:'8px',fontWeight:700,fontSize:'0.875rem'}}>
-            📅 {periodoLabel}
+          <span style={{background:'#EEF2FF',color:'#4F46E5',padding:'0.4rem 0.75rem',borderRadius:'8px',fontWeight:700,fontSize:'0.875rem'}}>
+            📅 Mostrando: {periodoLabel}
           </span>
         </div>
         {(anioSel||mesSel)&&<button onClick={()=>{setAnioSel('');setMesSel('');}} style={{padding:'0.4rem 0.75rem',border:'1px solid #E5E7EB',borderRadius:'8px',background:'white',cursor:'pointer',fontSize:'0.85rem'}}>✕ Limpiar</button>}
       </div>
     </div>
 
-    {(()=>{
-      const sc=entidad.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};
-      const clasificar=(pct)=>{
-        if(pct>=sc.optimo.min)return{label:'Óptimo',icon:'🟢',bg:'#D1FAE5',c:'#065F46',borde:'#059669'};
-        if(pct>=sc.precaucion.min)return{label:'Precaución',icon:'🟡',bg:'#FEF3C7',c:'#92400E',borde:'#F59E0B'};
-        return{label:'Crítico',icon:'🔴',bg:'#FEE2E2',c:'#991B1B',borde:'#DC2626'};
-      };
-
-      // ── Semáforo Indicadores ──
-      const indConSeg=indicadoresConEstado.filter(i=>i.ultimoSeguimiento);
-      const totalInd=indConSeg.length;
-      const optimosInd=indConSeg.filter(i=>i.ultimoSeguimiento?.score==='optimo').length;
-      const precaucionInd=indConSeg.filter(i=>i.ultimoSeguimiento?.score==='precaucion').length;
-      const criticosInd=indConSeg.filter(i=>i.ultimoSeguimiento?.score==='critico').length;
-      // Por conteo: % de indicadores en óptimo
-      const pctIndConteo=totalInd>0?Math.round((optimosInd/totalInd)*100):0;
-      const clIndConteo=totalInd>0?clasificar(pctIndConteo):{label:'Sin datos',icon:'⚪',bg:'#F3F4F6',c:'#6B7280',borde:'#E5E7EB'};
-      // Por rendimiento: promedio de rendimientos individuales (cap 100% para no inflar)
-      // Rendimiento: filtrar infinitos y NaN, cap 100%, ignorar sin meta
-      const indsConRend=indConSeg.filter(i=>{const r=parseFloat(i.ultimoSeguimiento?.rendimiento||0);return isFinite(r)&&!isNaN(r)&&(i.ultimoSeguimiento?.metaMes||0)>0;});
-      const pctIndRend=indsConRend.length>0?Math.round(indsConRend.reduce((acc,i)=>acc+Math.min(Math.max(parseFloat(i.ultimoSeguimiento?.rendimiento||0),0),100),0)/indsConRend.length):0;
-      const clIndRend=totalInd>0?clasificar(pctIndRend):{label:'Sin datos',icon:'⚪',bg:'#F3F4F6',c:'#6B7280',borde:'#E5E7EB'};
-
-      // ── Semáforo POA ──
-      const anioActual=filtroAnio||new Date().getFullYear().toString();
-      const planActivo=planesPOA.find(p=>String(p.anio)===String(anioActual))||planesPOA[0];
-      const actsDelPlan=planActivo?actividadesPOA.filter(a=>a.planId===planActivo.id):[];
-      const pctPOA=calcAvancePOA(actsDelPlan);
-      const clPOA=actsDelPlan.length>0?clasificar(pctPOA):{label:'Sin datos',icon:'⚪',bg:'#F3F4F6',c:'#6B7280',borde:'#E5E7EB'};
-      const completadasPOA=actsDelPlan.filter(a=>a.estado==='Completado').length;
-      const enProcesoPOA=actsDelPlan.filter(a=>a.estado==='En Proceso').length;
-      const canceladasPOA=actsDelPlan.filter(a=>a.estado==='Cancelada').length;
-      const programadasPOA=actsDelPlan.filter(a=>a.estado==='Programada').length;
-
-      return(<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1.5rem'}}>
-        {/* Semáforo Indicadores */}
-        <div style={{background:'white',borderRadius:'12px',padding:'1.25rem',border:'2px solid #E5E7EB'}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'1rem'}}>
-            <div>
-              <p style={{margin:0,fontSize:'0.75rem',fontWeight:700,color:'#374151',textTransform:'uppercase',letterSpacing:'0.05em'}}>Consolidado Indicadores</p>
-              <p style={{margin:'0.15rem 0 0 0',fontSize:'0.8rem',color:'#6B7280'}}>{periodoLabel} · {totalInd} con seguimiento</p>
-            </div>
-          </div>
-          {totalInd>0?(<div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.75rem'}}>
-            {/* Por conteo */}
-            <div style={{background:clIndConteo.bg,borderRadius:'8px',padding:'0.75rem',border:`1px solid ${clIndConteo.borde}`}}>
-              <p style={{margin:'0 0 0.25rem 0',fontSize:'0.7rem',fontWeight:700,color:clIndConteo.c,textTransform:'uppercase'}}>Por conteo</p>
-              <div style={{display:'flex',alignItems:'baseline',gap:'0.3rem',marginBottom:'0.3rem'}}>
-                <span style={{fontSize:'1.8rem',fontWeight:800,color:clIndConteo.c,lineHeight:1}}>{pctIndConteo}%</span>
-                <span style={{fontSize:'0.75rem',fontWeight:700,color:clIndConteo.c}}>{clIndConteo.icon} {clIndConteo.label}</span>
-              </div>
-              <div style={{width:'100%',height:'5px',background:'rgba(0,0,0,0.1)',borderRadius:'3px',marginBottom:'0.4rem'}}>
-                <div style={{width:Math.min(pctIndConteo,100)+'%',height:'100%',background:clIndConteo.c,borderRadius:'3px'}}></div>
-              </div>
-              <p style={{margin:0,fontSize:'0.7rem',color:clIndConteo.c}}>🟢 {optimosInd} · 🟡 {precaucionInd} · 🔴 {criticosInd}</p>
-            </div>
-            {/* Por rendimiento */}
-            <div style={{background:clIndRend.bg,borderRadius:'8px',padding:'0.75rem',border:`1px solid ${clIndRend.borde}`}}>
-              <p style={{margin:'0 0 0.25rem 0',fontSize:'0.7rem',fontWeight:700,color:clIndRend.c,textTransform:'uppercase'}}>Por rendimiento</p>
-              <div style={{display:'flex',alignItems:'baseline',gap:'0.3rem',marginBottom:'0.3rem'}}>
-                <span style={{fontSize:'1.8rem',fontWeight:800,color:clIndRend.c,lineHeight:1}}>{pctIndRend}%</span>
-                <span style={{fontSize:'0.75rem',fontWeight:700,color:clIndRend.c}}>{clIndRend.icon} {clIndRend.label}</span>
-              </div>
-              <div style={{width:'100%',height:'5px',background:'rgba(0,0,0,0.1)',borderRadius:'3px',marginBottom:'0.4rem'}}>
-                <div style={{width:Math.min(pctIndRend,100)+'%',height:'100%',background:clIndRend.c,borderRadius:'3px'}}></div>
-              </div>
-              <p style={{margin:0,fontSize:'0.7rem',color:clIndRend.c}}>Promedio de rendimiento individual</p>
-            </div>
-          </div>):<p style={{margin:0,fontSize:'0.85rem',color:'#6B7280',textAlign:'center',padding:'1rem 0'}}>Sin registros en este período</p>}
-        </div>
-
-        {/* Semáforo POA */}
-        <div style={{background:clPOA.bg,borderRadius:'12px',padding:'1.25rem',border:`2px solid ${clPOA.borde}`}}>
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'0.75rem'}}>
-            <div>
-              <p style={{margin:0,fontSize:'0.75rem',fontWeight:700,color:clPOA.c,textTransform:'uppercase',letterSpacing:'0.05em'}}>Consolidado POA</p>
-              <p style={{margin:'0.15rem 0 0 0',fontSize:'0.8rem',color:clPOA.c,opacity:0.8}}>{planActivo?planActivo.nombre+' '+planActivo.anio:'Sin plan activo'}</p>
-            </div>
-            <span style={{fontSize:'2.5rem',lineHeight:1}}>{clPOA.icon}</span>
-          </div>
-          <div style={{display:'flex',alignItems:'baseline',gap:'0.5rem',marginBottom:'0.5rem'}}>
-            <span style={{fontSize:'3rem',fontWeight:800,color:clPOA.c,lineHeight:1}}>{pctPOA}%</span>
-            <span style={{fontSize:'0.9rem',fontWeight:700,color:clPOA.c}}>{clPOA.label}</span>
-          </div>
-          <div style={{width:'100%',height:'6px',background:'rgba(0,0,0,0.1)',borderRadius:'3px',marginBottom:'0.75rem'}}>
-            <div style={{width:pctPOA+'%',height:'100%',background:clPOA.c,borderRadius:'3px'}}></div>
-          </div>
-          {actsDelPlan.length>0?<div style={{display:'flex',gap:'0.75rem',fontSize:'0.78rem',color:clPOA.c,flexWrap:'wrap'}}>
-            <span>✅ {completadasPOA} completadas</span>
-            <span>🔄 {enProcesoPOA} en proceso</span>
-            <span>📋 {programadasPOA} programadas</span>
-            {canceladasPOA>0&&<span>❌ {canceladasPOA} canceladas</span>}
-          </div>:<p style={{margin:0,fontSize:'0.8rem',color:clPOA.c}}>Sin actividades en el plan</p>}
-        </div>
-      </div>);
-    })()}
-
     <div className="grid">
       <div className="stat-card"><div className="stat-label">Ejes</div><div className="stat-value">{ejes.length}</div></div>
-      <div className="stat-card"><div className="stat-label">Indicadores con seguimiento</div><div className="stat-value">{indicadoresConEstado.length}</div></div>
-      <div className="stat-card" style={{borderLeftColor:'#059669'}}><div className="stat-label">🟢 Óptimos</div><div className="stat-value">{indicadoresConEstado.filter(i=>i.ultimoSeguimiento?.score==='optimo').length}</div></div>
-      <div className="stat-card" style={{borderLeftColor:'#F59E0B'}}><div className="stat-label">🟡 Precaución</div><div className="stat-value">{indicadoresConEstado.filter(i=>i.ultimoSeguimiento?.score==='precaucion').length}</div></div>
-      <div className="stat-card" style={{borderLeftColor:'#DC2626'}}><div className="stat-label">🔴 Críticos</div><div className="stat-value">{indicadoresConEstado.filter(i=>i.ultimoSeguimiento?.score==='critico').length}</div></div>
+      <div className="stat-card"><div className="stat-label">Indicadores</div><div className="stat-value">{indicadores.length}</div></div>
+      <div className="stat-card" style={{borderLeftColor:'#059669'}}><div className="stat-label">🟢 Óptimos</div><div className="stat-value">{porScore.optimo}</div></div>
+      <div className="stat-card" style={{borderLeftColor:'#F59E0B'}}><div className="stat-label">🟡 Precaución</div><div className="stat-value">{porScore.precaucion}</div></div>
+      <div className="stat-card" style={{borderLeftColor:'#DC2626'}}><div className="stat-label">🔴 Críticos</div><div className="stat-value">{porScore.critico}</div></div>
     </div>
 
     {indicadores.length>0&&<div className="card">
@@ -487,26 +278,6 @@ const VistaDashboard=({entidad,datos})=>{
         <tbody>{indicadoresConEstado.map(ind=>{
           const s=ind.ultimoSeguimiento;
           const sc={optimo:{bg:'#D1FAE5',c:'#065F46',icon:'🟢'},precaucion:{bg:'#FEF3C7',c:'#92400E',icon:'🟡'},critico:{bg:'#FEE2E2',c:'#991B1B',icon:'🔴'},sin_meta:{bg:'#F3F4F6',c:'#6B7280',icon:'⚪'}}[s?.score||'sin_meta']||{bg:'#F3F4F6',c:'#6B7280',icon:'—'};
-          if(modoAnio&&ind.segsAnio&&ind.segsAnio.length>1){
-            // Modo año: expandir una fila por mes
-            return(<React.Fragment key={ind.id}>
-              <tr style={{background:'#F0F4FF'}}>
-                <td rowSpan={ind.segsAnio.length+1}><div className="badge" style={{background:ind.eje?.color||'#6B7280',color:'white',padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem'}}>{ind.eje?.nombre||'-'}</div></td>
-                <td rowSpan={ind.segsAnio.length+1} style={{fontSize:'0.8rem',color:'#6B7280'}}>{ind.objetivo?.nombre}</td>
-                <td colSpan={5}><strong>{ind.nombre}</strong> <span style={{fontSize:'0.75rem',color:'#6B7280'}}>({ind.segsAnio.length} registros en {filtroAnio})</span></td>
-              </tr>
-              {ind.segsAnio.map(seg=>{
-                const scc={optimo:{bg:'#D1FAE5',c:'#065F46',icon:'🟢'},precaucion:{bg:'#FEF3C7',c:'#92400E',icon:'🟡'},critico:{bg:'#FEE2E2',c:'#991B1B',icon:'🔴'},sin_meta:{bg:'#F3F4F6',c:'#6B7280',icon:'⚪'}}[seg.score||'sin_meta']||{bg:'#F3F4F6',c:'#6B7280',icon:'—'};
-                return(<tr key={seg.id}>
-                  <td style={{fontSize:'0.8rem',color:'#4F46E5',fontWeight:600}}>{seg.mes}</td>
-                  <td style={{fontSize:'0.8rem'}}>{(seg.metaMes||ind.meta||0)+' '+(ind.unidad||'')}</td>
-                  <td style={{fontSize:'0.8rem'}}><strong>{parseFloat(seg.avance||0).toFixed(2)}</strong> {ind.unidad||''}</td>
-                  <td style={{fontSize:'0.8rem'}}><strong>{(seg.rendimiento||0).toFixed(1)}%</strong></td>
-                  <td><span style={{padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:700,background:scc.bg,color:scc.c}}>{scc.icon} {seg.score==='optimo'?'Óptimo':seg.score==='precaucion'?'Precaución':seg.score==='critico'?'Crítico':'Sin meta'}</span></td>
-                </tr>);
-              })}
-            </React.Fragment>);
-          }
           return(<tr key={ind.id} style={{opacity:ind.enPeriodo||!s?1:0.7}}>
             <td><div className="badge" style={{background:ind.eje?.color||'#6B7280',color:'white',padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem'}}>{ind.eje?.nombre||'-'}</div></td>
             <td style={{fontSize:'0.8rem',color:'#6B7280',maxWidth:'120px'}}>{ind.objetivo?.nombre}</td>
@@ -561,7 +332,7 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{const[modal,setModal]=useStat
     setLoading(false);
   }
 };
-const eliminar=async(coleccion,id)=>{if(!window.confirm('¿Eliminar?'))return;try{await ref.collection(coleccion).doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEje=(eje)=>{setItemEdit(eje);setForm({nombre:eje.nombre,color:eje.color});setModal('eje');};const editarObjetivo=(obj)=>{setItemEdit(obj);setForm({ejeId:obj.ejeId,nombre:obj.nombre});setModal('objetivo');};const editarIndicador=(ind)=>{setItemEdit(ind);const anios=ind.metasPorAnio?Object.keys(ind.metasPorAnio).join(','):'';const formData={objetivoId:ind.objetivoId,nombre:ind.nombre,tipo:ind.tipo,periodicidad:ind.periodicidad,meta:ind.meta,unidad:ind.unidad,estrategia:ind.estrategia||'',tipoMeta:ind.tipoMeta||'independiente',anios};if(ind.metasPorAnio){Object.entries(ind.metasPorAnio).forEach(([anio,meta])=>{formData[`meta_${anio}`]=meta;});}setForm(formData);setModal('indicador');};return(<div><div className="page-header"><h1>Planeación - {entidad.nombre}</h1><button className="btn-primary" onClick={()=>setModalPrint(true)} style={{width:'auto'}}>🖨️ Imprimir</button></div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Ejes Estratégicos ({ejes.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',color:'#4F46E5'});setModal('eje');}}>+ Nuevo Eje</button></div>{ejes.length===0?<p style={{color:'#6B7280'}}>No hay ejes</p>:<div className="grid">{ejes.map(eje=>(<div key={eje.id} className="card" style={{borderLeft:`4px solid ${eje.color}`}}><h4>{eje.nombre}</h4><div className="btn-group"><button className="btn-edit" onClick={()=>editarEje(eje)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('ejes',eje.id)}>🗑️ Eliminar</button></div></div>))}</div>}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Objetivos ({objetivos.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({ejeId:'',nombre:''});setModal('objetivo');}} disabled={ejes.length===0}>+ Nuevo Objetivo</button></div>{objetivos.length===0?<p style={{color:'#6B7280'}}>No hay objetivos</p>:<div>{ejes.map(eje=>{const objsEje=objetivos.filter(o=>o.ejeId===eje.id);if(objsEje.length===0)return null;return(<div key={eje.id} style={{marginBottom:'1.5rem'}}><div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'1rem',padding:'0.75rem 1rem',background:eje.color+'15',borderRadius:'10px',borderLeft:`4px solid ${eje.color}`}}><span style={{width:14,height:14,borderRadius:'50%',background:eje.color,display:'inline-block',flexShrink:0}}></span><strong style={{color:eje.color,fontSize:'1rem'}}>{eje.nombre}</strong><span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:'auto',background:'white',padding:'0.15rem 0.5rem',borderRadius:'12px',border:`1px solid ${eje.color}44`}}>{objsEje.length} {objsEje.length===1?'objetivo':'objetivos'}</span></div><div className="grid">{objsEje.map(obj=>(<div key={obj.id} className="card" style={{borderLeft:`4px solid ${eje.color}`,margin:0}}><p style={{fontWeight:600,color:'#111827',marginBottom:'0.5rem'}}>{obj.nombre}</p><div className="btn-group"><button className="btn-edit" onClick={()=>editarObjetivo(obj)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('objetivos',obj.id)}>🗑️ Eliminar</button></div></div>))}</div></div>);})}</div>}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Indicadores ({indicadores.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({objetivoId:'',nombre:'',tipo:'ascendente',periodicidad:'Mensual',meta:'',unidad:'%',estrategia:'',anios:''});setModal('indicador');}} disabled={objetivos.length===0}>+ Nuevo Indicador</button></div>{indicadores.length===0?<p style={{color:'#6B7280'}}>No hay indicadores</p>:<div>{ejes.map(eje=>{const objsEje=objetivos.filter(o=>o.ejeId===eje.id);const indsEje=indicadores.filter(ind=>{const obj=objetivos.find(o=>o.id===ind.objetivoId);return obj?.ejeId===eje.id;});if(indsEje.length===0)return null;return(<div key={eje.id} style={{marginBottom:'1.5rem'}}><div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'1rem',padding:'0.6rem 1rem',background:eje.color+'18',borderRadius:'8px',borderLeft:`4px solid ${eje.color}`}}><span style={{width:12,height:12,borderRadius:'50%',background:eje.color,display:'inline-block'}}></span><strong style={{color:eje.color,fontSize:'1rem'}}>{eje.nombre}</strong><span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:'auto'}}>{indsEje.length} indicadores</span></div>{objsEje.map(obj=>{const indsObj=indicadores.filter(ind=>ind.objetivoId===obj.id);if(indsObj.length===0)return null;return(<div key={obj.id} style={{marginBottom:'1rem',marginLeft:'1rem'}}><p style={{fontSize:'0.8rem',fontWeight:600,color:'#6B7280',marginBottom:'0.5rem',padding:'0.3rem 0.75rem',background:'#F9FAFB',borderRadius:'6px',borderLeft:`3px solid ${eje.color}66`}}>{obj.nombre} <span style={{fontWeight:400}}>({indsObj.length})</span></p><div className="grid">{indsObj.map(ind=>(<div key={ind.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}><h4>{ind.nombre}</h4><p style={{color:'#6B7280',fontSize:'0.875rem',marginTop:'0.5rem'}}>Meta: {ind.meta} {ind.unidad} | {ind.tipo==='ascendente'?'📈':'📉'} | {ind.periodicidad}</p>{ind.metasPorAnio&&Object.keys(ind.metasPorAnio).length>0&&(<p style={{color:'#4F46E5',fontSize:'0.75rem',marginTop:'0.25rem'}}>Metas: {Object.entries(ind.metasPorAnio).map(([a,m])=>`${a}:${m}`).join(', ')}</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarIndicador(ind)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('indicadores',ind.id)}>🗑️ Eliminar</button></div></div>))}</div></div>);})}</div>);})}</div>}</div>{modal==='eje'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Eje</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarEje}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>Color</label><input type="color" value={form.color} onChange={e=>setForm({...form,color:e.target.value})}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='objetivo'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Objetivo</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarObjetivo}><div className="form-group"><label>Eje *</label><select value={form.ejeId} onChange={e=>setForm({...form,ejeId:e.target.value})} required><option value="">Seleccionar...</option>{ejes.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}</select></div><div className="form-group"><label>Nombre *</label><textarea value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='indicador'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Indicador</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarIndicador}><div className="form-group"><label>Objetivo *</label><select value={form.objetivoId} onChange={e=>setForm({...form,objetivoId:e.target.value})} required><option value="">Seleccionar...</option>{objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}</select></div><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-row"><div className="form-group"><label>Tipo *</label><select value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})} required><option value="ascendente">📈 Ascendente</option><option value="descendente">📉 Descendente</option></select></div><div className="form-group"><label>Periodicidad *</label><select value={form.periodicidad} onChange={e=>setForm({...form,periodicidad:e.target.value})} required><option value="Mensual">Mensual</option><option value="Bimestral">Bimestral</option><option value="Trimestral">Trimestral</option><option value="Cuatrimestral">Cuatrimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select></div><div className="form-group"><label>Tipo de Meta</label><select value={form.tipoMeta||'independiente'} onChange={e=>setForm({...form,tipoMeta:e.target.value})}><option value="independiente">Independiente</option><option value="acumulativa">Acumulativa</option></select></div></div><div className="form-row"><div className="form-group"><label>Meta Base *</label><input type="number" step="0.01" value={form.meta} onChange={e=>setForm({...form,meta:e.target.value})} required/></div><div className="form-group"><label>Unidad *</label><input type="text" value={form.unidad} onChange={e=>setForm({...form,unidad:e.target.value})} required placeholder="%"/></div></div><div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>{form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}<div className="form-group"><label>Estrategia</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}
+const eliminar=async(coleccion,id)=>{if(!window.confirm('¿Eliminar?'))return;try{await ref.collection(coleccion).doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEje=(eje)=>{setItemEdit(eje);setForm({nombre:eje.nombre,color:eje.color});setModal('eje');};const editarObjetivo=(obj)=>{setItemEdit(obj);setForm({ejeId:obj.ejeId,nombre:obj.nombre});setModal('objetivo');};const editarIndicador=(ind)=>{setItemEdit(ind);const anios=ind.metasPorAnio?Object.keys(ind.metasPorAnio).join(','):'';const formData={objetivoId:ind.objetivoId,nombre:ind.nombre,tipo:ind.tipo,periodicidad:ind.periodicidad,meta:ind.meta,unidad:ind.unidad,estrategia:ind.estrategia||'',tipoMeta:ind.tipoMeta||'independiente',anios};if(ind.metasPorAnio){Object.entries(ind.metasPorAnio).forEach(([anio,meta])=>{formData[`meta_${anio}`]=meta;});}setForm(formData);setModal('indicador');};return(<div><div className="page-header"><h1>Planeación - {entidad.nombre}</h1><button className="btn-primary" onClick={()=>setModalPrint(true)} style={{width:'auto'}}>🖨️ Imprimir</button></div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Ejes Estratégicos ({ejes.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',color:'#4F46E5'});setModal('eje');}}>+ Nuevo Eje</button></div>{ejes.length===0?<p style={{color:'#6B7280'}}>No hay ejes</p>:<div className="grid">{ejes.map(eje=>(<div key={eje.id} className="card" style={{borderLeft:`4px solid ${eje.color}`}}><h4>{eje.nombre}</h4><div className="btn-group"><button className="btn-edit" onClick={()=>editarEje(eje)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('ejes',eje.id)}>🗑️ Eliminar</button></div></div>))}</div>}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Objetivos ({objetivos.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({ejeId:'',nombre:''});setModal('objetivo');}} disabled={ejes.length===0}>+ Nuevo Objetivo</button></div>{objetivos.length===0?<p style={{color:'#6B7280'}}>No hay objetivos</p>:objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return(<div key={obj.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}><div className="badge" style={{background:eje?.color,color:'white',marginBottom:'0.5rem'}}>{eje?.nombre||'Sin eje'}</div><p>{obj.nombre}</p><div className="btn-group"><button className="btn-edit" onClick={()=>editarObjetivo(obj)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('objetivos',obj.id)}>🗑️ Eliminar</button></div></div>);})}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Indicadores ({indicadores.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({objetivoId:'',nombre:'',tipo:'ascendente',periodicidad:'Mensual',meta:'',unidad:'%',estrategia:'',anios:''});setModal('indicador');}} disabled={objetivos.length===0}>+ Nuevo Indicador</button></div>{indicadores.length===0?<p style={{color:'#6B7280'}}>No hay indicadores</p>:<div className="grid">{indicadores.map(ind=>{const obj=objetivos.find(o=>o.id===ind.objetivoId);const eje=ejes.find(e=>e.id===obj?.ejeId);return(<div key={ind.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}><div className="badge" style={{background:eje?.color,color:'white',marginBottom:'0.5rem'}}>{eje?.nombre}</div><h4>{ind.nombre}</h4><p style={{color:'#6B7280',fontSize:'0.875rem',marginTop:'0.5rem'}}>Meta: {ind.meta} {ind.unidad} | {ind.tipo==='ascendente'?'📈':'📉'}</p>{ind.metasPorAnio&&Object.keys(ind.metasPorAnio).length>0&&(<p style={{color:'#4F46E5',fontSize:'0.75rem',marginTop:'0.25rem'}}>Metas: {Object.entries(ind.metasPorAnio).map(([a,m])=>`${a}:${m}`).join(', ')}</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarIndicador(ind)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('indicadores',ind.id)}>🗑️ Eliminar</button></div></div>);})}</div>}</div>{modal==='eje'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Eje</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarEje}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>Color</label><input type="color" value={form.color} onChange={e=>setForm({...form,color:e.target.value})}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='objetivo'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Objetivo</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarObjetivo}><div className="form-group"><label>Eje *</label><select value={form.ejeId} onChange={e=>setForm({...form,ejeId:e.target.value})} required><option value="">Seleccionar...</option>{ejes.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}</select></div><div className="form-group"><label>Nombre *</label><textarea value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='indicador'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Indicador</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarIndicador}><div className="form-group"><label>Objetivo *</label><select value={form.objetivoId} onChange={e=>setForm({...form,objetivoId:e.target.value})} required><option value="">Seleccionar...</option>{objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}</select></div><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-row"><div className="form-group"><label>Tipo *</label><select value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})} required><option value="ascendente">📈 Ascendente</option><option value="descendente">📉 Descendente</option></select></div><div className="form-group"><label>Periodicidad *</label><select value={form.periodicidad} onChange={e=>setForm({...form,periodicidad:e.target.value})} required><option value="Mensual">Mensual</option><option value="Bimestral">Bimestral</option><option value="Trimestral">Trimestral</option><option value="Cuatrimestral">Cuatrimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select></div><div className="form-group"><label>Tipo de Meta</label><select value={form.tipoMeta||'independiente'} onChange={e=>setForm({...form,tipoMeta:e.target.value})}><option value="independiente">Independiente</option><option value="acumulativa">Acumulativa</option></select></div></div><div className="form-row"><div className="form-group"><label>Meta Base *</label><input type="number" step="0.01" value={form.meta} onChange={e=>setForm({...form,meta:e.target.value})} required/></div><div className="form-group"><label>Unidad *</label><input type="text" value={form.unidad} onChange={e=>setForm({...form,unidad:e.target.value})} required placeholder="%"/></div></div><div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>{form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}<div className="form-group"><label>Estrategia</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}
     {modalPrint&&<ModalImpresionPlaneacion entidad={entidad} datos={datos} onClose={()=>setModalPrint(false)}/>}
   </div>);};
 
@@ -596,50 +367,6 @@ const formatearTareasCheckbox=(texto)=>{
       <span style={{color:'#9CA3AF',fontSize:'0.9rem'}}>☐</span>
       <span>{t}</span>
     </div>)}
-  </div>);
-};
-
-// ── Funciones globales de cálculo POA ──
-const getMesesRango=(inicio,fin)=>{
-  if(!inicio||!fin)return[];
-  const meses=[];
-  const nombresMes=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  let [ay,am]=inicio.split('-').map(Number);
-  const [fy,fm]=fin.split('-').map(Number);
-  while(ay<fy||(ay===fy&&am<=fm)){
-    meses.push({key:`${ay}-${String(am).padStart(2,'0')}`,label:`${nombresMes[am-1]} ${ay}`,anio:ay,mes:am});
-    am++;if(am>12){am=1;ay++;}
-  }
-  return meses;
-};
-const calcAvanceActividad=(act)=>{
-  if(act.estado==='Completada'||act.estado==='Completado')return 100;
-  if(act.estado==='Cancelada'||act.estado==='Programada')return 0;
-  const meses=getMesesRango(act.fechaInicio,act.fechaFin);
-  if(meses.length===0)return 0;
-  const porMes=100/meses.length;
-  const registrados=(act.seguimientoMensual||{});
-  const mesesConRegistro=meses.filter(m=>registrados[m.key]&&registrados[m.key].observacion).length;
-  return Math.round(mesesConRegistro*porMes);
-};
-const calcAvancePOA=(acts)=>{
-  if(acts.length===0)return 0;
-  const suma=acts.reduce((acc,a)=>acc+calcAvanceActividad(a),0);
-  return Math.round(suma/acts.length);
-};
-
-const SeguimientoMesInput=({act,mesKey,onGuardar})=>{
-  const[texto,setTexto]=React.useState('');
-  return(<div style={{display:'flex',gap:'0.4rem',marginTop:'0.3rem'}}>
-    <input type="text" value={texto} onChange={e=>setTexto(e.target.value)}
-      placeholder="Observación del mes..."
-      style={{flex:1,padding:'0.35rem 0.5rem',border:'1px solid #BFDBFE',borderRadius:'4px',fontSize:'0.8rem'}}
-      onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();onGuardar(act,mesKey,texto);setTexto('');}}}
-    />
-    <button onClick={()=>{onGuardar(act,mesKey,texto);setTexto('');}}
-      style={{padding:'0.35rem 0.6rem',background:'#3B82F6',color:'white',border:'none',borderRadius:'4px',cursor:'pointer',fontSize:'0.8rem',fontWeight:600}}>
-      ✓
-    </button>
   </div>);
 };
 
@@ -724,7 +451,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
       const data={
         ...formActividad,
         planId:planSel.id,
-        estado:formActividad.estado||'Programada',
+        estado:formActividad.estado||'Pendiente',
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       };
       if(itemEdit){
@@ -745,55 +472,28 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
   const guardarSeguimiento=async(e)=>{
     e.preventDefault();setLoading(true);
     try{
-      const updateData={
+      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(modalSeguimiento.id).update({
         estado:modalSeguimiento.estado,
         observacionesSeguimiento:modalSeguimiento.observacionesSeguimiento,
         fechaCambioEstado:new Date().toISOString().split('T')[0]
-      };
-      if(modalSeguimiento.estado==='Reprogramado'){
-        if(!modalSeguimiento.fechaReprogramada){alert('Debes ingresar la nueva fecha reprogramada.');setLoading(false);return;}
-        updateData.fechaReprogramada=modalSeguimiento.fechaReprogramada;
-        updateData.historialReprogramaciones=firebase.firestore.FieldValue.arrayUnion({
-          fecha:new Date().toISOString().split('T')[0],
-          nuevaFecha:modalSeguimiento.fechaReprogramada,
-          motivo:modalSeguimiento.observacionesSeguimiento||''
-        });
-      }
-      if(modalSeguimiento.estado==='Cancelada'){
-        if(!modalSeguimiento.observacionesSeguimiento){alert('Debes ingresar el motivo de cancelación.');setLoading(false);return;}
-      }
-      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(modalSeguimiento.id).update(updateData);
+      });
       setModalSeguimiento(null);
     }catch(err){alert('Error: '+err.message);}
     finally{setLoading(false);}
   };
   
   const estadoColor={
-    'Programada':{bg:'#FEF3C7',c:'#92400E'},
+    'Pendiente':{bg:'#FEF3C7',c:'#92400E'},
     'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},
     'Completado':{bg:'#D1FAE5',c:'#065F46'},
-    'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'},
-    'Cancelada':{bg:'#F3F4F6',c:'#374151'}
+    'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}
   };
-
-  const guardarSeguimientoMensual=async(act,mesKey,observacion)=>{
-    if(!observacion.trim())return;
-    try{
-      const update={};
-      update[`seguimientoMensual.${mesKey}.observacion`]=observacion;
-      update[`seguimientoMensual.${mesKey}.fecha`]=new Date().toISOString().split('T')[0];
-      if(act.estado==='Programada'){update.estado='En Proceso';update.fechaCambioEstado=new Date().toISOString().split('T')[0];}
-      await db.collection('fundacoofisam_datos').doc(entidad.id).collection('poa_actividades').doc(act.id).update(update);
-    }catch(err){alert('Error: '+err.message);}
-  };
-
-  // Funciones de cálculo disponibles globalmente (getMesesRango, calcAvanceActividad, calcAvancePOA)
   
   return(<div>
     <div className="page-header">
       <h1>🗓️ Plan Operativo Anual</h1>
       {!planSel?
-        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormPlan({anio:new Date().getFullYear().toString()});setItemEdit(null);setModalPlan(true);}} disabled={!isAdmin||isMonitoreo} style={{display:isMonitoreo?'none':''}}>+ Nuevo POA</button>
+        (!isMonitoreo&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormPlan({anio:new Date().getFullYear().toString()});setItemEdit(null);setModalPlan(true);}} disabled={!isAdmin}>+ Nuevo POA</button>)
       :
         <div style={{display:'flex',gap:'0.5rem'}}>
           <button className={`btn-${vista==='actividades'?'primary':'secondary'}`} onClick={()=>setVista('actividades')} style={{width:'auto'}}>📋 Actividades</button>
@@ -821,7 +521,9 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
         <div style={{display:'grid',gap:'1rem'}}>
           {planesFiltrados.map(plan=>{
             const actsPlan=todasActividades.filter(a=>a.planId===plan.id);
-            const avance=calcAvancePOA(actsPlan);
+            const completadas=actsPlan.filter(a=>a.estado==='Completado').length;
+            const total=actsPlan.length;
+            const avance=total>0?Math.round((completadas/total)*100):0;
             const objs=objetivos.filter(o=>(plan.objetivosIds||[]).includes(o.id));
             return(<div key={plan.id} className="card" style={{padding:'1rem',background:'#F9FAFB',cursor:'pointer'}} onClick={()=>{setPlanSel(plan);setVista('actividades');}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
@@ -844,8 +546,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
                   {plan.descripcion&&<p style={{margin:'0.5rem 0 0 0',fontSize:'0.85rem',color:'#6B7280',fontStyle:'italic'}}>"{plan.descripcion}"</p>}
                 </div>
                 <div style={{display:'flex',gap:'0.3rem'}} onClick={e=>e.stopPropagation()}>
-                  <button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>
-                  <button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>
+                  {!isMonitoreo&&<button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
+                  {!isMonitoreo&&<button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
                 </div>
               </div>
             </div>);
@@ -868,7 +570,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
       <div className="card">
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
           <h3>Actividades ({actividades.length})</h3>
-          <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>
+          {!isMonitoreo&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>}
         </div>
         {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
         <table className="tabla">
@@ -884,7 +586,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
           </thead>
           <tbody>
             {actividades.map(act=>{
-              const ec=estadoColor[act.estado]||estadoColor['Programada'];
+              const ec=estadoColor[act.estado]||estadoColor['Pendiente'];
               return(<tr key={act.id}>
                 <td><strong>{act.actividad}</strong></td>
                 <td>{act.tarea?formatearTareas(act.tarea,3):<span style={{color:'#9CA3AF',fontSize:'0.85rem'}}>-</span>}</td>
@@ -893,8 +595,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
                 <td><span style={{padding:'0.25rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:600,background:ec.bg,color:ec.c}}>{act.estado}</span></td>
                 <td>
                   <div style={{display:'flex',gap:'0.3rem'}}>
-                    <button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>
-                    <button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>
+                    {!isMonitoreo&&<button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
+                    {!isMonitoreo&&<button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
                   </div>
                 </td>
               </tr>);
@@ -908,7 +610,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
         {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
         <div style={{display:'grid',gap:'1rem'}}>
           {actividades.map(act=>{
-            const ec=estadoColor[act.estado]||estadoColor['Programada'];
+            const ec=estadoColor[act.estado]||estadoColor['Pendiente'];
             return(<div key={act.id} className="card" style={{padding:'1rem',background:'#F9FAFB'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'0.5rem'}}>
                 <div style={{flex:1}}>
@@ -918,53 +620,14 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
                   <p style={{margin:'0.25rem 0',fontSize:'0.85rem',color:'#6B7280'}}>📅 {act.fechaInicio} → {act.fechaFin||'-'}</p>
                   {act.observaciones&&<p style={{margin:'0.5rem 0',fontSize:'0.85rem',padding:'0.5rem',background:'white',borderRadius:'4px',borderLeft:'3px solid #4F46E5'}}>📝 {act.observaciones}</p>}
                   {act.observacionesSeguimiento&&<p style={{margin:'0.5rem 0',fontSize:'0.85rem',padding:'0.5rem',background:'#FEF3C7',borderRadius:'4px',borderLeft:'3px solid #F59E0B'}}>💬 Seguimiento: {act.observacionesSeguimiento}</p>}
-                  {act.estado==='Reprogramado'&&act.fechaReprogramada&&<p style={{margin:'0.5rem 0',fontSize:'0.85rem',padding:'0.5rem',background:'#FEE2E2',borderRadius:'4px',borderLeft:'3px solid #DC2626',fontWeight:600}}>🔁 Reprogramada al: {act.fechaReprogramada}</p>}
-                  {act.historialReprogramaciones&&act.historialReprogramaciones.length>0&&<details style={{margin:'0.5rem 0',fontSize:'0.8rem'}}><summary style={{cursor:'pointer',color:'#DC2626',fontWeight:600}}>📋 Historial de reprogramaciones ({act.historialReprogramaciones.length})</summary><div style={{marginTop:'0.5rem',paddingLeft:'0.5rem'}}>{act.historialReprogramaciones.map((r,i)=><div key={i} style={{padding:'0.35rem 0',borderBottom:'1px solid #FEE2E2',color:'#6B7280'}}>• {r.fecha} → nueva fecha: <strong>{r.nuevaFecha}</strong>{r.motivo&&<span> — {r.motivo}</span>}</div>)}</div></details>}
                 </div>
                 <span style={{padding:'0.5rem 0.75rem',borderRadius:'6px',fontWeight:700,fontSize:'0.85rem',background:ec.bg,color:ec.c,whiteSpace:'nowrap'}}>{act.estado}</span>
               </div>
-              {(()=>{
-                const avAct=calcAvanceActividad(act);
-                const mesesAct=getMesesRango(act.fechaInicio,act.fechaFin);
-                const segMens=act.seguimientoMensual||{};
-                return(<div style={{marginTop:'0.75rem'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.25rem'}}>
-                    <span style={{fontSize:'0.8rem',color:'#6B7280',fontWeight:600}}>Avance:</span>
-                    <span style={{fontSize:'0.9rem',fontWeight:700,color:avAct>=100?'#059669':avAct>=50?'#F59E0B':'#DC2626'}}>{avAct}%</span>
-                  </div>
-                  <div style={{width:'100%',height:'8px',background:'#E5E7EB',borderRadius:'4px',marginBottom:'0.75rem'}}>
-                    <div style={{width:avAct+'%',height:'100%',background:avAct>=100?'#059669':avAct>=50?'#F59E0B':'#DC2626',borderRadius:'4px'}}></div>
-                  </div>
-                  {act.estado==='En Proceso'&&mesesAct.length>0&&(
-                    <details style={{marginBottom:'0.75rem'}}>
-                      <summary style={{cursor:'pointer',fontSize:'0.85rem',fontWeight:600,color:'#1E40AF',padding:'0.4rem 0',userSelect:'none'}}>
-                        📅 Seguimiento mensual ({mesesAct.filter(m=>segMens[m.key]?.observacion).length}/{mesesAct.length} meses registrados)
-                      </summary>
-                      <div style={{marginTop:'0.5rem',display:'grid',gap:'0.5rem'}}>
-                        {mesesAct.map(m=>{
-                          const reg=segMens[m.key];
-                          return(<div key={m.key} style={{padding:'0.6rem',background:reg?.observacion?'#EFF6FF':'#F9FAFB',borderRadius:'6px',border:`1px solid ${reg?.observacion?'#BFDBFE':'#E5E7EB'}`}}>
-                            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.35rem'}}>
-                              <span style={{fontSize:'0.8rem',fontWeight:700,color:'#1E40AF'}}>{m.label}</span>
-                              <span style={{fontSize:'0.7rem',color:reg?.observacion?'#059669':'#9CA3AF',fontWeight:600}}>{reg?.observacion?'✅ Registrado':'⬜ Pendiente'}</span>
-                            </div>
-                            {reg?.observacion?
-                              <p style={{margin:0,fontSize:'0.8rem',color:'#374151'}}>{reg.observacion}</p>
-                              :<SeguimientoMesInput act={act} mesKey={m.key} onGuardar={guardarSeguimientoMensual}/>
-                            }
-                          </div>);
-                        })}
-                      </div>
-                    </details>
-                  )}
-                </div>);
-              })()}
-              <div style={{display:'flex',gap:'0.5rem',marginTop:'0.5rem',paddingTop:'1rem',borderTop:'1px solid #E5E7EB',flexWrap:'wrap'}}>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Programada'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Programada'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Programada'?700:400}}>📋 Programada</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'En Proceso'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Completado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Reprogramado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Cancelada'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Cancelada'?'#F3F4F6':'white',border:'1px solid #6B7280',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Cancelada'?700:400}}>❌ Cancelar</button>
+              <div style={{display:'flex',gap:'0.5rem',marginTop:'1rem',paddingTop:'1rem',borderTop:'1px solid #E5E7EB',flexWrap:'wrap'}}>
+                <button onClick={()=>setModalSeguimiento({...act,estado:'Pendiente'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Pendiente'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Pendiente'?700:400}}>⏸️ Pendiente</button>
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'En Proceso'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>}
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'Completado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>}
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'Reprogramado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>}
               </div>
             </div>);
           })}
@@ -1073,30 +736,16 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
             <div className="form-group">
               <label>Nuevo Estado *</label>
               <select value={modalSeguimiento.estado} onChange={e=>setModalSeguimiento({...modalSeguimiento,estado:e.target.value})} required>
-                <option value="Programada">📋 Programada</option>
+                <option value="Pendiente">⏸️ Pendiente</option>
                 <option value="En Proceso">🔄 En Proceso</option>
                 <option value="Completado">✅ Completado</option>
                 <option value="Reprogramado">🔁 Reprogramado</option>
-                <option value="Cancelada">❌ Cancelada</option>
               </select>
             </div>
             <div className="form-group">
               <label>Observaciones del Seguimiento</label>
               <textarea value={modalSeguimiento.observacionesSeguimiento||''} onChange={e=>setModalSeguimiento({...modalSeguimiento,observacionesSeguimiento:e.target.value})} rows={3} placeholder="Añade notas sobre el cambio de estado..."/>
             </div>
-            {modalSeguimiento.estado==='Reprogramado'&&(
-              <div className="form-group" style={{background:'#FEE2E2',padding:'1rem',borderRadius:'8px',border:'1px solid #DC2626'}}>
-                <label style={{color:'#991B1B',fontWeight:700}}>🗓️ Nueva Fecha Reprogramada *</label>
-                <input type="date" value={modalSeguimiento.fechaReprogramada||''} onChange={e=>setModalSeguimiento({...modalSeguimiento,fechaReprogramada:e.target.value})} style={{border:'2px solid #DC2626'}}/>
-                <small style={{color:'#991B1B',display:'block',marginTop:'0.25rem'}}>Se guardará historial de reprogramaciones</small>
-              </div>
-            )}
-            {modalSeguimiento.estado==='Cancelada'&&(
-              <div className="form-group" style={{background:'#F3F4F6',padding:'1rem',borderRadius:'8px',border:'1px solid #6B7280'}}>
-                <label style={{color:'#374151',fontWeight:700}}>❌ Motivo de cancelación *</label>
-                <small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>El campo de observaciones es obligatorio para cancelar</small>
-              </div>
-            )}
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
           </form>
         </div>
@@ -1113,85 +762,59 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
           </div>
         </div>
         <div className="modal-body">
-          {(()=>{
-            const avGlobal=calcAvancePOA(actividades);
-            const colorAv=avGlobal>=100?'#059669':avGlobal>=50?'#F59E0B':'#DC2626';
-            return(<div>
-              <div style={{background:'#F9FAFB',padding:'1rem',borderRadius:'8px',marginBottom:'1.5rem'}}>
-                <h3 style={{marginTop:0}}>Resumen</h3>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:'0.75rem'}}>
-                  <div style={{textAlign:'center',padding:'0.75rem',background:'white',borderRadius:'6px'}}>
-                    <div style={{fontSize:'1.75rem',fontWeight:700,color:'#4F46E5'}}>{actividades.length}</div>
-                    <div style={{fontSize:'0.75rem',color:'#6B7280'}}>Total</div>
-                  </div>
-                  <div style={{textAlign:'center',padding:'0.75rem',background:'white',borderRadius:'6px'}}>
-                    <div style={{fontSize:'1.75rem',fontWeight:700,color:'#059669'}}>{actividades.filter(a=>a.estado==='Completado').length}</div>
-                    <div style={{fontSize:'0.75rem',color:'#6B7280'}}>✅ Completadas</div>
-                  </div>
-                  <div style={{textAlign:'center',padding:'0.75rem',background:'white',borderRadius:'6px'}}>
-                    <div style={{fontSize:'1.75rem',fontWeight:700,color:'#3B82F6'}}>{actividades.filter(a=>a.estado==='En Proceso').length}</div>
-                    <div style={{fontSize:'0.75rem',color:'#6B7280'}}>🔄 En Proceso</div>
-                  </div>
-                  <div style={{textAlign:'center',padding:'0.75rem',background:'white',borderRadius:'6px'}}>
-                    <div style={{fontSize:'1.75rem',fontWeight:700,color:'#F59E0B'}}>{actividades.filter(a=>a.estado==='Programada').length}</div>
-                    <div style={{fontSize:'0.75rem',color:'#6B7280'}}>📋 Programadas</div>
-                  </div>
-                  <div style={{textAlign:'center',padding:'0.75rem',background:'white',borderRadius:'6px'}}>
-                    <div style={{fontSize:'1.75rem',fontWeight:700,color:'#6B7280'}}>{actividades.filter(a=>a.estado==='Cancelada').length}</div>
-                    <div style={{fontSize:'0.75rem',color:'#6B7280'}}>❌ Canceladas</div>
-                  </div>
-                </div>
+          <div style={{background:'#F9FAFB',padding:'1rem',borderRadius:'8px',marginBottom:'1.5rem'}}>
+            <h3 style={{marginTop:0}}>Resumen</h3>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'1rem'}}>
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#4F46E5'}}>{actividades.length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>Total</div>
               </div>
-              <div style={{marginBottom:'2rem'}}>
-                <h3>Avance Global del POA</h3>
-                <p style={{fontSize:'0.8rem',color:'#6B7280',marginBottom:'0.5rem'}}>Promedio de avance por actividad (Completada=100%, Cancelada=0%, En Proceso=% proporcional por meses)</p>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.5rem'}}>
-                  <span style={{fontSize:'1.1rem',fontWeight:600}}>Avance promedio</span>
-                  <span style={{fontSize:'2rem',fontWeight:700,color:colorAv}}>{avGlobal}%</span>
-                </div>
-                <div style={{width:'100%',height:'30px',background:'#E5E7EB',borderRadius:'15px',overflow:'hidden'}}>
-                  <div style={{width:avGlobal+'%',height:'100%',background:colorAv,display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:'0.5rem',color:'white',fontWeight:700,minWidth:avGlobal>0?'2rem':'0'}}>{avGlobal>5?avGlobal+'%':''}</div>
-                </div>
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#059669'}}>{actividades.filter(a=>a.estado==='Completado').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>✅ Completadas</div>
               </div>
-              <div>
-                <h3>Detalle por Actividad</h3>
-                {['Completado','En Proceso','Programada','Reprogramado','Cancelada'].map(estado=>{
-                  const acts=actividades.filter(a=>a.estado===estado);
-                  if(acts.length===0)return null;
-                  const cols={'Completado':{bg:'#D1FAE5',c:'#065F46'},'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},'Programada':{bg:'#FEF3C7',c:'#92400E'},'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'},'Cancelada':{bg:'#F3F4F6',c:'#374151'}};
-                  const col=cols[estado];
-                  return(<div key={estado} style={{marginBottom:'1.5rem'}}>
-                    <h4 style={{padding:'0.5rem 1rem',background:col.bg,color:col.c,borderRadius:'6px',display:'inline-block'}}>{estado} ({acts.length})</h4>
-                    <table className="tabla" style={{fontSize:'0.85rem',marginTop:'0.5rem'}}>
-                      <thead><tr><th>Actividad</th><th>Responsable</th><th>Fechas</th><th>Avance</th><th>Seguimiento mensual</th></tr></thead>
-                      <tbody>{acts.map(act=>{
-                        const avAct=calcAvanceActividad(act);
-                        const mesesAct=getMesesRango(act.fechaInicio,act.fechaFin);
-                        const segMens=act.seguimientoMensual||{};
-                        const mesesConReg=mesesAct.filter(m=>segMens[m.key]?.observacion);
-                        const mesesReg=mesesConReg.length;
-                        return(<React.Fragment key={act.id}>
-                          <tr>
-                            <td><strong>{act.actividad}</strong>{act.tarea&&<div style={{fontSize:'0.8rem',color:'#6B7280'}}>{act.tarea}</div>}</td>
-                            <td>{act.responsable}</td>
-                            <td style={{fontSize:'0.8rem'}}>{act.fechaInicio} → {act.fechaFin||'-'}{act.fechaReprogramada&&<div style={{color:'#DC2626',fontSize:'0.75rem'}}>🔁 Nueva: {act.fechaReprogramada}</div>}</td>
-                            <td><span style={{fontWeight:700,color:avAct>=100?'#059669':avAct>=50?'#F59E0B':'#DC2626'}}>{avAct}%</span></td>
-                            <td style={{fontSize:'0.8rem',color:'#6B7280'}}>{mesesAct.length>0?`${mesesReg}/${mesesAct.length} meses`:'-'}</td>
-                          </tr>
-                          {mesesConReg.length>0&&mesesConReg.map(m=>(
-                            <tr key={m.key} style={{background:'#F9FAFB'}}>
-                              <td colSpan={2} style={{fontSize:'0.78rem',color:'#4F46E5',paddingLeft:'1.5rem',fontWeight:600}}>↳ {m.label}</td>
-                              <td colSpan={3} style={{fontSize:'0.78rem',color:'#374151'}}>{segMens[m.key].observacion}</td>
-                            </tr>
-                          ))}
-                        </React.Fragment>);
-                      })}</tbody>
-                    </table>
-                  </div>);
-                })}
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#3B82F6'}}>{actividades.filter(a=>a.estado==='En Proceso').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>🔄 En Proceso</div>
               </div>
-            </div>);
-          })()}
+              <div style={{textAlign:'center',padding:'1rem',background:'white',borderRadius:'6px'}}>
+                <div style={{fontSize:'2rem',fontWeight:700,color:'#F59E0B'}}>{actividades.filter(a=>a.estado==='Pendiente').length}</div>
+                <div style={{fontSize:'0.85rem',color:'#6B7280'}}>⏸️ Pendientes</div>
+              </div>
+            </div>
+          </div>
+          <div style={{marginBottom:'2rem'}}>
+            <h3>Avance Global</h3>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.5rem'}}>
+              <span style={{fontSize:'1.1rem',fontWeight:600}}>Cumplimiento</span>
+              <span style={{fontSize:'2rem',fontWeight:700,color:(()=>{const av=actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0;return av>=100?'#059669':av>=50?'#F59E0B':'#DC2626';})()}}>
+                {actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0}%
+              </span>
+            </div>
+            <div style={{width:'100%',height:'30px',background:'#E5E7EB',borderRadius:'15px',overflow:'hidden'}}>
+              <div style={{width:(actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0)+'%',height:'100%',background:(()=>{const av=actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0;return av>=100?'#059669':av>=50?'#F59E0B':'#DC2626';})(),display:'flex',alignItems:'center',justifyContent:'flex-end',paddingRight:'0.5rem',color:'white',fontWeight:700}}>{actividades.length>0?Math.round((actividades.filter(a=>a.estado==='Completado').length/actividades.length)*100):0}%</div>
+            </div>
+          </div>
+          <div>
+            <h3>Detalle por Estado</h3>
+            {['Completado','En Proceso','Pendiente','Reprogramado'].map(estado=>{
+              const acts=actividades.filter(a=>a.estado===estado);
+              if(acts.length===0)return null;
+              const cols={'Completado':{bg:'#D1FAE5',c:'#065F46'},'En Proceso':{bg:'#DBEAFE',c:'#1E40AF'},'Pendiente':{bg:'#FEF3C7',c:'#92400E'},'Reprogramado':{bg:'#FEE2E2',c:'#991B1B'}};
+              const col=cols[estado];
+              return(<div key={estado} style={{marginBottom:'1.5rem'}}>
+                <h4 style={{padding:'0.5rem 1rem',background:col.bg,color:col.c,borderRadius:'6px',display:'inline-block'}}>{estado} ({acts.length})</h4>
+                <table className="tabla" style={{fontSize:'0.85rem',marginTop:'0.5rem'}}>
+                  <thead><tr><th>Actividad</th><th>Responsable</th><th>Fechas</th></tr></thead>
+                  <tbody>{acts.map(act=>(<tr key={act.id}>
+                    <td><strong>{act.actividad}</strong>{act.tarea&&<div style={{fontSize:'0.8rem',color:'#6B7280'}}>{act.tarea}</div>}</td>
+                    <td>{act.responsable}</td>
+                    <td style={{fontSize:'0.8rem'}}>{act.fechaInicio} → {act.fechaFin||'-'}</td>
+                  </tr>))}</tbody>
+                </table>
+              </div>);
+            })}
+          </div>
         </div>
       </div>
     </div>}
@@ -1199,62 +822,9 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
   </div>);
 };
 
-const HistorialSeguimiento=({seguimientos,indicador,scoreIcon,onEditar,onEliminar})=>{
-  const[anioHist,setAnioHist]=useState('');
-  const aniosHist=[...new Set(seguimientos.map(s=>String(s.anio)))].sort((a,b)=>b-a);
-  const segsFilt=anioHist?seguimientos.filter(s=>String(s.anio)===anioHist):seguimientos;
-  return(<div className="card">
-    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
-      <h3 style={{margin:0}}>Historial de Registros</h3>
-      {aniosHist.length>1&&<div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-        <label style={{fontSize:'0.85rem',fontWeight:600,color:'#6B7280'}}>Año:</label>
-        <select value={anioHist} onChange={e=>setAnioHist(e.target.value)}
-          style={{padding:'0.3rem 0.5rem',border:'1px solid #E5E7EB',borderRadius:'6px',fontSize:'0.85rem'}}>
-          <option value="">Todos</option>
-          {aniosHist.map(a=><option key={a} value={a}>{a}</option>)}
-        </select>
-        {anioHist&&<button onClick={()=>setAnioHist('')} style={{padding:'0.3rem 0.5rem',border:'1px solid #E5E7EB',borderRadius:'6px',background:'white',cursor:'pointer',fontSize:'0.8rem'}}>✕</button>}
-      </div>}
-    </div>
-    {segsFilt.length===0
-      ?<div className="empty-state" style={{padding:'1.5rem'}}><p>No hay registros{anioHist?' para '+anioHist:''}.</p></div>
-      :<div style={{overflowX:'auto'}}>
-        {indicador?.tipoMeta==='acumulativa'&&(()=>{
-          const total=segsFilt.reduce((acc,s)=>acc+parseFloat(s.avance||0),0);
-          return(<div style={{background:'#EEF2FF',padding:'1rem',borderRadius:'8px',marginBottom:'1rem',border:'2px solid #C7D2FE'}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-              <span style={{fontSize:'0.9rem',color:'#6B7280',fontWeight:600}}>TOTAL ACUMULADO{anioHist?' '+anioHist:''}</span>
-              <div style={{fontSize:'1.8rem',fontWeight:'bold',color:'#4F46E5'}}>📈 {total.toFixed(2)} {indicador.unidad}</div>
-            </div>
-          </div>);
-        })()}
-        <table className="tabla">
-          <thead><tr><th>Período</th><th>Meta Anual</th><th>Meta Mes</th><th>Avance</th><th>Rendimiento</th><th>Score</th><th>Obs.</th><th>Acciones</th></tr></thead>
-          <tbody>{segsFilt.map(seg=>(
-            <tr key={seg.id}>
-              <td><strong>{seg.mes} {seg.anio}</strong></td>
-              <td>{indicador.meta||seg.metaAnual} {indicador.unidad}</td>
-              <td>{seg.metaMes} {indicador.unidad}</td>
-              <td>{seg.avance} {indicador.unidad}</td>
-              <td><strong>{seg.rendimiento?.toFixed(2)}%</strong></td>
-              <td><div className={'semaforo '+(seg.score||'sin_meta')}>{scoreIcon[seg.score||'sin_meta']}</div></td>
-              <td style={{maxWidth:'120px',fontSize:'0.8rem',color:'#6B7280'}}>{seg.observaciones}</td>
-              <td><div style={{display:'flex',gap:'0.3rem'}}>
-                <button className="btn-edit" onClick={()=>onEditar(seg)}>✏️</button>
-                <button className="btn-secondary" style={{padding:'0.3rem 0.5rem',fontSize:'0.8rem'}} onClick={()=>onEliminar(seg.id)}>🗑️</button>
-              </div></td>
-            </tr>
-          ))}</tbody>
-        </table>
-      </div>}
-  </div>);
-};
-
 const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
   const[indicadorSel,setIndicadorSel]=useState(null);
   const[busquedaSeg,setBusquedaSeg]=useState('');
-  const[ejeSel,setEjeSel]=useState('');
-  const[objetivoSel,setObjetivoSel]=useState('');
   const[segEdit,setSegEdit]=useState(null);
   const[modal,setModal]=useState(false);
   const[form,setForm]=useState({});
@@ -1277,21 +847,11 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
   const{ejes=[],objetivos=[],indicadores=[]}=datos;
   const indicador=indicadores.find(i=>i.id===indicadorSel);
 
-  const scoreConfig=entidad?.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};
   const calcScore=(avance,metaMes,tipo)=>{
     if(!metaMes||metaMes===0)return'sin_meta';
     const r=(avance/metaMes)*100;
-    if(tipo==='descendente'){
-      // Descendente: cumple si avance <= meta (r<=100 es óptimo)
-      const inv=r===0?100:Math.min((metaMes/avance)*100,200);
-      if(inv>=scoreConfig.optimo.min)return'optimo';
-      if(inv>=scoreConfig.precaucion.min)return'precaucion';
-      return'critico';
-    }
-    // Ascendente: usar rangos de scoreConfig de la entidad
-    if(r>=scoreConfig.optimo.min)return'optimo';
-    if(r>=scoreConfig.precaucion.min)return'precaucion';
-    return'critico';
+    if(tipo==='descendente'){if(r<=100)return'optimo';if(r<=120)return'precaucion';return'critico';}
+    if(r>=100)return'optimo';if(r>=70)return'precaucion';return'critico';
   };
 
   const guardar=async(e)=>{
@@ -1300,12 +860,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
       const metaMes=parseFloat(form.metaMes||0);
       const avance=parseFloat(form.avance||0);
       const metaAnual=parseFloat(form.metaAnual||indicador?.meta||0);
-      // Rendimiento: ascendente = avance/meta*100, descendente = meta/avance*100 (menor es mejor)
-      const rendimiento=metaMes>0
-        ?(indicador?.tipo==='descendente'
-          ?(avance===0?100:Math.min((metaMes/avance)*100,200))
-          :(avance/metaMes)*100)
-        :0;
+      const rendimiento=metaMes>0?(avance/metaMes)*100:0;
       const score=calcScore(avance,metaMes,indicador?.tipo);
       const data={...form,metaMes,avance,metaAnual,rendimiento,score,indicadorId:indicadorSel};
       const ref=db.collection('fundacoofisam_datos').doc(entidad.id).collection('seguimientos');
@@ -1327,13 +882,10 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
   const scoreIcon={optimo:'🟢',precaucion:'🟡',critico:'🔴',sin_meta:'⚪'};
   const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre','Semestral 1','Semestral 2','Anual'];
 
-  const objetivosPorEje=ejeSel?objetivos.filter(o=>o.ejeId===ejeSel):objetivos;
   const indicadoresFiltrados=indicadores.filter(i=>{
     const o=objetivos.find(x=>x.id===i.objetivoId);
     const ej=ejes.find(x=>x.id===o?.ejeId);
-    if(ejeSel&&ej?.id!==ejeSel)return false;
-    if(objetivoSel&&o?.id!==objetivoSel)return false;
-    return(i.nombre+' '+(o?.nombre||'')+' '+(ej?.nombre||'')).toLowerCase().includes(busquedaSeg.toLowerCase());
+    return(i.nombre+' '+(ej?.nombre||'')).toLowerCase().includes(busquedaSeg.toLowerCase());
   });
 
   return(<div>
@@ -1342,46 +894,22 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
       <div style={{display:"flex",gap:"0.5rem"}}>
         <button className="btn-primary print-btn" onClick={()=>window.print()} style={{width:"auto"}}>🖨️ Imprimir</button>
         {indicadorSel&&<button className="btn-primary" style={{width:'auto'}}
-        onClick={()=>{setSegEdit(null);setForm({mes:meses[new Date().getMonth()],anio:new Date().getFullYear().toString(),avance:'',metaMes:'',metaAnual:indicador?.meta||'',observaciones:''});setModal(true);}}>
-        {!isMonitoreo&&'+ Nuevo Registro'}{isMonitoreo&&'📊 Solo lectura'}
+        onClick={()=>{if(isMonitoreo)return;setSegEdit(null);setForm({mes:meses[new Date().getMonth()],anio:new Date().getFullYear().toString(),avance:'',metaMes:'',metaAnual:indicador?.meta||'',observaciones:''});setModal(true);}}>
+        {!isMonitoreo&&'+ Nuevo Registro'}{isMonitoreo&&'👁️ Solo lectura'}
       </button>}
       </div>
     </div>
     <div className="card">
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1rem'}}>
-        <div className="form-group" style={{margin:0}}>
-          <label style={{fontSize:'0.85rem',fontWeight:600}}>Filtrar por Eje</label>
-          <select value={ejeSel} onChange={e=>{setEjeSel(e.target.value);setObjetivoSel('');setIndicadorSel(null);}}
-            style={{width:'100%',padding:'0.5rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'0.9rem'}}>
-            <option value="">Todos los ejes</option>
-            {ejes.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}
-          </select>
-        </div>
-        <div className="form-group" style={{margin:0}}>
-          <label style={{fontSize:'0.85rem',fontWeight:600}}>Filtrar por Objetivo</label>
-          <select value={objetivoSel} onChange={e=>{setObjetivoSel(e.target.value);setIndicadorSel(null);}}
-            style={{width:'100%',padding:'0.5rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'0.9rem'}}>
-            <option value="">Todos los objetivos</option>
-            {objetivosPorEje.map(o=>{
-              const eje=ejes.find(e=>e.id===o.ejeId);
-              return<option key={o.id} value={o.id}>{ejeSel?o.nombre:`[${eje?.nombre}] ${o.nombre}`}</option>;
-            })}
-          </select>
-        </div>
-      </div>
-      <div className="form-group" style={{margin:0}}>
-        <label style={{fontSize:'0.85rem',fontWeight:600}}>Buscar y seleccionar Indicador
-          <span style={{marginLeft:'0.5rem',fontWeight:400,color:'#6B7280'}}>({indicadoresFiltrados.length} indicadores)</span>
-          {(ejeSel||objetivoSel||busquedaSeg)&&<button onClick={()=>{setEjeSel('');setObjetivoSel('');setBusquedaSeg('');setIndicadorSel(null);}} style={{marginLeft:'0.75rem',padding:'0.15rem 0.5rem',border:'1px solid #E5E7EB',borderRadius:'4px',background:'white',cursor:'pointer',fontSize:'0.75rem',color:'#6B7280'}}>✕ Limpiar filtros</button>}
-        </label>
-        <input type="text" value={busquedaSeg} onChange={e=>setBusquedaSeg(e.target.value)} placeholder="Escribe para filtrar por nombre..." style={{marginBottom:'0.5rem'}}/>
+      <div className="form-group">
+        <label>Buscar Indicador</label>
+        <input type="text" value={busquedaSeg} onChange={e=>setBusquedaSeg(e.target.value)} placeholder="Escribe para filtrar..." style={{marginBottom:'0.5rem'}}/>
         <select value={indicadorSel||''} onChange={e=>setIndicadorSel(e.target.value||null)}
-          size={Math.min(8,indicadoresFiltrados.length+1)} style={{height:'auto',minHeight:'80px'}}>
+          size={Math.min(6,indicadoresFiltrados.length+1)} style={{height:'auto',minHeight:'80px'}}>
           <option value="">-- Seleccionar indicador --</option>
           {indicadoresFiltrados.map(ind=>{
             const obj=objetivos.find(o=>o.id===ind.objetivoId);
             const eje=ejes.find(e=>e.id===obj?.ejeId);
-            return<option key={ind.id} value={ind.id}>[{eje?.nombre}] {obj?.nombre?obj.nombre.substring(0,30)+'…':''} — {ind.nombre}</option>;
+            return<option key={ind.id} value={ind.id}>[{eje?.nombre}] {ind.nombre}</option>;
           })}
         </select>
       </div>
@@ -1395,13 +923,48 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
           📅 Metas por año: {Object.entries(indicador.metasPorAnio).map(([a,m])=>a+': '+m).join(' | ')}
         </div>}
       </div>
-      <HistorialSeguimiento
-        seguimientos={seguimientos}
-        indicador={indicador}
-        scoreIcon={scoreIcon}
-        onEditar={editarSeg}
-        onEliminar={eliminarSeg}
-      />
+      <div className="card">
+        <h3>Historial de Registros</h3>
+        {seguimientos.length===0?<div className="empty-state" style={{padding:'1.5rem'}}><p>No hay registros. Click en + Nuevo Registro.</p></div>:
+        <div style={{overflowX:'auto'}}>
+          {indicador?.tipoMeta==='acumulativa'&&seguimientos.length>0&&(()=>{
+            let total=0;
+            seguimientos.forEach(s=>{
+              if(s.avance)total+=parseFloat(s.avance);
+            });
+            return(
+              <div style={{background:'#EEF2FF',padding:'1rem',borderRadius:'8px',marginBottom:'1rem',border:'2px solid #C7D2FE'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <span style={{fontSize:'0.9rem',color:'#6B7280',fontWeight:600}}>TOTAL ACUMULADO</span>
+                  <div style={{fontSize:'1.8rem',fontWeight:'bold',color:'#4F46E5'}}>
+                    📈 {total.toFixed(2)} {indicador.unidad}
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+          <table className="tabla">
+            <thead><tr><th>Período</th><th>Meta Anual</th><th>Meta Mes</th><th>Avance</th><th>Rendimiento</th><th>Score</th><th>Obs.</th><th>Acciones</th></tr></thead>
+            <tbody>{seguimientos.map(seg=>(
+              <tr key={seg.id}>
+                <td><strong>{seg.mes} {seg.anio}</strong></td>
+                <td>{indicador.meta||seg.metaAnual} {indicador.unidad}</td>
+                <td>{seg.metaMes} {indicador.unidad}</td>
+                <td>{seg.avance} {indicador.unidad}</td>
+                <td><strong>{seg.rendimiento.toFixed(2)}%</strong></td>
+                <td><div className={'semaforo '+(seg.score||'sin_meta')}>{scoreIcon[seg.score||'sin_meta']}</div></td>
+                <td style={{maxWidth:'120px',fontSize:'0.8rem',color:'#6B7280'}}>{seg.observaciones}</td>
+                <td>
+                  <div style={{display:'flex',gap:'0.3rem'}}>
+                    {!isMonitoreo&&<button className="btn-edit" onClick={()=>editarSeg(seg)}>✏️</button>}
+                    {!isMonitoreo&&<button className="btn-secondary" style={{padding:'0.3rem 0.5rem',fontSize:'0.8rem'}} onClick={()=>eliminarSeg(seg.id)}>🗑️</button>}
+                  </div>
+                </td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>}
+      </div>
     </>)}
     {modal&&indicador&&(<div className="modal-overlay" onClick={()=>{setModal(false);setSegEdit(null);}}>
       <div className="modal" onClick={e=>e.stopPropagation()}>
@@ -1528,7 +1091,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
     await db.collection('fundacoofisam_usuarios').doc(uid).delete();
   };
 
-  const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
+  const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'🔑 Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'📝 Seguimiento'},monitoreo:{bg:'#DBEAFE',color:'#1E40AF',label:'👁️ Monitoreo'}};
 
   return(<div>
     <div className="page-header">
