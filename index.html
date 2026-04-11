@@ -98,7 +98,7 @@ const App=()=>{
     const unsub=auth.onAuthStateChanged(async(u)=>{
       setUser(u);
       if(u){
-        await migrarDatosACompartido(u.uid,'coosanroque');
+        await migrarDatosACompartido(u.uid,'fundacoofisam');
         const doc=await db.collection('fundacoofisam_usuarios').doc(u.uid).get();
         if(doc.exists)setUserRol(doc.data().rol||'admin');
         else setUserRol('admin');
@@ -115,6 +115,7 @@ const AuthScreen=()=>{const[isLogin,setIsLogin]=useState(true);const[email,setEm
   const[busquedaPOA,setBusquedaPOA]=useState('');const handleSubmit=async(e)=>{e.preventDefault();setError('');setLoading(true);try{if(isLogin)await auth.signInWithEmailAndPassword(email,password);else await auth.createUserWithEmailAndPassword(email,password);}catch(err){setError(err.message);}finally{setLoading(false);}};return(<div className="auth-container"><div className="auth-box"><div className="auth-header"><h1>🧭 Nórdico</h1><p style={{fontSize:'0.8rem',color:'#6B7280',marginTop:'0.25rem'}}>Planeación Estratégica</p><p>{isLogin?'Inicia sesión':'Crea tu cuenta'}</p></div>{error&&<div className="error-message">⚠️ {error}</div>}<form onSubmit={handleSubmit}><div className="form-group"><label>Email</label><input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required/></div><div className="form-group"><label>Contraseña</label><input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳':(isLogin?'🔐 Entrar':'📝 Crear Cuenta')}</button></form><div style={{textAlign:'center',fontSize:'0.875rem',color:'#6B7280'}}>{isLogin?'¿No tienes cuenta? ':'¿Ya tienes cuenta? '}<button onClick={()=>setIsLogin(!isLogin)} style={{background:'none',border:'none',color:'#4F46E5',fontWeight:600,cursor:'pointer',textDecoration:'underline'}}>{isLogin?'Regístrate':'Inicia sesión'}</button></div><AvisoLegal modo="login"/></div></div>);};
 const MainApp=({user,userRol})=>{
   const isAdmin=userRol==='admin'||userRol===null;
+  const isMonitoreo=userRol==='monitoreo';
   const[vista,setVista]=useState('entidades');
   const[entidades,setEntidades]=useState([]);
   const[entidadActiva,setEntidadActiva]=useState(null);
@@ -153,15 +154,16 @@ const MainApp=({user,userRol})=>{
       </div>
       <div className="user-info">
         <div className="user-email">👤 {user.email}</div>
-        <div style={{fontSize:'0.75rem',padding:'0.2rem 0.5rem',borderRadius:'6px',display:'inline-block',background:isAdmin?'#EDE9FE':'#D1FAE5',color:isAdmin?'#6D28D9':'#065F46',fontWeight:700,margin:'0.25rem 0'}}>
-          {isAdmin?'🔑 Admin':'📝 Seguimiento'}
+        <div style={{fontSize:'0.75rem',padding:'0.2rem 0.5rem',borderRadius:'6px',display:'inline-block',background:isAdmin?'#EDE9FE':isMonitoreo?'#DBEAFE':'#D1FAE5',color:isAdmin?'#6D28D9':isMonitoreo?'#1E40AF':'#065F46',fontWeight:700,margin:'0.25rem 0'}}>
+          {isAdmin?'🔑 Admin':isMonitoreo?'👁️ Monitoreo':'📝 Seguimiento'}
         </div>
         <button className="btn-logout" onClick={()=>{if(window.confirm('¿Cerrar sesión?'))auth.signOut();}}>🚪 Cerrar</button>
       </div>
       <div className="nav-items">
         <button className={`nav-item ${vista==='entidades'?'activo':''}`} onClick={()=>setVista('entidades')}>🏢 Entidades</button>
         {isAdmin&&<button className={`nav-item ${vista==='config'?'activo':''}`} onClick={()=>setVista('config')} disabled={!entidadActiva}>📋 Planeación</button>}
-        <button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📝 Seguimiento</button>
+        {!isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📝 Seguimiento</button>}
+        {isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📈 Seguimiento</button>}
         <button className={`nav-item ${vista==='dashboard'?'activo':''}`} onClick={()=>setVista('dashboard')} disabled={!entidadActiva}>📊 Dashboard</button>
         <button className={`nav-item ${vista==='poa'?'activo':''}`} onClick={()=>setVista('poa')} disabled={!entidadActiva}>🗓️ Plan Operativo</button>
         {isAdmin&&<button className={`nav-item ${vista==='usuarios'?'activo':''}`} onClick={()=>setVista('usuarios')} disabled={!entidadActiva}>👥 Usuarios</button>}
@@ -170,9 +172,9 @@ const MainApp=({user,userRol})=>{
     <main className="main-content">
       {vista==='entidades'&&<VistaEntidades user={user} entidades={entidades} entidadActiva={entidadActiva} isAdmin={isAdmin}/>}
       {vista==='config'&&<VistaConfig user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin}/>}
-      {vista==='seguimiento'&&<VistaSeguimiento user={user} entidad={entidadActiva} datos={datos}/>}
+      {vista==='seguimiento'&&<VistaSeguimiento user={user} entidad={entidadActiva} datos={datos} isMonitoreo={isMonitoreo}/>}
       {vista==='dashboard'&&<VistaDashboard entidad={entidadActiva} datos={datos}/>}
-      {vista==='poa'&&<VistaPlanOperativo user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin}/>}
+      {vista==='poa'&&<VistaPlanOperativo user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin} isMonitoreo={isMonitoreo}/>}
       {isAdmin&&vista==='usuarios'&&<VistaUsuarios user={user} userRol={userRol} entidad={entidadActiva}/>}
     </main>
   </div>
@@ -640,7 +642,7 @@ const SeguimientoMesInput=({act,mesKey,onGuardar})=>{
   </div>);
 };
 
-const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
+const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo})=>{
   const[vista,setVista]=useState('planes');
   const[planSel,setPlanSel]=useState(null);
   const[planes,setPlanes]=useState([]);
@@ -790,7 +792,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
     <div className="page-header">
       <h1>🗓️ Plan Operativo Anual</h1>
       {!planSel?
-        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormPlan({anio:new Date().getFullYear().toString()});setItemEdit(null);setModalPlan(true);}} disabled={!isAdmin}>+ Nuevo POA</button>
+        (!isMonitoreo&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormPlan({anio:new Date().getFullYear().toString()});setItemEdit(null);setModalPlan(true);}} disabled={!isAdmin}>+ Nuevo POA</button>)
       :
         <div style={{display:'flex',gap:'0.5rem'}}>
           <button className={`btn-${vista==='actividades'?'primary':'secondary'}`} onClick={()=>setVista('actividades')} style={{width:'auto'}}>📋 Actividades</button>
@@ -841,8 +843,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
                   {plan.descripcion&&<p style={{margin:'0.5rem 0 0 0',fontSize:'0.85rem',color:'#6B7280',fontStyle:'italic'}}>"{plan.descripcion}"</p>}
                 </div>
                 <div style={{display:'flex',gap:'0.3rem'}} onClick={e=>e.stopPropagation()}>
-                  <button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>
-                  <button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>
+                  {!isMonitoreo&&<button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
+                  {!isMonitoreo&&<button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
                 </div>
               </div>
             </div>);
@@ -865,7 +867,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
       <div className="card">
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
           <h3>Actividades ({actividades.length})</h3>
-          <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>
+          {!isMonitoreo&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>}
         </div>
         {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
         <table className="tabla">
@@ -890,8 +892,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
                 <td><span style={{padding:'0.25rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:600,background:ec.bg,color:ec.c}}>{act.estado}</span></td>
                 <td>
                   <div style={{display:'flex',gap:'0.3rem'}}>
-                    <button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>
-                    <button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>
+                    {!isMonitoreo&&<button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
+                    {!isMonitoreo&&<button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
                   </div>
                 </td>
               </tr>);
@@ -947,7 +949,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
                             </div>
                             {reg?.observacion?
                               <p style={{margin:0,fontSize:'0.8rem',color:'#374151'}}>{reg.observacion}</p>
-                              :<SeguimientoMesInput act={act} mesKey={m.key} onGuardar={guardarSeguimientoMensual}/>
+                              :(isMonitoreo?<span style={{fontSize:'0.78rem',color:'#9CA3AF',fontStyle:'italic'}}>Solo lectura</span>:<SeguimientoMesInput act={act} mesKey={m.key} onGuardar={guardarSeguimientoMensual}/>)
                             }
                           </div>);
                         })}
@@ -957,11 +959,11 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin})=>{
                 </div>);
               })()}
               <div style={{display:'flex',gap:'0.5rem',marginTop:'0.5rem',paddingTop:'1rem',borderTop:'1px solid #E5E7EB',flexWrap:'wrap'}}>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Programada'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Programada'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Programada'?700:400}}>📋 Programada</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'En Proceso'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Completado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Reprogramado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>
-                <button onClick={()=>setModalSeguimiento({...act,estado:'Cancelada'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Cancelada'?'#F3F4F6':'white',border:'1px solid #6B7280',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Cancelada'?700:400}}>❌ Cancelar</button>
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'Programada'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Programada'?'#FEF3C7':'white',border:'1px solid #F59E0B',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Programada'?700:400}}>📋 Programada</button>}
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'En Proceso'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='En Proceso'?'#DBEAFE':'white',border:'1px solid #3B82F6',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='En Proceso'?700:400}}>🔄 En Proceso</button>}
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'Completado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Completado'?'#D1FAE5':'white',border:'1px solid #059669',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Completado'?700:400}}>✅ Completado</button>}
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'Reprogramado'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Reprogramado'?'#FEE2E2':'white',border:'1px solid #DC2626',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Reprogramado'?700:400}}>🔁 Reprogramar</button>}
+                {!isMonitoreo&&<button onClick={()=>setModalSeguimiento({...act,estado:'Cancelada'})} style={{padding:'0.4rem 0.75rem',fontSize:'0.85rem',background:act.estado==='Cancelada'?'#F3F4F6':'white',border:'1px solid #6B7280',borderRadius:'6px',cursor:'pointer',fontWeight:act.estado==='Cancelada'?700:400}}>❌ Cancelar</button>}
               </div>
             </div>);
           })}
@@ -1247,7 +1249,7 @@ const HistorialSeguimiento=({seguimientos,indicador,scoreIcon,onEditar,onElimina
   </div>);
 };
 
-const VistaSeguimiento=({user,entidad,datos})=>{
+const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
   const[indicadorSel,setIndicadorSel]=useState(null);
   const[busquedaSeg,setBusquedaSeg]=useState('');
   const[ejeSel,setEjeSel]=useState('');
@@ -1339,8 +1341,8 @@ const VistaSeguimiento=({user,entidad,datos})=>{
       <div style={{display:"flex",gap:"0.5rem"}}>
         <button className="btn-primary print-btn" onClick={()=>window.print()} style={{width:"auto"}}>🖨️ Imprimir</button>
         {indicadorSel&&<button className="btn-primary" style={{width:'auto'}}
-        onClick={()=>{setSegEdit(null);setForm({mes:meses[new Date().getMonth()],anio:new Date().getFullYear().toString(),avance:'',metaMes:'',metaAnual:indicador?.meta||'',observaciones:''});setModal(true);}}>
-        + Nuevo Registro
+        onClick={()=>{if(isMonitoreo)return;setSegEdit(null);setForm({mes:meses[new Date().getMonth()],anio:new Date().getFullYear().toString(),avance:'',metaMes:'',metaAnual:indicador?.meta||'',observaciones:''});setModal(true);}}>
+        {!isMonitoreo&&'+ Nuevo Registro'}{isMonitoreo&&'👁️ Solo lectura'}
       </button>}
       </div>
     </div>
@@ -1525,7 +1527,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
     await db.collection('fundacoofisam_usuarios').doc(uid).delete();
   };
 
-  const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'Seguimiento'}};
+  const badges={admin:{bg:'#EEF2FF',color:'#4F46E5',label:'🔑 Admin'},seguimiento:{bg:'#F0FDF4',color:'#166534',label:'📝 Seguimiento'},monitoreo:{bg:'#DBEAFE',color:'#1E40AF',label:'👁️ Monitoreo'}};
 
   return(<div>
     <div className="page-header">
@@ -1555,6 +1557,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
                   style={{padding:'0.4rem 0.5rem',borderRadius:'6px',border:'2px solid #E5E7EB',fontSize:'0.875rem'}}>
                   <option value="admin">Admin</option>
                   <option value="seguimiento">Seguimiento</option>
+                  <option value="monitoreo">Monitoreo</option>
                 </select>
               )}</td>
               <td>{!esTu&&(
@@ -1599,6 +1602,7 @@ const VistaSeguimiento=({user,entidad,datos})=>{
               <select value={form.rol} onChange={e=>setForm({...form,rol:e.target.value})}>
                 <option value="admin">Admin - Control total</option>
                 <option value="seguimiento">Seguimiento - Solo registrar avances</option>
+                <option value="monitoreo">Monitoreo</option>
               </select>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>
