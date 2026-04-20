@@ -292,6 +292,11 @@ const VistaDashboard=({entidad,datos})=>{
     segsFiltrados.forEach(s=>{if(s.score&&porScore[s.score]!==undefined)porScore[s.score]++;});
   }
 
+  const getMetaAnio=(ind,anio)=>{
+    if(ind.metasPorAnio&&anio&&ind.metasPorAnio[String(anio)]!==undefined)
+      return parseFloat(ind.metasPorAnio[String(anio)]);
+    return parseFloat(ind.meta||0);
+  };
   const indicadoresConEstado=indicadores.map(ind=>{
     const segsInd=segsFiltrados.filter(s=>s.indicadorId===ind.id);
     const segPeriodo=modoAnio?segsInd[segsInd.length-1]:segsInd[0];
@@ -310,11 +315,11 @@ const VistaDashboard=({entidad,datos})=>{
       if(ind.tipoMeta!=='acumulativa'&&segsInd.length>0){
         const ult=segsInd[segsInd.length-1];
         avanceCalc=parseFloat(ult.avance||0);
-        metaCalc=parseFloat(ult.metaMes||ind.meta||0);
+        metaCalc=parseFloat(ult.metaMes||getMetaAnio(ind,filtroAnio)||0);
       }
     }else{
       avanceCalc=ultSeg?.avance||0;
-      metaCalc=ultSeg?.metaMes||ind.meta||0;
+      metaCalc=ultSeg?.metaMes||getMetaAnio(ind,filtroAnio)||0;
       if(ind.tipoMeta==='acumulativa'){
         avanceCalc=0;metaCalc=0;
         const todosSegs=seguimientos.filter(s=>s.indicadorId===ind.id&&String(s.anio)===String(filtroAnio));
@@ -498,7 +503,7 @@ const VistaDashboard=({entidad,datos})=>{
                 const scc={optimo:{bg:'#D1FAE5',c:'#065F46',icon:'🟢'},precaucion:{bg:'#FEF3C7',c:'#92400E',icon:'🟡'},critico:{bg:'#FEE2E2',c:'#991B1B',icon:'🔴'},sin_meta:{bg:'#F3F4F6',c:'#6B7280',icon:'⚪'}}[seg.score||'sin_meta']||{bg:'#F3F4F6',c:'#6B7280',icon:'—'};
                 return(<tr key={seg.id}>
                   <td style={{fontSize:'0.8rem',color:'#4F46E5',fontWeight:600}}>{seg.mes}</td>
-                  <td style={{fontSize:'0.8rem'}}>{(seg.metaMes||ind.meta||0)+' '+(ind.unidad||'')}</td>
+                  <td style={{fontSize:'0.8rem'}}>{(seg.metaMes||getMetaAnio(ind,seg.anio)||0)+' '+(ind.unidad||'')}</td>
                   <td style={{fontSize:'0.8rem'}}><strong>{parseFloat(seg.avance||0).toFixed(2)}</strong> {ind.unidad||''}</td>
                   <td style={{fontSize:'0.8rem'}}><strong>{(seg.rendimiento||0).toFixed(1)}%</strong></td>
                   <td><span style={{padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:700,background:scc.bg,color:scc.c}}>{scc.icon} {seg.score==='optimo'?'Óptimo':seg.score==='precaucion'?'Precaución':seg.score==='critico'?'Crítico':'Sin meta'}</span></td>
@@ -510,7 +515,7 @@ const VistaDashboard=({entidad,datos})=>{
             <td><div className="badge" style={{background:ind.eje?.color||'#6B7280',color:'white',padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem'}}>{ind.eje?.nombre||'-'}</div></td>
             <td style={{fontSize:'0.8rem',color:'#6B7280',maxWidth:'120px'}}>{ind.objetivo?.nombre}</td>
             <td><strong>{ind.nombre}</strong>{!ind.enPeriodo&&s&&<span style={{fontSize:'0.7rem',color:'#9CA3AF',marginLeft:'0.3rem'}}>(último: {s.mes} {s.anio})</span>}</td>
-            <td>{s?(ind.metaAcum||ind.meta||s.metaAnual)+' '+(ind.unidad||''):'-'}</td>
+            <td>{s?(ind.metaAcum||getMetaAnio(ind,filtroAnio)||s.metaAnual)+' '+(ind.unidad||''):'-'}</td>
             <td>{s?<div><div><strong>{ind.avanceAcum.toFixed(2)}</strong> {ind.unidad||''}</div>{ind.tipoMeta==='acumulativa'&&<div style={{fontSize:'0.7rem',color:'#6B7280'}}>📈 Acumulado</div>}</div>:'-'}</td>
             <td>{s?<strong>{((ind.avanceAcum||0)/(ind.metaAcum||1)*100).toFixed(1)}%</strong>:'-'}</td>
             <td>{s?<span style={{padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.8rem',fontWeight:700,background:sc.bg,color:sc.c}}>{sc.icon} {s.score==='optimo'?'Óptimo':s.score==='precaucion'?'Precaución':s.score==='critico'?'Crítico':'Sin meta'}</span>:'-'}</td>
@@ -1232,7 +1237,7 @@ const HistorialSeguimiento=({seguimientos,indicador,scoreIcon,onEditar,onElimina
           <tbody>{segsFilt.map(seg=>(
             <tr key={seg.id}>
               <td><strong>{seg.mes} {seg.anio}</strong></td>
-              <td>{indicador.meta||seg.metaAnual} {indicador.unidad}</td>
+              <td>{(indicador.metasPorAnio&&seg.anio&&indicador.metasPorAnio[String(seg.anio)]!==undefined?indicador.metasPorAnio[String(seg.anio)]:indicador.meta)||seg.metaAnual} {indicador.unidad}</td>
               <td>{seg.metaMes} {indicador.unidad}</td>
               <td>{seg.avance} {indicador.unidad}</td>
               <td><strong>{seg.rendimiento?.toFixed(2)}%</strong></td>
@@ -1298,7 +1303,10 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
     try{
       const metaMes=parseFloat(form.metaMes||0);
       const avance=parseFloat(form.avance||0);
-      const metaAnual=parseFloat(form.metaAnual||indicador?.meta||0);
+      const metaAnioSel=indicador?.metasPorAnio&&form.anio&&indicador.metasPorAnio[String(form.anio)]!==undefined
+        ?indicador.metasPorAnio[String(form.anio)]
+        :indicador?.meta||0;
+      const metaAnual=parseFloat(form.metaAnual||metaAnioSel||0);
       // Rendimiento: ascendente = avance/meta*100, descendente = meta/avance*100 (menor es mejor)
       const rendimiento=metaMes>0
         ?(indicador?.tipo==='descendente'
@@ -1431,7 +1439,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
             <div className="form-row">
               <div className="form-group">
                 <label>Meta Anual ({indicador.unidad})</label>
-                <input type="number" value={form.metaAnual||indicador.meta||''} onChange={e=>setForm({...form,metaAnual:e.target.value})}/>
+                <input type="number" value={form.metaAnual||(indicador.metasPorAnio&&form.anio&&indicador.metasPorAnio[String(form.anio)]!==undefined?indicador.metasPorAnio[String(form.anio)]:indicador.meta)||''} onChange={e=>setForm({...form,metaAnual:e.target.value})}/>
               </div>
               <div className="form-group">
                 <label>Meta del Mes ({indicador.unidad}) *</label>
@@ -1640,7 +1648,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo})=>{
           const ultimo=segs.length>0?segs[segs.length-1]:null;
           return<tr key={ind.id}>
             <td>{ind.nombre}</td><td>{obj?.nombre}</td>
-            <td>{ind.meta} {ind.unidad}</td>
+            <td>{getMetaAnio(ind,filtroAnio||new Date().getFullYear())} {ind.unidad}</td>
             <td>{ultimo?ultimo.avance+' '+ind.unidad:'-'}</td>
             <td>{ultimo?<div className={'semaforo '+(ultimo.score||'')} style={{display:'inline-block'}}>{ultimo.score==='critico'&&'Critico'}{ultimo.score==='precaucion'&&'Precaucion'}{ultimo.score==='optimo'&&'Optimo'}</div>:'-'}</td>
           </tr>;
