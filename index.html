@@ -6,7 +6,7 @@
     <meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nórdico — Planeación Estratégica</title>
+<title>Nórdico — FUNDACOOFISAM</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -194,12 +194,12 @@ const MainApp=({user,userRol,userCargo})=>{
       {vista==='entidades'&&<VistaEntidades user={user} entidades={entidades} entidadActiva={entidadActiva} isAdmin={isAdmin}/>}
       {vista==='direccionamiento'&&<VistaDireccionamiento entidad={entidadActiva} isAdmin={isAdmin}/>}
       {vista==='config'&&<VistaConfig user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin}/>}
-      {vista==='analisis'&&<VistaAnalisis entidad={entidadActiva} isAdmin={isAdmin} isMonitoreo={isMonitoreo} userCargo={userCargo}/>}
+      {vista==='analisis'&&<VistaAnalisis entidad={entidadActiva} isAdmin={isAdmin} isMonitoreo={isMonitoreo} userCargo={userCargo} user={user}/>}
       {vista==='seguimiento'&&<VistaSeguimiento user={user} entidad={entidadActiva} datos={datos} isMonitoreo={isMonitoreo} userCargo={userCargo}/>}
       {vista==='dashboard'&&<VistaDashboard entidad={entidadActiva} datos={datos}/>}
       {vista==='poa'&&<VistaPlanOperativo user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin} isMonitoreo={isMonitoreo} userCargo={userCargo}/>}
       {isAdmin&&vista==='usuarios'&&<VistaUsuarios user={user} userRol={userRol} entidad={entidadActiva}/>}
-      {isAdmin&&vista==='cargos'&&<VistaCargos/>}
+      {isAdmin&&vista==='cargos'&&<VistaCargos entidad={entidadActiva}/>}
     </main>
   </div>
   <AvisoLegal/>
@@ -551,16 +551,16 @@ const VistaDashboard=({entidad,datos})=>{
     {modalInforme&&<ModalImpresionDashboard entidad={entidad} datos={datos} periodo={periodoLabel} onClose={()=>setModalInforme(false)}/>}
   </div>);
 };
-const CargosSelect=({value,onChange})=>{
+const CargosSelect=({value,onChange,entidad})=>{
   const[cargos,setCargos]=useState([]);
   useEffect(()=>{
-    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
+    if(!entidad?.id)return;const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));
       setCargos(d);
     });
     return()=>unsub();
-  },[]);
+  },[entidad?.id]);
   return(<select value={value} onChange={e=>onChange(e.target.value)}
     style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}}>
     <option value="">Sin cargo</option>
@@ -568,7 +568,7 @@ const CargosSelect=({value,onChange})=>{
   </select>);
 };
 
-const VistaCargos=()=>{
+const VistaCargos=({entidad})=>{
   const[cargos,setCargos]=useState([]);
   const[modal,setModal]=useState(false);
   const[form,setForm]=useState({nombre:'',descripcion:'',area:''});
@@ -576,17 +576,17 @@ const VistaCargos=()=>{
   const[loading,setLoading]=useState(false);
   const[msg,setMsg]=useState('');
   useEffect(()=>{
-    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
+    if(!entidad?.id)return;const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));setCargos(d);
     });
     return()=>unsub();
-  },[]);
+  },[entidad?.id]);
   const areasExistentes=[...new Set(cargos.map(c=>c.area).filter(Boolean))].sort();
   const guardar=async(e)=>{
     e.preventDefault();setLoading(true);
     try{
-      const ref=db.collection('fundacoofisam_cargos');
+      if(!entidad?.id)return;const ref=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos');
       if(itemEdit){await ref.doc(itemEdit.id).update({nombre:form.nombre,descripcion:form.descripcion||'',area:form.area||''});}
       else{await ref.add({nombre:form.nombre,descripcion:form.descripcion||'',area:form.area||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
       setModal(false);setForm({nombre:'',descripcion:'',area:''});setItemEdit(null);setMsg('Guardado.');
@@ -594,7 +594,7 @@ const VistaCargos=()=>{
     }catch(err){setMsg('Error: '+err.message);}
     finally{setLoading(false);}
   };
-  const eliminar=async(id)=>{if(!window.confirm('¿Eliminar cargo?'))return;await db.collection('fundacoofisam_cargos').doc(id).delete();};
+  const eliminar=async(id)=>{if(!window.confirm('¿Eliminar cargo?'))return;await db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').doc(id).delete();};
   const editar=(c)=>{setItemEdit(c);setForm({nombre:c.nombre,descripcion:c.descripcion||'',area:c.area||''});setModal(true);};
   return(<div>
     <div className="page-header"><h1>🏷️ Cargos</h1>
@@ -957,7 +957,7 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
         <div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>
         {form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}
         <div className="form-group"><label>Notas adicionales (opcional)</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={2} placeholder="Cualquier detalle extra que no quepa en la estrategia estructurada de arriba"/></div>
-        <div className="form-group"><label>Cargo Responsable</label><CargosSelect value={form.cargoResponsable||''} onChange={v=>setForm({...form,cargoResponsable:v})}/></div>
+        <div className="form-group"><label>Cargo Responsable</label><CargosSelect value={form.cargoResponsable||''} onChange={v=>setForm({...form,cargoResponsable:v})} entidad={entidad}/></div>
         <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
       </form></div>
     </div></div>)}
@@ -1208,20 +1208,21 @@ const ModalImpresionAnalisis=({entidad,vrio,contraste,pestel,bmc,eric,areaLabel,
 
 const TRANSVERSAL='Transversal / Corporativo';
 
-const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo})=>{
+const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo,user})=>{
   const[sub,setSub]=useState('vrio');
   const[cargos,setCargos]=useState([]);
   const[areaActiva,setAreaActiva]=useState('');
   const[modalPrint,setModalPrint]=useState(false);
   const[exportando,setExportando]=useState(false);
   const canEdit=isAdmin||!isMonitoreo;
+  const canEditEntry=(entry)=>isAdmin||(entry?.autorUid&&entry.autorUid===user?.uid);
   useEffect(()=>{
-    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
+    if(!entidad?.id)return;const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       setCargos(d);
     });
     return()=>unsub();
-  },[]);
+  },[entidad?.id]);
   const areasExistentes=[...new Set([...cargos.map(c=>c.area).filter(Boolean),TRANSVERSAL])].sort();
   const miCargo=cargos.find(c=>c.nombre===userCargo);
   const miArea=miCargo?miCargo.area:'';
@@ -1263,7 +1264,7 @@ const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo})=>{
   if(!isAdmin&&userCargo&&!miArea)return <div className="empty-state"><h3>🗂️ Tu cargo no tiene área asignada</h3><p>Tu cargo (<strong>{userCargo}</strong>) existe, pero todavía no está asociado a un área. Pide al administrador que complete el campo "Área" para ese cargo desde el menú "Cargos".</p></div>;
 
   const ref=db.collection('fundacoofisam_datos').doc(entidad.id);
-  const add=(coll,data)=>ref.collection(coll).add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  const add=(coll,data)=>ref.collection(coll).add({...data,autorUid:user?.uid||'',autorNombre:user?.displayName||user?.email||'',autorCargo:userCargo||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
   const remove=(coll,id)=>{if(window.confirm('¿Eliminar?'))ref.collection(coll).doc(id).delete();};
   const update=(coll,id,data)=>ref.collection(coll).doc(id).update(data);
 
@@ -1328,11 +1329,11 @@ const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo})=>{
       </div>
     </div>}
 
-    {sub==='vrio'&&<AnalisisVrio entries={vrio} area={areaTag} cargo={cargoTag} isAdmin={isAdmin} canEdit={canEdit} onAdd={d=>add('vrio',d)} onUpdate={(id,d)=>update('vrio',id,d)} onRemove={id=>remove('vrio',id)} onEric={d=>add('eric',d)}/>}
-    {sub==='contraste'&&<AnalisisContraste entries={contraste} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('contraste',d)} onUpdate={(id,d)=>update('contraste',id,d)} onRemove={id=>remove('contraste',id)}/>}
-    {sub==='pestel'&&<AnalisisPestel entries={pestel} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('pestel',d)} onUpdate={(id,d)=>update('pestel',id,d)} onRemove={id=>remove('pestel',id)}/>}
-    {sub==='bmc'&&<AnalisisBmc entries={bmc} vrio={vrio} contraste={contraste} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('bmc',d)} onUpdate={(id,d)=>update('bmc',id,d)} onRemove={id=>remove('bmc',id)}/>}
-    {sub==='eric'&&<AnalisisEric entries={eric} bmc={bmc} vrio={vrio} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('eric',d)} onUpdate={(id,d)=>update('eric',id,d)} onRemove={id=>remove('eric',id)}/>}
+    {sub==='vrio'&&<AnalisisVrio entries={vrio} area={areaTag} cargo={cargoTag} isAdmin={isAdmin} canEdit={canEdit} userId={user?.uid} isAdmin={isAdmin} onAdd={d=>add('vrio',d)} onUpdate={(id,d)=>update('vrio',id,d)} onRemove={id=>remove('vrio',id)} onEric={d=>add('eric',d)}/>}
+    {sub==='contraste'&&<AnalisisContraste entries={contraste} area={areaTag} cargo={cargoTag} canEdit={canEdit} userId={user?.uid} isAdmin={isAdmin} onAdd={d=>add('contraste',d)} onUpdate={(id,d)=>update('contraste',id,d)} onRemove={id=>remove('contraste',id)}/>}
+    {sub==='pestel'&&<AnalisisPestel entries={pestel} area={areaTag} cargo={cargoTag} canEdit={canEdit} userId={user?.uid} isAdmin={isAdmin} onAdd={d=>add('pestel',d)} onUpdate={(id,d)=>update('pestel',id,d)} onRemove={id=>remove('pestel',id)}/>}
+    {sub==='bmc'&&<AnalisisBmc entries={bmc} vrio={vrio} contraste={contraste} area={areaTag} cargo={cargoTag} canEdit={canEdit} userId={user?.uid} isAdmin={isAdmin} onAdd={d=>add('bmc',d)} onUpdate={(id,d)=>update('bmc',id,d)} onRemove={id=>remove('bmc',id)}/>}
+    {sub==='eric'&&<AnalisisEric entries={eric} bmc={bmc} vrio={vrio} area={areaTag} cargo={cargoTag} canEdit={canEdit} userId={user?.uid} isAdmin={isAdmin} onAdd={d=>add('eric',d)} onUpdate={(id,d)=>update('eric',id,d)} onRemove={id=>remove('eric',id)}/>}
     {sub==='sintesis'&&isAdmin&&<AnalisisSintesis eric={eric} bmc={bmc} onUpdate={(id,d)=>update('eric',id,d)}/>}
     {modalPrint&&<ModalImpresionAnalisis entidad={entidad} vrio={vrio} contraste={contraste} pestel={pestel} bmc={bmc} eric={eric} areaLabel={areaLabelActual} onClose={()=>setModalPrint(false)}/>}
   </div>);
@@ -1344,7 +1345,7 @@ const TransversalCheck=({checked,onChange})=>(
   </label>
 );
 
-const AnalisisVrio=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove,onEric})=>{
+const AnalisisVrio=({entries,area,cargo,isAdmin,canEdit,userId,onAdd,onUpdate,onRemove,onEric})=>{
   const[editId,setEditId]=useState(null);
   const[editArea,setEditArea]=useState('');
   const[recurso,setRecurso]=useState('');const[descripcion,setDescripcion]=useState('');
@@ -1383,7 +1384,7 @@ const AnalisisVrio=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove,
         const quad=tier.accion?ERIC_LABEL[tier.accion]:null;
         return(<div key={e.id} className="card">
           <h4>{e.recurso}</h4>
-          <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip><Chip color={tier.color} bg={tier.bg}>{tier.label}</Chip></div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip><Chip color={tier.color} bg={tier.bg}>{tier.label}</Chip>{e.autorNombre&&<span style={{fontSize:'0.72rem',color:'#6B7280'}}>✍️ {e.autorNombre}{e.autorCargo?' · '+e.autorCargo:''}</span>}</div>
           {e.descripcion&&<p style={{color:'#6B7280',fontSize:'0.875rem'}}>{e.descripcion}</p>}
           {canEdit&&<div className="btn-group">
             {quad&&<button className="btn-edit" onClick={()=>marcarEric(e,tier)}>{quad.emoji} Marcar para {quad.label.toLowerCase()}</button>}
@@ -1397,7 +1398,7 @@ const AnalisisVrio=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove,
   </div>);
 };
 
-const AnalisisContraste=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>{
+const AnalisisContraste=({entries,area,cargo,isAdmin,canEdit,userId,onAdd,onUpdate,onRemove})=>{
   const[editId,setEditId]=useState(null);
   const[editArea,setEditArea]=useState('');
   const[linea,setLinea]=useState('');const[relevante,setRelevante]=useState('si');const[capacidad,setCapacidad]=useState('si');const[cumplimiento,setCumplimiento]=useState('');
@@ -1429,16 +1430,16 @@ const AnalisisContraste=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRe
       {entries.map(e=>{const dec=contrasteDecision(e.relevante,e.capacidad,e.cumplimiento);return(
         <div key={e.id} className="card">
           <h4>{e.linea}</h4>
-          <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip><Chip color={dec.color} bg={dec.bg}>{dec.label}</Chip></div>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip><Chip color={dec.color} bg={dec.bg}>{dec.label}</Chip>{e.autorNombre&&<span style={{fontSize:'0.72rem',color:'#6B7280'}}>✍️ {e.autorNombre}{e.autorCargo?' · '+e.autorCargo:''}</span>}</div>
           <p style={{color:'#6B7280',fontSize:'0.875rem'}}>Relevante: {e.relevante} · Capacidad: {e.capacidad} · Cumplimiento: {e.cumplimiento||0}%</p>
-          {canEdit&&<div className="btn-group"><button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button></div>}
+          {(isAdmin||(e?.autorUid&&e.autorUid===userId))&&<div className="btn-group"><button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button></div>}
         </div>);})}
       {entries.length===0&&<p style={{color:'#6B7280'}}>Todavía no hay líneas contrastadas.</p>}
     </div>
   </div>);
 };
 
-const AnalisisPestel=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>{
+const AnalisisPestel=({entries,area,cargo,isAdmin,canEdit,userId,onAdd,onUpdate,onRemove})=>{
   const[editId,setEditId]=useState(null);
   const[editArea,setEditArea]=useState('');
   const[dimension,setDimension]=useState('politico');const[factor,setFactor]=useState('');const[impacto,setImpacto]=useState('');const[probabilidad,setProbabilidad]=useState('media');const[tipo,setTipo]=useState('oportunidad');
@@ -1483,7 +1484,7 @@ const AnalisisPestel=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemov
               <Chip color="#6B7280" bg="#F3F4F6">Probabilidad {e.probabilidad}</Chip>
             </div>
             {e.impacto&&<p style={{color:'#6B7280',fontSize:'0.875rem'}}>{e.impacto}</p>}
-            {canEdit&&<div className="btn-group"><button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button></div>}
+            {(isAdmin||(e?.autorUid&&e.autorUid===userId))&&<div className="btn-group"><button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button></div>}
           </div>))}
         </div>
       </div>);
@@ -1492,7 +1493,7 @@ const AnalisisPestel=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemov
   </div>);
 };
 
-const AnalisisBmc=({entries,vrio,contraste,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>(
+const AnalisisBmc=({entries,vrio,contraste,area,cargo,isAdmin,canEdit,userId,onAdd,onUpdate,onRemove})=>(
   <div>
     <p style={{color:'#6B7280',marginBottom:'1rem'}}>Cada bloque acepta notas enlazadas opcionalmente a un recurso VRIO o a una línea de la matriz de contraste.</p>
     <div style={{display:'grid',gap:'0.85rem',gridTemplateColumns:'repeat(5, minmax(200px,1fr))',gridTemplateAreas:`"socios actividades valor relaciones segmentos" "socios recursos valor canales segmentos" "costos costos costos ingresos ingresos"`}}>
@@ -1519,8 +1520,8 @@ const BmcBlock=({block,entries,area,cargo,isAdmin,canEdit,vrio,contraste,onAdd,o
     <div style={{display:'flex',flexDirection:'column',gap:6,maxHeight:220,overflowY:'auto',margin:'0.5rem 0'}}>
       {entries.length===0&&<span style={{fontSize:'0.75rem',color:'#9CA3AF'}}>Sin notas aún.</span>}
       {entries.map(e=>(<div key={e.id} style={{background:'#FEF3C7',borderRadius:8,padding:'0.4rem 0.6rem',fontSize:'0.75rem',display:'flex',justifyContent:'space-between',gap:6}}>
-        <div><div style={{whiteSpace:'pre-wrap'}}>{e.texto}</div><div style={{opacity:0.7}}>🗂️ {e.area}{e.origenLabel&&<span> · 🔗 {e.origenLabel}</span>}</div></div>
-        {canEdit&&<div style={{display:'flex',flexDirection:'column',gap:2}}><button onClick={()=>editar(e)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.6}}>✏️</button><button onClick={()=>onRemove(e.id)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.5}}>🗑️</button></div>}
+        <div><div style={{whiteSpace:'pre-wrap'}}>{e.texto}</div><div style={{opacity:0.7}}>🗂️ {e.area}{e.origenLabel&&<span> · 🔗 {e.origenLabel}</span>}{e.autorNombre&&<span> · ✍️ {e.autorNombre}</span>}</div></div>
+        {(isAdmin||(e?.autorUid&&e.autorUid===userId))&&<div style={{display:'flex',flexDirection:'column',gap:2}}><button onClick={()=>editar(e)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.6}}>✏️</button><button onClick={()=>onRemove(e.id)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.5}}>🗑️</button></div>}
       </div>))}
     </div>
     {canEdit&&<form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:5}}>
@@ -1538,7 +1539,7 @@ const BmcBlock=({block,entries,area,cargo,isAdmin,canEdit,vrio,contraste,onAdd,o
   </div>);
 };
 
-const AnalisisEric=({entries,bmc,vrio,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>(
+const AnalisisEric=({entries,bmc,vrio,area,cargo,isAdmin,canEdit,userId,onAdd,onUpdate,onRemove})=>(
   <div>
     <p style={{color:'#6B7280',marginBottom:'1rem'}}>Puedes registrar ideas aquí, o marcarlas directamente desde un recurso VRIO.</p>
     <div className="grid">
@@ -1566,8 +1567,8 @@ const EricQuad=({quad,entries,area,cargo,isAdmin,canEdit,bmc,vrio,onAdd,onUpdate
     <div style={{display:'flex',flexDirection:'column',gap:6,maxHeight:170,overflowY:'auto',margin:'0.5rem 0'}}>
       {entries.length===0&&<span style={{fontSize:'0.75rem',color:'#9CA3AF'}}>Sin ideas registradas.</span>}
       {entries.map(e=>(<div key={e.id} style={{background:quad.bg,borderRadius:8,padding:'0.5rem 0.7rem',fontSize:'0.8rem',display:'flex',justifyContent:'space-between',gap:8}}>
-        <div><div>{e.texto}</div><div style={{opacity:0.7,fontSize:'0.7rem'}}>🗂️ {e.area}{e.refLabel&&<span> · 🔗 {e.refTipo==='bmc'?BMC_LABEL[e.refBloque]+': ':'VRIO: '}{e.refLabel}</span>}{e.lineaPropuesta&&<span> · 🎯 {e.lineaPropuesta}</span>}</div></div>
-        {canEdit&&<div style={{display:'flex',flexDirection:'column',gap:2}}><button onClick={()=>editar(e)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.6}}>✏️</button><button onClick={()=>onRemove(e.id)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.5}}>🗑️</button></div>}
+        <div><div>{e.texto}</div><div style={{opacity:0.7,fontSize:'0.7rem'}}>🗂️ {e.area}{e.refLabel&&<span> · 🔗 {e.refTipo==='bmc'?BMC_LABEL[e.refBloque]+': ':'VRIO: '}{e.refLabel}</span>}{e.lineaPropuesta&&<span> · 🎯 {e.lineaPropuesta}</span>}{e.autorNombre&&<span> · ✍️ {e.autorNombre}</span>}</div></div>
+        {(isAdmin||(e?.autorUid&&e.autorUid===userId))&&<div style={{display:'flex',flexDirection:'column',gap:2}}><button onClick={()=>editar(e)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.6}}>✏️</button><button onClick={()=>onRemove(e.id)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.5}}>🗑️</button></div>}
       </div>))}
     </div>
     {canEdit&&<form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:6}}>
@@ -2049,7 +2050,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
             </div>
             <div className="form-group">
               <label>Líder del POA</label>
-              <CargosSelect value={formPlan.lider||''} onChange={v=>setFormPlan({...formPlan,lider:v})}/>
+              <CargosSelect value={formPlan.lider||''} onChange={v=>setFormPlan({...formPlan,lider:v})} entidad={entidad}/>
               <small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>El cargo que lidera este plan operativo</small>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
@@ -2094,7 +2095,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
             </div>
             <div className="form-group">
               <label>Líder</label>
-              <CargosSelect value={formActividad.cargoResponsable||''} onChange={v=>setFormActividad({...formActividad,cargoResponsable:v})}/>
+              <CargosSelect value={formActividad.cargoResponsable||''} onChange={v=>setFormActividad({...formActividad,cargoResponsable:v})} entidad={entidad}/>
               <small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Cargo líder responsable de esta actividad</small>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
@@ -2658,7 +2659,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
             </div>
             {(form.rol==='seguimiento'||form.rol==='monitoreo')&&<div className="form-group">
               <label>Cargo</label>
-              <CargosSelect value={form.cargo||''} onChange={v=>setForm({...form,cargo:v})}/>
+              <CargosSelect value={form.cargo||''} onChange={v=>setForm({...form,cargo:v})} entidad={entidad}/>
             </div>}
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading?'Espere...':(usuarioEdit?'Guardar Cambios':'Crear Usuario')}
