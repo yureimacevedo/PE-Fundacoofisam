@@ -13,6 +13,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#1F2937}.loading{display:flex;justify-content:center;align-items:center;height:100vh;color:white;font-size:1.5rem}.auth-container{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}.auth-box{background:white;border-radius:16px;padding:2rem;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}.auth-header{text-align:center;margin-bottom:2rem}.auth-header h1{font-size:1.75rem;color:#4F46E5;margin-bottom:0.5rem}.form-group{margin-bottom:1.5rem}.form-group label{display:block;margin-bottom:0.5rem;font-weight:600;color:#374151}.form-group input,.form-group select,.form-group textarea{width:100%;padding:0.75rem;border:2px solid #E5E7EB;border-radius:8px;font-size:1rem}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#4F46E5}.btn-primary{width:100%;padding:0.875rem;border:none;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;margin-bottom:1rem}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(79,70,229,0.3)}.btn-primary:disabled{opacity:0.5;cursor:not-allowed}.btn-secondary{padding:0.75rem 1.5rem;border:2px solid #E5E7EB;background:white;color:#6B7280;border-radius:8px;font-weight:600;cursor:pointer;margin-right:0.5rem}.btn-secondary:hover{border-color:#4F46E5;color:#4F46E5}.btn-edit{padding:0.5rem 1rem;border:2px solid #4F46E5;background:white;color:#4F46E5;border-radius:6px;font-weight:600;cursor:pointer;font-size:0.875rem;margin-right:0.5rem}.btn-edit:hover{background:#4F46E5;color:white}.error-message{background:#FEE2E2;color:#991B1B;padding:0.75rem;border-radius:8px;margin-bottom:1rem;font-size:0.875rem}.app-container{display:flex;min-height:100vh}.sidebar{width:280px;background:rgba(255,255,255,0.95);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,0.08)}.sidebar-header{padding:2rem 1.5rem;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white}.sidebar-header h2{font-size:1.5rem;font-weight:700}.selector-entidad{padding:1rem 1.5rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB}.selector-entidad select{width:100%;padding:0.5rem;border:2px solid #E5E7EB;border-radius:6px}.user-info{padding:1rem 1.5rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB;font-size:0.875rem}.user-email{color:#4F46E5;font-weight:600;margin-bottom:0.5rem}.btn-logout{padding:0.5rem 1rem;background:white;border:2px solid #E5E7EB;border-radius:6px;cursor:pointer;font-size:0.875rem;width:100%}.nav-items{flex:1;padding:1rem 0}.nav-item{width:100%;padding:1rem 1.5rem;border:none;background:none;display:flex;align-items:center;gap:0.75rem;cursor:pointer;color:#4B5563;font-size:1rem;border-left:3px solid transparent;text-align:left}.nav-item:hover:not(:disabled){background:#F3F4F6;color:#4F46E5}.nav-item.activo{background:rgba(79,70,229,0.1);color:#4F46E5;font-weight:600;border-left-color:#4F46E5}.nav-item:disabled{opacity:0.4;cursor:not-allowed}.main-content{flex:1;padding:2rem;overflow-y:auto;background:#F9FAFB}.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}.page-header h1{font-size:2rem;font-weight:800;color:#111827}.card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1.5rem}.card h3{font-size:1.25rem;font-weight:700;color:#111827;margin-bottom:1rem}.card h4{font-size:1.1rem;font-weight:600;color:#374151;margin-bottom:0.5rem}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}.stat-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);border-left:4px solid #4F46E5}.stat-label{font-size:0.875rem;color:#6B7280;margin-bottom:0.5rem;text-transform:uppercase;font-weight:600}.stat-value{font-size:2.5rem;font-weight:800;color:#111827}.semaforo{display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:8px;font-size:0.875rem;font-weight:600}.semaforo.critico{background:#FEE2E2;color:#991B1B}.semaforo.precaucion{background:#FEF3C7;color:#92400E}.semaforo.optimo{background:#D1FAE5;color:#065F46}.tabla{width:100%;border-collapse:collapse}.tabla th{background:#F9FAFB;padding:1rem;text-align:left;font-weight:700;color:#374151;font-size:0.875rem}.tabla td{padding:1rem;border-top:1px solid #E5E7EB}.tabla tr:hover{background:#F9FAFB}.badge{display:inline-block;padding:0.25rem 0.75rem;border-radius:12px;font-size:0.75rem;font-weight:700}.empty-state{text-align:center;padding:4rem 2rem;color:#6B7280}.empty-state h3{font-size:1.5rem;color:#111827;margin:1rem 0}.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem}.modal{background:white;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}.modal-header{padding:1.5rem;border-bottom:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#4F46E5 0%,#7C3AED 100%);color:white;border-radius:16px 16px 0 0}.modal-header h2{font-size:1.5rem;font-weight:700}.btn-cerrar{background:rgba(255,255,255,0.2);border:none;color:white;width:36px;height:36px;border-radius:6px;cursor:pointer;font-size:1.5rem;line-height:1}.modal-body{padding:1.5rem}.form-row{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}.btn-group{display:flex;gap:0.5rem;margin-top:1rem;flex-wrap:wrap}@media print{
   .sidebar,.page-header button,.btn-primary,.btn-secondary,.btn-edit,.modal-overlay,.form-group{display:none!important}
@@ -52,6 +54,20 @@ const imprimirInforme=()=>{window.print();};
 
 // Migración desactivada — ya completada
 const migrarDatosACompartido=async(uid,prefijo)=>{return;};
+const eliminarEntidadCompleta=async(entidadId)=>{
+  const ref=db.collection('fundacoofisam_datos').doc(entidadId);
+  const subcolecciones=['ejes','objetivos','indicadores','seguimientos','cargos','poa_actividades','planes_operativos','vrio','contraste','pestel','bmc','eric'];
+  for(const col of subcolecciones){
+    const snap=await ref.collection(col).get();
+    let batch=db.batch();let count=0;
+    for(const doc of snap.docs){
+      batch.delete(doc.ref);count++;
+      if(count%400===0){await batch.commit();batch=db.batch();}
+    }
+    if(count%400!==0)await batch.commit();
+  }
+  await ref.delete();
+};
 const AvisoLegal=({modo})=>{
   const[ver,setVer]=React.useState(false);
   const texto=(<div style={{fontSize:'0.78rem',color:'#6B7280',lineHeight:1.6}}>
@@ -136,6 +152,7 @@ const MainApp=({user,userRol,userCargo})=>{
     const unsubs=[
       ref.collection('ejes').onSnapshot(s=>{const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));setDatos(p=>({...p,ejes:d}))}),
       ref.collection('objetivos').onSnapshot(s=>{const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));setDatos(p=>({...p,objetivos:d}))}),
+      ref.collection('estrategias').onSnapshot(s=>{const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));setDatos(p=>({...p,estrategias:d}))}),
       ref.collection('indicadores').onSnapshot(s=>{const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));setDatos(p=>({...p,indicadores:d}))}),
       ref.collection('seguimientos').onSnapshot(s=>{const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));setDatos(p=>({...p,seguimientos:d}))}),
     ];
@@ -149,7 +166,7 @@ const MainApp=({user,userRol,userCargo})=>{
       </div>
       <div className="selector-entidad">
         <select value={entidadActiva?.id||''} onChange={(e)=>setEntidadActiva(entidades.find(en=>en.id===e.target.value)||null)}>
-          <option value="">Seleccionar...</option>
+          <option value="">Seleccionar periodo...</option>
           {entidades.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}
         </select>
       </div>
@@ -161,31 +178,35 @@ const MainApp=({user,userRol,userCargo})=>{
         <button className="btn-logout" onClick={()=>{if(window.confirm('¿Cerrar sesión?'))auth.signOut();}}>🚪 Cerrar</button>
       </div>
       <div className="nav-items">
-        <button className={`nav-item ${vista==='entidades'?'activo':''}`} onClick={()=>setVista('entidades')}>🏢 Entidades</button>
+        <button className={`nav-item ${vista==='entidades'?'activo':''}`} onClick={()=>setVista('entidades')}>🏢 Periodos PE</button>
+        <button className={`nav-item ${vista==='analisis'?'activo':''}`} onClick={()=>setVista('analisis')} disabled={!entidadActiva}>🔍 Análisis y Diagnóstico</button>
+        <button className={`nav-item ${vista==='direccionamiento'?'activo':''}`} onClick={()=>setVista('direccionamiento')} disabled={!entidadActiva}>🧭 Direccionamiento</button>
         {isAdmin&&<button className={`nav-item ${vista==='config'?'activo':''}`} onClick={()=>setVista('config')} disabled={!entidadActiva}>📋 Planeación</button>}
         {!isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📝 Seguimiento</button>}
         {isMonitoreo&&<button className={`nav-item ${vista==='seguimiento'?'activo':''}`} onClick={()=>setVista('seguimiento')} disabled={!entidadActiva}>📈 Seguimiento</button>}
         <button className={`nav-item ${vista==='dashboard'?'activo':''}`} onClick={()=>setVista('dashboard')} disabled={!entidadActiva}>📊 Dashboard</button>
         <button className={`nav-item ${vista==='poa'?'activo':''}`} onClick={()=>setVista('poa')} disabled={!entidadActiva}>🗓️ Plan Operativo</button>
         {isAdmin&&<button className={`nav-item ${vista==='usuarios'?'activo':''}`} onClick={()=>setVista('usuarios')} disabled={!entidadActiva}>👥 Usuarios</button>}
-        {isAdmin&&<button className={`nav-item ${vista==='cargos'?'activo':''}`} onClick={()=>setVista('cargos')} disabled={!entidadActiva}>🏷️ Cargos</button>}
+        {isAdmin&&<button className={`nav-item ${vista==='cargos'?'activo':''}`} onClick={()=>setVista('cargos')}>🏷️ Cargos</button>}
       </div>
     </nav>
     <main className="main-content">
       {vista==='entidades'&&<VistaEntidades user={user} entidades={entidades} entidadActiva={entidadActiva} isAdmin={isAdmin}/>}
+      {vista==='direccionamiento'&&<VistaDireccionamiento entidad={entidadActiva} isAdmin={isAdmin}/>}
       {vista==='config'&&<VistaConfig user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin}/>}
+      {vista==='analisis'&&<VistaAnalisis entidad={entidadActiva} isAdmin={isAdmin} isMonitoreo={isMonitoreo} userCargo={userCargo}/>}
       {vista==='seguimiento'&&<VistaSeguimiento user={user} entidad={entidadActiva} datos={datos} isMonitoreo={isMonitoreo} userCargo={userCargo}/>}
       {vista==='dashboard'&&<VistaDashboard entidad={entidadActiva} datos={datos}/>}
       {vista==='poa'&&<VistaPlanOperativo user={user} entidad={entidadActiva} datos={datos} isAdmin={isAdmin} isMonitoreo={isMonitoreo} userCargo={userCargo}/>}
       {isAdmin&&vista==='usuarios'&&<VistaUsuarios user={user} userRol={userRol} entidad={entidadActiva}/>}
-      {isAdmin&&vista==='cargos'&&<VistaCargos entidad={entidadActiva}/>}
+      {isAdmin&&vista==='cargos'&&<VistaCargos/>}
     </main>
   </div>
   <AvisoLegal/>
   </>);
 };
 const VistaEntidades=({user,entidades,entidadActiva,isAdmin})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
-  const[busquedaPOA,setBusquedaPOA]=useState('');const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,nit:form.nit,periodo:form.periodo,vision:form.vision||'',scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y todos sus datos?'))return;try{await db.collection('fundacoofisam_datos').doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,nit:ent.nit,periodo:ent.periodo,vision:ent.vision||'',criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};
+  const[busquedaPOA,setBusquedaPOA]=useState('');const guardar=async(e)=>{e.preventDefault();setLoading(true);try{const scoreConfig={critico:{min:0,max:parseFloat(form.criticoMax||60),color:'#DC2626',label:'Crítico'},precaucion:{min:parseFloat(form.precaucionMin||61),max:parseFloat(form.precaucionMax||85),color:'#F59E0B',label:'Precaución'},optimo:{min:parseFloat(form.optimoMin||86),max:100,color:'#059669',label:'Óptimo'}};const data={nombre:form.nombre,periodo:form.periodo,scoreConfig};if(itemEdit){await db.collection('fundacoofisam_datos').doc(itemEdit.id).update(data);}else{await db.collection('fundacoofisam_datos').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const eliminar=async(id)=>{if(!window.confirm('¿Eliminar entidad y TODOS sus datos (VRIO, PESTEL, Canvas, ERIC, Cargos, Ejes, Objetivos, Indicadores, etc.)? Esta acción no se puede deshacer.'))return;try{await eliminarEntidadCompleta(id);}catch(error){alert('Error: '+error.message);}};const editarEntidad=(ent)=>{setItemEdit(ent);setForm({nombre:ent.nombre,periodo:ent.periodo,criticoMax:ent.scoreConfig?.critico?.max||60,precaucionMin:ent.scoreConfig?.precaucion?.min||61,precaucionMax:ent.scoreConfig?.precaucion?.max||85,optimoMin:ent.scoreConfig?.optimo?.min||86});setModal('entidad');};
   const[recalcLoading,setRecalcLoading]=useState(null);
   const recalcularScores=async(ent)=>{
     if(!ent.scoreConfig){alert('Esta entidad no tiene configuración de score.');return;}
@@ -233,10 +254,10 @@ const VistaEntidades=({user,entidades,entidadActiva,isAdmin})=>{const[modal,setM
       alert('✅ '+total+' registros recalculados correctamente con el score de '+ent.nombre);
     }catch(err){alert('Error: '+err.message);}
     finally{setRecalcLoading(null);}
-  };return(<div><div className="page-header"><h1>Mis Entidades</h1>{isAdmin&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',nit:'',periodo:'',vision:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nueva Entidad</button>}</div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay entidades</h3><p>Crea tu primera entidad</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><p style={{color:'#6B7280',marginBottom:'0.5rem'}}>NIT: {ent.nit}</p><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.vision&&<p style={{color:'#4F46E5',fontSize:'0.875rem',marginBottom:'0.5rem'}}>🎯 {ent.vision}</p>}{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}{isAdmin&&<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div>}
+  };return(<div><div className="page-header"><h1>Mis Periodos PE</h1>{isAdmin&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',periodo:'',criticoMax:'60',precaucionMin:'61',precaucionMax:'85',optimoMin:'86'});setModal('entidad');}}>+ Nuevo Periodo PE</button>}</div><div className="grid">{entidades.length===0?(<div className="empty-state"><h3>🏢 No hay periodos</h3><p>Crea tu primer periodo PE</p></div>):(entidades.map(ent=>(<div key={ent.id} className="card" style={{borderLeft:entidadActiva?.id===ent.id?'4px solid #4F46E5':'4px solid transparent'}}><h3>{ent.nombre}</h3><div className="badge" style={{background:'#4F46E5',color:'white',marginBottom:'0.5rem'}}>{ent.periodo}</div>{ent.scoreConfig&&(<p style={{color:'#059669',fontSize:'0.75rem',marginTop:'0.5rem'}}>Score: 0-{ent.scoreConfig.critico.max}% 🔴 | {ent.scoreConfig.precaucion.min}-{ent.scoreConfig.precaucion.max}% 🟡 | {ent.scoreConfig.optimo.min}%+ 🟢</p>)}{isAdmin&&<div className="btn-group"><button className="btn-edit" onClick={()=>editarEntidad(ent)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar(ent.id)}>🗑️ Eliminar</button></div>}
               {isAdmin&&<button onClick={()=>recalcularScores(ent)} disabled={recalcLoading===ent.id} style={{marginTop:'0.5rem',width:'100%',padding:'0.5rem',border:'2px solid #4F46E5',borderRadius:'6px',background:'white',color:'#4F46E5',fontWeight:600,cursor:'pointer',fontSize:'0.8rem'}}>
                 {recalcLoading===ent.id?'⏳ Recalculando...':'🔄 Recalcular Scores'}
-              </button>}</div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Entidad</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>NIT *</label><input type="text" value={form.nit} onChange={e=>setForm({...form,nit:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><div className="form-group"><label>Visión</label><textarea value={form.vision} onChange={e=>setForm({...form,vision:e.target.value})} rows={3}/></div><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de esta entidad</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
+              </button>}</div>)))}</div>{modal==='entidad'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Periodo PE</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardar}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>Periodo *</label><input type="text" value={form.periodo} onChange={e=>setForm({...form,periodo:e.target.value})} required placeholder="2025-2027"/></div><p style={{fontSize:'0.8rem',color:'#6B7280',marginTop:'-0.5rem',marginBottom:'1rem'}}>La misión, visión y valores se definen en "Direccionamiento" una vez creado el periodo.</p><div className="card" style={{background:'#FEF3C7',marginBottom:'1rem'}}><h4 style={{color:'#92400E',marginBottom:'0.5rem'}}>⚙️ Configuración de Score (Global)</h4><div className="form-row"><div className="form-group"><label>🔴 Crítico: 0% hasta</label><input type="number" value={form.criticoMax} onChange={e=>setForm({...form,criticoMax:e.target.value})} required/></div><div className="form-group"><label>🟡 Precaución: desde</label><input type="number" value={form.precaucionMin} onChange={e=>setForm({...form,precaucionMin:e.target.value})} required/></div></div><div className="form-row"><div className="form-group"><label>🟡 Precaución: hasta</label><input type="number" value={form.precaucionMax} onChange={e=>setForm({...form,precaucionMax:e.target.value})} required/></div><div className="form-group"><label>🟢 Óptimo: desde</label><input type="number" value={form.optimoMin} onChange={e=>setForm({...form,optimoMin:e.target.value})} required/></div></div><small style={{color:'#92400E'}}>Este score se aplicará a TODOS los indicadores de este periodo</small></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳ Guardando...':'💾 Guardar'}</button></form></div></div></div>)}</div>);};
 const VistaDashboard=({entidad,datos})=>{
   const[anioSel,setAnioSel]=useState('');
   const[mesSel,setMesSel]=useState('');
@@ -258,7 +279,7 @@ const VistaDashboard=({entidad,datos})=>{
     return()=>{u1();u2();};
   },[entidad]);
 
-  if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;
+  if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona un periodo PE</h3></div>;
   const{ejes=[],objetivos=[],indicadores=[],seguimientos=[]}=datos;
 
   const mesesOrden=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre','Semestral 1','Semestral 2','Anual'];
@@ -530,17 +551,16 @@ const VistaDashboard=({entidad,datos})=>{
     {modalInforme&&<ModalImpresionDashboard entidad={entidad} datos={datos} periodo={periodoLabel} onClose={()=>setModalInforme(false)}/>}
   </div>);
 };
-const CargosSelect=({entidad,value,onChange})=>{
+const CargosSelect=({value,onChange})=>{
   const[cargos,setCargos]=useState([]);
   useEffect(()=>{
-    if(!entidad)return;
-    const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
+    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));
       setCargos(d);
     });
     return()=>unsub();
-  },[entidad]);
+  },[]);
   return(<select value={value} onChange={e=>onChange(e.target.value)}
     style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}}>
     <option value="">Sin cargo</option>
@@ -548,46 +568,46 @@ const CargosSelect=({entidad,value,onChange})=>{
   </select>);
 };
 
-const VistaCargos=({entidad})=>{
+const VistaCargos=()=>{
   const[cargos,setCargos]=useState([]);
   const[modal,setModal]=useState(false);
-  const[form,setForm]=useState({nombre:'',descripcion:''});
+  const[form,setForm]=useState({nombre:'',descripcion:'',area:''});
   const[itemEdit,setItemEdit]=useState(null);
   const[loading,setLoading]=useState(false);
   const[msg,setMsg]=useState('');
   useEffect(()=>{
-    if(!entidad)return;
-    const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
+    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));setCargos(d);
     });
     return()=>unsub();
-  },[entidad]);
+  },[]);
+  const areasExistentes=[...new Set(cargos.map(c=>c.area).filter(Boolean))].sort();
   const guardar=async(e)=>{
     e.preventDefault();setLoading(true);
     try{
-      const ref=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos');
-      if(itemEdit){await ref.doc(itemEdit.id).update({nombre:form.nombre,descripcion:form.descripcion||''});}
-      else{await ref.add({nombre:form.nombre,descripcion:form.descripcion||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
-      setModal(false);setForm({nombre:'',descripcion:''});setItemEdit(null);setMsg('Guardado.');
+      const ref=db.collection('fundacoofisam_cargos');
+      if(itemEdit){await ref.doc(itemEdit.id).update({nombre:form.nombre,descripcion:form.descripcion||'',area:form.area||''});}
+      else{await ref.add({nombre:form.nombre,descripcion:form.descripcion||'',area:form.area||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
+      setModal(false);setForm({nombre:'',descripcion:'',area:''});setItemEdit(null);setMsg('Guardado.');
       setTimeout(()=>setMsg(''),3000);
     }catch(err){setMsg('Error: '+err.message);}
     finally{setLoading(false);}
   };
-  const eliminar=async(id)=>{if(!window.confirm('¿Eliminar cargo?'))return;await db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').doc(id).delete();};
-  const editar=(c)=>{setItemEdit(c);setForm({nombre:c.nombre,descripcion:c.descripcion||''});setModal(true);};
-  if(!entidad)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;
+  const eliminar=async(id)=>{if(!window.confirm('¿Eliminar cargo?'))return;await db.collection('fundacoofisam_cargos').doc(id).delete();};
+  const editar=(c)=>{setItemEdit(c);setForm({nombre:c.nombre,descripcion:c.descripcion||'',area:c.area||''});setModal(true);};
   return(<div>
     <div className="page-header"><h1>🏷️ Cargos</h1>
-      <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',descripcion:''});setModal(true);}}>+ Nuevo Cargo</button>
+      <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',descripcion:'',area:''});setModal(true);}}>+ Nuevo Cargo</button>
     </div>
     {msg&&<div style={{padding:'0.75rem',borderRadius:'8px',background:'#D1FAE5',color:'#065F46',marginBottom:'1rem'}}>{msg}</div>}
     <div className="card">
-      <p style={{color:'#6B7280',marginBottom:'1rem'}}>Los cargos definen qué indicadores y POA puede ver cada usuario de seguimiento.</p>
+      <p style={{color:'#6B7280',marginBottom:'1rem'}}>Los cargos son compartidos por todos los periodos PE — es la misma gente. El campo Área agrupa varios cargos (ej. "Líder de Riesgos" y "Analista de Riesgos" → área "Riesgos") para que compartan la misma información en Análisis y Diagnóstico.</p>
       {cargos.length===0?<p style={{color:'#6B7280'}}>No hay cargos creados aún.</p>:
       <div className="grid">{cargos.map(c=><div key={c.id} className="card" style={{borderLeft:'4px solid #4F46E5',margin:0}}>
         <h4>{c.nombre}</h4>
-        {c.descripcion&&<p style={{color:'#6B7280',fontSize:'0.875rem'}}>{c.descripcion}</p>}
+        {c.area?<span style={{fontSize:'0.75rem',color:'#4F46E5',fontWeight:600}}>🗂️ Área: {c.area}</span>:<span style={{fontSize:'0.75rem',color:'#DC2626'}}>⚠️ Sin área asignada</span>}
+        {c.descripcion&&<p style={{color:'#6B7280',fontSize:'0.875rem',marginTop:'0.25rem'}}>{c.descripcion}</p>}
         <div className="btn-group">
           <button className="btn-edit" onClick={()=>editar(c)}>✏️ Editar</button>
           <button className="btn-secondary" onClick={()=>eliminar(c.id)}>🗑️ Eliminar</button>
@@ -601,7 +621,12 @@ const VistaCargos=({entidad})=>{
         </div>
         <div className="modal-body"><form onSubmit={guardar}>
           <div className="form-group"><label>Nombre *</label>
-            <input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/>
+            <input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required placeholder="Ej. Líder de Riesgos"/>
+          </div>
+          <div className="form-group"><label>Área *</label>
+            <input type="text" list="areas-existentes" value={form.area} onChange={e=>setForm({...form,area:e.target.value})} required placeholder="Ej. Riesgos"/>
+            <datalist id="areas-existentes">{areasExistentes.map(a=><option key={a} value={a}/>)}</datalist>
+            <small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Varios cargos pueden compartir la misma área (ej. Coordinador y Auxiliar de Talento Humano → "Talento Humano").</small>
           </div>
           <div className="form-group"><label>Descripción</label>
             <textarea value={form.descripcion} onChange={e=>setForm({...form,descripcion:e.target.value})} rows={2}/>
@@ -613,48 +638,333 @@ const VistaCargos=({entidad})=>{
   </div>);
 };
 
-const VistaConfig=({user,entidad,datos,isAdmin})=>{const[modal,setModal]=useState(null);const[form,setForm]=useState({});const[itemEdit,setItemEdit]=useState(null);const[loading,setLoading]=useState(false);
-  const[busquedaPOA,setBusquedaPOA]=useState('');const[modalPrint,setModalPrint]=useState(false);if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;const{ejes=[],objetivos=[],indicadores=[]}=datos;const ref=db.collection('fundacoofisam_datos').doc(entidad.id);const scoreConfig=entidad.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};const guardarEje=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('ejes').doc(itemEdit.id).update(form);}else{await ref.collection('ejes').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarObjetivo=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('objetivos').doc(itemEdit.id).update(form);}else{await ref.collection('objetivos').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};const guardarIndicador=async(e)=>{
-  e.preventDefault();
-  setLoading(true);
-  try{
-    const metasPorAnio={};
-    if(form.anios){
-      form.anios.split(',').forEach(a=>{
-        const anio=a.trim();
-        if(anio)metasPorAnio[anio]=parseFloat(form[`meta_${anio}`]||form.meta);
-      });
-    }
-    const updateData={
-      objetivoId:String(form.objetivoId),
-      nombre:String(form.nombre),
-      tipo:String(form.tipo),
-      periodicidad:String(form.periodicidad),
-      meta:parseFloat(form.meta),
-      unidad:String(form.unidad),
-      estrategia:String(form.estrategia||''),tipoMeta:String(form.tipoMeta||'independiente'),
-      metasPorAnio:metasPorAnio,
-      cargoResponsable:String(form.cargoResponsable||'')
-    };
-    if(itemEdit){
-      updateData.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
-      await ref.collection('indicadores').doc(itemEdit.id).set(updateData,{merge:true});
-    }else{
-      await ref.collection('indicadores').add(updateData);
-    }
-    setModal(null);
-    setForm({});
-    setItemEdit(null);
-  }catch(error){
-    console.error('Error:',error);
-    alert('Error: '+error.message);
-  }finally{
-    setLoading(false);
-  }
+const VistaDireccionamiento=({entidad,isAdmin})=>{
+  const[mision,setMision]=useState('');
+  const[vision,setVision]=useState('');
+  const[valores,setValores]=useState([]);
+  const[nuevoValor,setNuevoValor]=useState('');
+  const[nuevoDesc,setNuevoDesc]=useState('');
+  const[principios,setPrincipios]=useState([]);
+  const[nuevoPrincipio,setNuevoPrincipio]=useState('');
+  const[nuevoPrincipioDesc,setNuevoPrincipioDesc]=useState('');
+  const[loading,setLoading]=useState(false);
+  useEffect(()=>{
+    if(!entidad)return;
+    setMision(entidad.mision||'');
+    setVision(entidad.vision||'');
+    setValores(entidad.valores||[]);
+    setPrincipios(entidad.principios||[]);
+  },[entidad]);
+  if(!entidad)return <div className="empty-state"><h3>Selecciona un periodo PE</h3></div>;
+  const guardar=async(campo,valor)=>{
+    setLoading(true);
+    try{await db.collection('fundacoofisam_datos').doc(entidad.id).update({[campo]:valor});}
+    catch(error){alert('Error: '+error.message);}
+    finally{setLoading(false);}
+  };
+  const agregarValor=async(e)=>{
+    e.preventDefault();
+    if(!nuevoValor.trim())return;
+    const next=[...valores,{nombre:nuevoValor,descripcion:nuevoDesc}];
+    setValores(next);
+    await guardar('valores',next);
+    setNuevoValor('');setNuevoDesc('');
+  };
+  const quitarValor=async(idx)=>{
+    const next=valores.filter((_,i)=>i!==idx);
+    setValores(next);
+    await guardar('valores',next);
+  };
+  const agregarPrincipio=async(e)=>{
+    e.preventDefault();
+    if(!nuevoPrincipio.trim())return;
+    const next=[...principios,{nombre:nuevoPrincipio,descripcion:nuevoPrincipioDesc}];
+    setPrincipios(next);
+    await guardar('principios',next);
+    setNuevoPrincipio('');setNuevoPrincipioDesc('');
+  };
+  const quitarPrincipio=async(idx)=>{
+    const next=principios.filter((_,i)=>i!==idx);
+    setPrincipios(next);
+    await guardar('principios',next);
+  };
+  return(<div>
+    <div className="page-header"><h1>Direccionamiento Estratégico</h1></div>
+    <div className="card">
+      <h3>Misión</h3>
+      {isAdmin
+        ?<textarea rows={3} value={mision} onChange={e=>setMision(e.target.value)} onBlur={()=>guardar('mision',mision)} placeholder="¿Para qué existe la entidad?" style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}}/>
+        :<p style={{color:'#374151'}}>{mision||'Sin definir.'}</p>}
+    </div>
+    <div className="card">
+      <h3>Visión</h3>
+      {isAdmin
+        ?<textarea rows={3} value={vision} onChange={e=>setVision(e.target.value)} onBlur={()=>guardar('vision',vision)} placeholder="¿Qué quiere ser la entidad en el horizonte del plan?" style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}}/>
+        :<p style={{color:'#374151'}}>{vision||'Sin definir.'}</p>}
+    </div>
+    <div className="card">
+      <h3>Valores</h3>
+      {valores.length===0&&<p style={{color:'#6B7280'}}>Sin valores definidos aún.</p>}
+      {valores.map((v,idx)=>(
+        <div key={idx} style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:'0.75rem',padding:'0.6rem 0',borderTop:idx>0?'1px solid #E5E7EB':'none'}}>
+          <div><strong>{v.nombre}</strong>{v.descripcion&&<span style={{color:'#6B7280'}}> — {v.descripcion}</span>}</div>
+          {isAdmin&&<button className="btn-secondary" onClick={()=>quitarValor(idx)}>🗑️</button>}
+        </div>
+      ))}
+      {isAdmin&&<form onSubmit={agregarValor} style={{display:'flex',gap:'0.5rem',marginTop:'1rem',flexWrap:'wrap'}}>
+        <input style={{flex:'1 1 180px',padding:'0.6rem',border:'2px solid #E5E7EB',borderRadius:'8px'}} value={nuevoValor} onChange={e=>setNuevoValor(e.target.value)} placeholder="Valor (ej. Transparencia)"/>
+        <input style={{flex:'2 1 260px',padding:'0.6rem',border:'2px solid #E5E7EB',borderRadius:'8px'}} value={nuevoDesc} onChange={e=>setNuevoDesc(e.target.value)} placeholder="Descripción breve (opcional)"/>
+        <button type="submit" className="btn-primary" style={{width:'auto'}} disabled={loading}>+ Agregar</button>
+      </form>}
+    </div>
+    <div className="card">
+      <h3>Principios</h3>
+      {principios.length===0&&<p style={{color:'#6B7280'}}>Sin principios definidos aún.</p>}
+      {principios.map((p,idx)=>(
+        <div key={idx} style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:'0.75rem',padding:'0.6rem 0',borderTop:idx>0?'1px solid #E5E7EB':'none'}}>
+          <div><strong>{p.nombre}</strong>{p.descripcion&&<span style={{color:'#6B7280'}}> — {p.descripcion}</span>}</div>
+          {isAdmin&&<button className="btn-secondary" onClick={()=>quitarPrincipio(idx)}>🗑️</button>}
+        </div>
+      ))}
+      {isAdmin&&<form onSubmit={agregarPrincipio} style={{display:'flex',gap:'0.5rem',marginTop:'1rem',flexWrap:'wrap'}}>
+        <input style={{flex:'1 1 180px',padding:'0.6rem',border:'2px solid #E5E7EB',borderRadius:'8px'}} value={nuevoPrincipio} onChange={e=>setNuevoPrincipio(e.target.value)} placeholder="Principio (ej. Buena fe)"/>
+        <input style={{flex:'2 1 260px',padding:'0.6rem',border:'2px solid #E5E7EB',borderRadius:'8px'}} value={nuevoPrincipioDesc} onChange={e=>setNuevoPrincipioDesc(e.target.value)} placeholder="Descripción breve (opcional)"/>
+        <button type="submit" className="btn-primary" style={{width:'auto'}} disabled={loading}>+ Agregar</button>
+      </form>}
+    </div>
+  </div>);
 };
-const eliminar=async(coleccion,id)=>{if(!window.confirm('¿Eliminar?'))return;try{await ref.collection(coleccion).doc(id).delete();}catch(error){alert('Error: '+error.message);}};const editarEje=(eje)=>{setItemEdit(eje);setForm({nombre:eje.nombre,color:eje.color});setModal('eje');};const editarObjetivo=(obj)=>{setItemEdit(obj);setForm({ejeId:obj.ejeId,nombre:obj.nombre});setModal('objetivo');};const editarIndicador=(ind)=>{setItemEdit(ind);const anios=ind.metasPorAnio?Object.keys(ind.metasPorAnio).join(','):'';const formData={objetivoId:ind.objetivoId,nombre:ind.nombre,tipo:ind.tipo,periodicidad:ind.periodicidad,meta:ind.meta,unidad:ind.unidad,estrategia:ind.estrategia||'',tipoMeta:ind.tipoMeta||'independiente',anios,cargoResponsable:ind.cargoResponsable||''};if(ind.metasPorAnio){Object.entries(ind.metasPorAnio).forEach(([anio,meta])=>{formData[`meta_${anio}`]=meta;});}setForm(formData);setModal('indicador');};return(<div><div className="page-header"><h1>Planeación - {entidad.nombre}</h1><button className="btn-primary" onClick={()=>setModalPrint(true)} style={{width:'auto'}}>🖨️ Imprimir</button></div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Ejes Estratégicos ({ejes.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',color:'#4F46E5'});setModal('eje');}}>+ Nuevo Eje</button></div>{ejes.length===0?<p style={{color:'#6B7280'}}>No hay ejes</p>:<div className="grid">{ejes.map(eje=>(<div key={eje.id} className="card" style={{borderLeft:`4px solid ${eje.color}`}}><h4>{eje.nombre}</h4><div className="btn-group"><button className="btn-edit" onClick={()=>editarEje(eje)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('ejes',eje.id)}>🗑️ Eliminar</button></div></div>))}</div>}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Objetivos ({objetivos.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({ejeId:'',nombre:''});setModal('objetivo');}} disabled={ejes.length===0}>+ Nuevo Objetivo</button></div>{objetivos.length===0?<p style={{color:'#6B7280'}}>No hay objetivos</p>:<div>{ejes.map(eje=>{const objsEje=objetivos.filter(o=>o.ejeId===eje.id);if(objsEje.length===0)return null;return(<div key={eje.id} style={{marginBottom:'1.5rem'}}><div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'1rem',padding:'0.75rem 1rem',background:eje.color+'15',borderRadius:'10px',borderLeft:`4px solid ${eje.color}`}}><span style={{width:14,height:14,borderRadius:'50%',background:eje.color,display:'inline-block',flexShrink:0}}></span><strong style={{color:eje.color,fontSize:'1rem'}}>{eje.nombre}</strong><span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:'auto',background:'white',padding:'0.15rem 0.5rem',borderRadius:'12px',border:`1px solid ${eje.color}44`}}>{objsEje.length} {objsEje.length===1?'objetivo':'objetivos'}</span></div><div className="grid">{objsEje.map(obj=>(<div key={obj.id} className="card" style={{borderLeft:`4px solid ${eje.color}`,margin:0}}><p style={{fontWeight:600,color:'#111827',marginBottom:'0.5rem'}}>{obj.nombre}</p><div className="btn-group"><button className="btn-edit" onClick={()=>editarObjetivo(obj)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('objetivos',obj.id)}>🗑️ Eliminar</button></div></div>))}</div></div>);})}</div>}</div><div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}><h3>Indicadores ({indicadores.length})</h3><button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({objetivoId:'',nombre:'',tipo:'ascendente',periodicidad:'Mensual',meta:'',unidad:'%',estrategia:'',anios:''});setModal('indicador');}} disabled={objetivos.length===0}>+ Nuevo Indicador</button></div>{indicadores.length===0?<p style={{color:'#6B7280'}}>No hay indicadores</p>:<div>{ejes.map(eje=>{const objsEje=objetivos.filter(o=>o.ejeId===eje.id);const indsEje=indicadores.filter(ind=>{const obj=objetivos.find(o=>o.id===ind.objetivoId);return obj?.ejeId===eje.id;});if(indsEje.length===0)return null;return(<div key={eje.id} style={{marginBottom:'1.5rem'}}><div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'1rem',padding:'0.6rem 1rem',background:eje.color+'18',borderRadius:'8px',borderLeft:`4px solid ${eje.color}`}}><span style={{width:12,height:12,borderRadius:'50%',background:eje.color,display:'inline-block'}}></span><strong style={{color:eje.color,fontSize:'1rem'}}>{eje.nombre}</strong><span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:'auto'}}>{indsEje.length} indicadores</span></div>{objsEje.map(obj=>{const indsObj=indicadores.filter(ind=>ind.objetivoId===obj.id);if(indsObj.length===0)return null;return(<div key={obj.id} style={{marginBottom:'1rem',marginLeft:'1rem'}}><p style={{fontSize:'0.8rem',fontWeight:600,color:'#6B7280',marginBottom:'0.5rem',padding:'0.3rem 0.75rem',background:'#F9FAFB',borderRadius:'6px',borderLeft:`3px solid ${eje.color}66`}}>{obj.nombre} <span style={{fontWeight:400}}>({indsObj.length})</span></p><div className="grid">{indsObj.map(ind=>(<div key={ind.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}><h4>{ind.nombre}</h4><p style={{color:'#6B7280',fontSize:'0.875rem',marginTop:'0.5rem'}}>Meta: {ind.meta} {ind.unidad} | {ind.tipo==='ascendente'?'📈':'📉'} | {ind.periodicidad}</p>{ind.metasPorAnio&&Object.keys(ind.metasPorAnio).length>0&&(<p style={{color:'#4F46E5',fontSize:'0.75rem',marginTop:'0.25rem'}}>Metas: {Object.entries(ind.metasPorAnio).map(([a,m])=>`${a}:${m}`).join(', ')}</p>)}<div className="btn-group"><button className="btn-edit" onClick={()=>editarIndicador(ind)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('indicadores',ind.id)}>🗑️ Eliminar</button></div></div>))}</div></div>);})}</div>);})}</div>}</div>{modal==='eje'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Eje</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarEje}><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-group"><label>Color</label><input type="color" value={form.color} onChange={e=>setForm({...form,color:e.target.value})}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='objetivo'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Objetivo</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarObjetivo}><div className="form-group"><label>Eje *</label><select value={form.ejeId} onChange={e=>setForm({...form,ejeId:e.target.value})} required><option value="">Seleccionar...</option>{ejes.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}</select></div><div className="form-group"><label>Nombre *</label><textarea value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required rows={3}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}{modal==='indicador'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}><div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Indicador</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div><div className="modal-body"><form onSubmit={guardarIndicador}><div className="form-group"><label>Objetivo *</label><select value={form.objetivoId} onChange={e=>setForm({...form,objetivoId:e.target.value})} required><option value="">Seleccionar...</option>{objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}</select></div><div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div><div className="form-row"><div className="form-group"><label>Tipo *</label><select value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})} required><option value="ascendente">📈 Ascendente</option><option value="descendente">📉 Descendente</option></select></div><div className="form-group"><label>Periodicidad *</label><select value={form.periodicidad} onChange={e=>setForm({...form,periodicidad:e.target.value})} required><option value="Mensual">Mensual</option><option value="Bimestral">Bimestral</option><option value="Trimestral">Trimestral</option><option value="Cuatrimestral">Cuatrimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select></div><div className="form-group"><label>Tipo de Meta</label><select value={form.tipoMeta||'independiente'} onChange={e=>setForm({...form,tipoMeta:e.target.value})}><option value="independiente">Independiente</option><option value="acumulativa">Acumulativa</option></select></div></div><div className="form-row"><div className="form-group"><label>Meta Base *</label><input type="number" step="0.01" value={form.meta} onChange={e=>setForm({...form,meta:e.target.value})} required/></div><div className="form-group"><label>Unidad *</label><input type="text" value={form.unidad} onChange={e=>setForm({...form,unidad:e.target.value})} required placeholder="%"/></div></div><div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>{form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}<div className="form-group"><label>Estrategia</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={3}/></div><div className="form-group"><label>Cargo Responsable</label><CargosSelect entidad={entidad} value={form.cargoResponsable||''} onChange={v=>setForm({...form,cargoResponsable:v})}/></div><button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button></form></div></div></div>)}
+
+const VistaConfig=({user,entidad,datos,isAdmin})=>{
+  const[modal,setModal]=useState(null);
+  const[form,setForm]=useState({});
+  const[itemEdit,setItemEdit]=useState(null);
+  const[loading,setLoading]=useState(false);
+  const[busquedaPOA,setBusquedaPOA]=useState('');
+  const[modalPrint,setModalPrint]=useState(false);
+  if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona un periodo PE</h3></div>;
+  const{ejes=[],objetivos=[],estrategias=[],indicadores=[]}=datos;
+  const ref=db.collection('fundacoofisam_datos').doc(entidad.id);
+  const scoreConfig=entidad.scoreConfig||{critico:{min:0,max:60},precaucion:{min:61,max:85},optimo:{min:86,max:100}};
+
+  const guardarEje=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('ejes').doc(itemEdit.id).update(form);}else{await ref.collection('ejes').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};
+  const guardarObjetivo=async(e)=>{e.preventDefault();setLoading(true);try{if(itemEdit){await ref.collection('objetivos').doc(itemEdit.id).update(form);}else{await ref.collection('objetivos').add(form);}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};
+  const guardarEstrategia=async(e)=>{e.preventDefault();setLoading(true);try{const data={objetivoId:form.objetivoId,nombre:form.nombre};if(itemEdit){await ref.collection('estrategias').doc(itemEdit.id).update(data);}else{await ref.collection('estrategias').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};
+
+  const guardarIndicador=async(e)=>{
+    e.preventDefault();
+    setLoading(true);
+    try{
+      const metasPorAnio={};
+      if(form.anios){
+        form.anios.split(',').forEach(a=>{
+          const anio=a.trim();
+          if(anio)metasPorAnio[anio]=parseFloat(form[`meta_${anio}`]||form.meta);
+        });
+      }
+      const updateData={
+        objetivoId:String(form.objetivoId),
+        estrategiaId:String(form.estrategiaId||''),
+        nombre:String(form.nombre),
+        tipo:String(form.tipo),
+        periodicidad:String(form.periodicidad),
+        meta:parseFloat(form.meta),
+        unidad:String(form.unidad),
+        estrategia:String(form.estrategia||''),tipoMeta:String(form.tipoMeta||'independiente'),
+        metasPorAnio:metasPorAnio,
+        cargoResponsable:String(form.cargoResponsable||'')
+      };
+      if(itemEdit){
+        updateData.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+        await ref.collection('indicadores').doc(itemEdit.id).set(updateData,{merge:true});
+      }else{
+        await ref.collection('indicadores').add(updateData);
+      }
+      setModal(null);
+      setForm({});
+      setItemEdit(null);
+    }catch(error){
+      console.error('Error:',error);
+      alert('Error: '+error.message);
+    }finally{
+      setLoading(false);
+    }
+  };
+
+  const eliminar=async(coleccion,id)=>{if(!window.confirm('¿Eliminar?'))return;try{await ref.collection(coleccion).doc(id).delete();}catch(error){alert('Error: '+error.message);}};
+  const editarEje=(eje)=>{setItemEdit(eje);setForm({nombre:eje.nombre,color:eje.color});setModal('eje');};
+  const editarObjetivo=(obj)=>{setItemEdit(obj);setForm({ejeId:obj.ejeId,nombre:obj.nombre});setModal('objetivo');};
+  const editarEstrategia=(est)=>{setItemEdit(est);setForm({objetivoId:est.objetivoId,nombre:est.nombre});setModal('estrategia');};
+  const editarIndicador=(ind)=>{
+    setItemEdit(ind);
+    const anios=ind.metasPorAnio?Object.keys(ind.metasPorAnio).join(','):'';
+    const formData={objetivoId:ind.objetivoId,estrategiaId:ind.estrategiaId||'',nombre:ind.nombre,tipo:ind.tipo,periodicidad:ind.periodicidad,meta:ind.meta,unidad:ind.unidad,estrategia:ind.estrategia||'',tipoMeta:ind.tipoMeta||'independiente',anios,cargoResponsable:ind.cargoResponsable||''};
+    if(ind.metasPorAnio){Object.entries(ind.metasPorAnio).forEach(([anio,meta])=>{formData[`meta_${anio}`]=meta;});}
+    setForm(formData);
+    setModal('indicador');
+  };
+
+  const estrategiasDeObjetivo=(objId)=>estrategias.filter(es=>es.objetivoId===objId);
+
+  return(<div>
+    <div className="page-header"><h1>Planeación - {entidad.nombre}</h1><button className="btn-primary" onClick={()=>setModalPrint(true)} style={{width:'auto'}}>🖨️ Imprimir</button></div>
+
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+        <h3>Ejes Estratégicos ({ejes.length})</h3>
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({nombre:'',color:'#4F46E5'});setModal('eje');}}>+ Nuevo Eje</button>
+      </div>
+      {ejes.length===0?<p style={{color:'#6B7280'}}>No hay ejes</p>:<div className="grid">{ejes.map(eje=>(
+        <div key={eje.id} className="card" style={{borderLeft:`4px solid ${eje.color}`}}>
+          <h4>{eje.nombre}</h4>
+          <div className="btn-group"><button className="btn-edit" onClick={()=>editarEje(eje)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('ejes',eje.id)}>🗑️ Eliminar</button></div>
+        </div>))}</div>}
+    </div>
+
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+        <h3>Objetivos ({objetivos.length})</h3>
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({ejeId:'',nombre:''});setModal('objetivo');}} disabled={ejes.length===0}>+ Nuevo Objetivo</button>
+      </div>
+      {objetivos.length===0?<p style={{color:'#6B7280'}}>No hay objetivos</p>:<div>{ejes.map(eje=>{
+        const objsEje=objetivos.filter(o=>o.ejeId===eje.id);
+        if(objsEje.length===0)return null;
+        return(<div key={eje.id} style={{marginBottom:'1.5rem'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'1rem',padding:'0.75rem 1rem',background:eje.color+'15',borderRadius:'10px',borderLeft:`4px solid ${eje.color}`}}>
+            <span style={{width:14,height:14,borderRadius:'50%',background:eje.color,display:'inline-block',flexShrink:0}}></span>
+            <strong style={{color:eje.color,fontSize:'1rem'}}>{eje.nombre}</strong>
+            <span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:'auto',background:'white',padding:'0.15rem 0.5rem',borderRadius:'12px',border:`1px solid ${eje.color}44`}}>{objsEje.length} {objsEje.length===1?'objetivo':'objetivos'}</span>
+          </div>
+          <div className="grid">{objsEje.map(obj=>(
+            <div key={obj.id} className="card" style={{borderLeft:`4px solid ${eje.color}`,margin:0}}>
+              <p style={{fontWeight:600,color:'#111827',marginBottom:'0.5rem'}}>{obj.nombre}</p>
+              <div className="btn-group"><button className="btn-edit" onClick={()=>editarObjetivo(obj)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('objetivos',obj.id)}>🗑️ Eliminar</button></div>
+            </div>))}</div>
+        </div>);})}</div>}
+    </div>
+
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+        <div><h3>Estrategias ({estrategias.length})</h3><p style={{fontSize:'0.8rem',color:'#6B7280',marginTop:'0.25rem'}}>El objetivo es el <strong>qué</strong>, la estrategia es el <strong>cómo</strong>.</p></div>
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({objetivoId:'',nombre:''});setModal('estrategia');}} disabled={objetivos.length===0}>+ Nueva Estrategia</button>
+      </div>
+      {estrategias.length===0?<p style={{color:'#6B7280'}}>No hay estrategias definidas aún.</p>:<div>{ejes.map(eje=>{
+        const objsEje=objetivos.filter(o=>o.ejeId===eje.id);
+        const estsEje=estrategias.filter(es=>objsEje.some(o=>o.id===es.objetivoId));
+        if(estsEje.length===0)return null;
+        return(<div key={eje.id} style={{marginBottom:'1.5rem'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'0.75rem',padding:'0.6rem 1rem',background:eje.color+'15',borderRadius:'8px',borderLeft:`4px solid ${eje.color}`}}>
+            <strong style={{color:eje.color,fontSize:'0.95rem'}}>{eje.nombre}</strong>
+          </div>
+          {objsEje.map(obj=>{
+            const estsObj=estrategiasDeObjetivo(obj.id);
+            if(estsObj.length===0)return null;
+            return(<div key={obj.id} style={{marginBottom:'1rem',marginLeft:'1rem'}}>
+              <p style={{fontSize:'0.8rem',fontWeight:600,color:'#6B7280',marginBottom:'0.5rem',padding:'0.3rem 0.75rem',background:'#F9FAFB',borderRadius:'6px',borderLeft:`3px solid ${eje.color}66`}}>{obj.nombre}</p>
+              <div className="grid">{estsObj.map(est=>(
+                <div key={est.id} className="card" style={{borderLeft:`4px solid ${eje.color}`,margin:0}}>
+                  <p style={{fontWeight:600,color:'#111827'}}>{est.nombre}</p>
+                  <div className="btn-group"><button className="btn-edit" onClick={()=>editarEstrategia(est)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('estrategias',est.id)}>🗑️ Eliminar</button></div>
+                </div>))}</div>
+            </div>);
+          })}
+        </div>);})}</div>}
+    </div>
+
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+        <h3>Indicadores ({indicadores.length})</h3>
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>{setItemEdit(null);setForm({objetivoId:'',estrategiaId:'',nombre:'',tipo:'ascendente',periodicidad:'Mensual',meta:'',unidad:'%',estrategia:'',anios:''});setModal('indicador');}} disabled={objetivos.length===0}>+ Nuevo Indicador</button>
+      </div>
+      {indicadores.length===0?<p style={{color:'#6B7280'}}>No hay indicadores</p>:<div>{ejes.map(eje=>{
+        const objsEje=objetivos.filter(o=>o.ejeId===eje.id);
+        const indsEje=indicadores.filter(ind=>{const obj=objetivos.find(o=>o.id===ind.objetivoId);return obj?.ejeId===eje.id;});
+        if(indsEje.length===0)return null;
+        return(<div key={eje.id} style={{marginBottom:'1.5rem'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginBottom:'1rem',padding:'0.6rem 1rem',background:eje.color+'18',borderRadius:'8px',borderLeft:`4px solid ${eje.color}`}}>
+            <span style={{width:12,height:12,borderRadius:'50%',background:eje.color,display:'inline-block'}}></span>
+            <strong style={{color:eje.color,fontSize:'1rem'}}>{eje.nombre}</strong>
+            <span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:'auto'}}>{indsEje.length} indicadores</span>
+          </div>
+          {objsEje.map(obj=>{
+            const indsObj=indicadores.filter(ind=>ind.objetivoId===obj.id);
+            if(indsObj.length===0)return null;
+            const estsObj=estrategiasDeObjetivo(obj.id);
+            const gruposEstrategia=[...estsObj,{id:'',nombre:'Sin estrategia asignada'}];
+            return(<div key={obj.id} style={{marginBottom:'1rem',marginLeft:'1rem'}}>
+              <p style={{fontSize:'0.8rem',fontWeight:600,color:'#6B7280',marginBottom:'0.5rem',padding:'0.3rem 0.75rem',background:'#F9FAFB',borderRadius:'6px',borderLeft:`3px solid ${eje.color}66`}}>{obj.nombre} <span style={{fontWeight:400}}>({indsObj.length})</span></p>
+              {gruposEstrategia.map(est=>{
+                const indsEst=indsObj.filter(ind=>(ind.estrategiaId||'')===est.id);
+                if(indsEst.length===0)return null;
+                return(<div key={est.id||'sin'} style={{marginBottom:'0.75rem',marginLeft:'1rem'}}>
+                  <p style={{fontSize:'0.75rem',fontWeight:600,color:est.id?'#4F46E5':'#9CA3AF',marginBottom:'0.4rem'}}>{est.id?'↳ '+est.nombre:'↳ Sin estrategia asignada'} <span style={{fontWeight:400}}>({indsEst.length})</span></p>
+                  <div className="grid">{indsEst.map(ind=>(
+                    <div key={ind.id} className="card" style={{borderLeft:`4px solid ${eje?.color||'#6B7280'}`}}>
+                      <h4>{ind.nombre}</h4>
+                      <p style={{color:'#6B7280',fontSize:'0.875rem',marginTop:'0.5rem'}}>Meta: {ind.meta} {ind.unidad} | {ind.tipo==='ascendente'?'📈':'📉'} | {ind.periodicidad}</p>
+                      {ind.metasPorAnio&&Object.keys(ind.metasPorAnio).length>0&&(<p style={{color:'#4F46E5',fontSize:'0.75rem',marginTop:'0.25rem'}}>Metas: {Object.entries(ind.metasPorAnio).map(([a,m])=>`${a}:${m}`).join(', ')}</p>)}
+                      <div className="btn-group"><button className="btn-edit" onClick={()=>editarIndicador(ind)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>eliminar('indicadores',ind.id)}>🗑️ Eliminar</button></div>
+                    </div>))}</div>
+                </div>);
+              })}
+            </div>);
+          })}
+        </div>);})}</div>}
+    </div>
+
+    {modal==='eje'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Eje</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div>
+      <div className="modal-body"><form onSubmit={guardarEje}>
+        <div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div>
+        <div className="form-group"><label>Color</label><input type="color" value={form.color} onChange={e=>setForm({...form,color:e.target.value})}/></div>
+        <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+      </form></div>
+    </div></div>)}
+
+    {modal==='objetivo'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Objetivo</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div>
+      <div className="modal-body"><form onSubmit={guardarObjetivo}>
+        <div className="form-group"><label>Eje *</label><select value={form.ejeId} onChange={e=>setForm({...form,ejeId:e.target.value})} required><option value="">Seleccionar...</option>{ejes.map(e=><option key={e.id} value={e.id}>{e.nombre}</option>)}</select></div>
+        <div className="form-group"><label>Nombre *</label><textarea value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required rows={3}/></div>
+        <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+      </form></div>
+    </div></div>)}
+
+    {modal==='estrategia'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <div className="modal-header"><h2>{itemEdit?'Editar':'Nueva'} Estrategia</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div>
+      <div className="modal-body"><form onSubmit={guardarEstrategia}>
+        <div className="form-group"><label>Objetivo *</label><select value={form.objetivoId} onChange={e=>setForm({...form,objetivoId:e.target.value})} required><option value="">Seleccionar...</option>{objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}</select></div>
+        <div className="form-group"><label>Nombre / Descripción de la estrategia (el "cómo") *</label><textarea value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required rows={3} placeholder="Ej. Digitalizar el proceso de vinculación de asociados"/></div>
+        <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+      </form></div>
+    </div></div>)}
+
+    {modal==='indicador'&&(<div className="modal-overlay" onClick={()=>setModal(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <div className="modal-header"><h2>{itemEdit?'Editar':'Nuevo'} Indicador</h2><button className="btn-cerrar" onClick={()=>setModal(null)}>×</button></div>
+      <div className="modal-body"><form onSubmit={guardarIndicador}>
+        <div className="form-group"><label>Objetivo *</label><select value={form.objetivoId} onChange={e=>setForm({...form,objetivoId:e.target.value,estrategiaId:''})} required><option value="">Seleccionar...</option>{objetivos.map(obj=>{const eje=ejes.find(e=>e.id===obj.ejeId);return<option key={obj.id} value={obj.id}>[{eje?.nombre}] {obj.nombre}</option>;})}</select></div>
+        <div className="form-group"><label>Estrategia (el "cómo" — opcional)</label><select value={form.estrategiaId||''} onChange={e=>setForm({...form,estrategiaId:e.target.value})} disabled={!form.objetivoId}><option value="">Sin estrategia asignada</option>{estrategiasDeObjetivo(form.objetivoId).map(est=><option key={est.id} value={est.id}>{est.nombre}</option>)}</select>{form.objetivoId&&estrategiasDeObjetivo(form.objetivoId).length===0&&<small style={{color:'#9CA3AF',display:'block',marginTop:'0.25rem'}}>Este objetivo no tiene estrategias aún — puedes crearlas en la sección "Estrategias".</small>}</div>
+        <div className="form-group"><label>Nombre *</label><input type="text" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/></div>
+        <div className="form-row">
+          <div className="form-group"><label>Tipo *</label><select value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})} required><option value="ascendente">📈 Ascendente</option><option value="descendente">📉 Descendente</option></select></div>
+          <div className="form-group"><label>Periodicidad *</label><select value={form.periodicidad} onChange={e=>setForm({...form,periodicidad:e.target.value})} required><option value="Mensual">Mensual</option><option value="Bimestral">Bimestral</option><option value="Trimestral">Trimestral</option><option value="Cuatrimestral">Cuatrimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select></div>
+          <div className="form-group"><label>Tipo de Meta</label><select value={form.tipoMeta||'independiente'} onChange={e=>setForm({...form,tipoMeta:e.target.value})}><option value="independiente">Independiente</option><option value="acumulativa">Acumulativa</option></select></div>
+        </div>
+        <div className="form-row">
+          <div className="form-group"><label>Meta Base *</label><input type="number" step="0.01" value={form.meta} onChange={e=>setForm({...form,meta:e.target.value})} required/></div>
+          <div className="form-group"><label>Unidad *</label><input type="text" value={form.unidad} onChange={e=>setForm({...form,unidad:e.target.value})} required placeholder="%"/></div>
+        </div>
+        <div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>
+        {form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}
+        <div className="form-group"><label>Notas adicionales (opcional)</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={2} placeholder="Cualquier detalle extra que no quepa en la estrategia estructurada de arriba"/></div>
+        <div className="form-group"><label>Cargo Responsable</label><CargosSelect value={form.cargoResponsable||''} onChange={v=>setForm({...form,cargoResponsable:v})}/></div>
+        <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
+      </form></div>
+    </div></div>)}
+
     {modalPrint&&<ModalImpresionPlaneacion entidad={entidad} datos={datos} onClose={()=>setModalPrint(false)}/>}
-  </div>);};
+  </div>);
+};
 
 // Función para formatear y mostrar tareas
 const formatearTareas=(texto,limite=null)=>{
@@ -734,6 +1044,633 @@ const SeguimientoMesInput=({act,mesKey,onGuardar})=>{
   </div>);
 };
 
+// ===================== ANÁLISIS Y DIAGNÓSTICO =====================
+const vrioTier=(v,r,i,o)=>{
+  if(v&&r&&i&&o)return{label:'Ventaja sostenida',color:'#059669',bg:'#D1FAE5',accion:null};
+  if(v&&r&&i&&!o)return{label:'Ventaja sin explotar',color:'#4F46E5',bg:'#EDE9FE',accion:'incrementar'};
+  if(v&&r&&!i)return{label:'Ventaja temporal',color:'#B45309',bg:'#FEF3C7',accion:'incrementar'};
+  if(v&&!r)return{label:'Paridad competitiva',color:'#6B7280',bg:'#F3F4F6',accion:'reducir'};
+  return{label:'Desventaja competitiva',color:'#991B1B',bg:'#FEE2E2',accion:'eliminar'};
+};
+const agruparSintesis=(eric)=>{
+  const candidatas=eric.filter(e=>e.accion==='incrementar'||e.accion==='crear');
+  const grupos={};const sueltas=[];
+  candidatas.forEach(e=>{
+    if(e.lineaPropuesta&&e.lineaPropuesta.trim()){(grupos[e.lineaPropuesta]=grupos[e.lineaPropuesta]||[]).push(e);}
+    else sueltas.push(e);
+  });
+  return{grupos,sueltas};
+};
+const contrasteDecision=(relevante,capacidad,cumplimiento)=>{
+  const c=Number(cumplimiento)||0;
+  if(relevante==='no')return{label:'Reemplazar',color:'#991B1B',bg:'#FEE2E2'};
+  if(relevante==='si'&&capacidad==='si'&&c>=70)return{label:'Mantener',color:'#059669',bg:'#D1FAE5'};
+  return{label:'Ajustar',color:'#B45309',bg:'#FEF3C7'};
+};
+const BMC_BLOCKS=[
+  {key:'socios',label:'Socios clave',area:'socios'},{key:'actividades',label:'Actividades clave',area:'actividades'},
+  {key:'recursos',label:'Recursos clave',area:'recursos'},{key:'valor',label:'Propuesta de valor',area:'valor'},
+  {key:'relaciones',label:'Relación con clientes',area:'relaciones'},{key:'canales',label:'Canales',area:'canales'},
+  {key:'segmentos',label:'Segmentos de clientes',area:'segmentos'},{key:'costos',label:'Estructura de costos',area:'costos'},
+  {key:'ingresos',label:'Fuentes de ingreso',area:'ingresos'},
+];
+const BMC_LABEL=Object.fromEntries(BMC_BLOCKS.map(b=>[b.key,b.label]));
+const ERIC_QUADS=[
+  {key:'eliminar',label:'Eliminar',emoji:'🗑️',color:'#991B1B',bg:'#FEE2E2',hint:'¿Qué ya no aporta valor?'},
+  {key:'reducir',label:'Reducir',emoji:'✂️',color:'#B45309',bg:'#FEF3C7',hint:'¿Qué se hace en exceso?'},
+  {key:'incrementar',label:'Incrementar',emoji:'📈',color:'#4F46E5',bg:'#EDE9FE',hint:'¿Qué merece más atención?'},
+  {key:'crear',label:'Crear',emoji:'✨',color:'#059669',bg:'#D1FAE5',hint:'¿Qué no existe hoy?'},
+];
+const ERIC_LABEL=Object.fromEntries(ERIC_QUADS.map(q=>[q.key,q]));
+const PESTEL_DIMS=[{key:'politico',label:'Político'},{key:'economico',label:'Económico'},{key:'social',label:'Social'},{key:'tecnologico',label:'Tecnológico'},{key:'ecologico',label:'Ecológico'},{key:'legal',label:'Legal'}];
+
+const Chip=({color,bg,children})=>(<span style={{display:'inline-flex',alignItems:'center',gap:4,padding:'0.2rem 0.65rem',borderRadius:999,fontSize:'0.75rem',fontWeight:700,color,background:bg,whiteSpace:'nowrap'}}>{children}</span>);
+
+const descargarBlob=(blob,filename)=>{
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+const exportarWordAnalisis=async(entidad,vrio,contraste,pestel,bmc,eric,areaLabel)=>{
+  const{Document,Packer,Paragraph,TextRun,HeadingLevel,Table,TableRow,TableCell,WidthType,ShadingType}=window.docx;
+  const H1=(t)=>new Paragraph({heading:HeadingLevel.HEADING_1,spacing:{before:300,after:150},children:[new TextRun({text:t,bold:true,color:'4C1D95'})]});
+  const P=(t)=>new Paragraph({spacing:{after:120},children:[new TextRun({text:t})]});
+  const cell=(t,header)=>new TableCell({width:{size:2500,type:WidthType.DXA},shading:header?{type:ShadingType.CLEAR,fill:'4F46E5'}:undefined,margins:{top:80,bottom:80,left:100,right:100},children:[new Paragraph({children:[new TextRun({text:String(t==null?'':t),bold:!!header,color:header?'FFFFFF':'000000'})]})]});
+  const tabla=(headers,rows)=>new Table({width:{size:10000,type:WidthType.DXA},rows:[new TableRow({children:headers.map(h=>cell(h,true))}),...rows.map(r=>new TableRow({children:r.map(v=>cell(v))}))]});
+
+  const vrioRows=vrio.map(v=>{const t=vrioTier(v.valioso,v.raro,v.inimitable,v.organizado);return[v.area,v.recurso,t.label];});
+  const contrasteRows=contraste.map(c=>{const d=contrasteDecision(c.relevante,c.capacidad,c.cumplimiento);return[c.area,c.linea,d.label];});
+  const pestelRows=pestel.map(p=>[p.area,PESTEL_DIMS.find(d=>d.key===p.dimension)?.label||'',p.factor,p.tipo==='oportunidad'?'Oportunidad':'Amenaza']);
+  const bmcRows=bmc.map(b=>[b.area,BMC_LABEL[b.bloque],b.texto]);
+  const ericRows=eric.map(e=>[e.area,ERIC_LABEL[e.accion]?.label||'',e.texto,e.lineaPropuesta||'']);
+  const{grupos:sintesisGrupos,sueltas:sintesisSueltas}=agruparSintesis(eric);
+  const sintesisChildren=[];
+  Object.entries(sintesisGrupos).forEach(([nombre,items])=>{
+    sintesisChildren.push(new Paragraph({spacing:{before:160,after:60},children:[new TextRun({text:'🎯 '+nombre,bold:true,color:'4F46E5'})]}));
+    items.forEach(it=>sintesisChildren.push(P('• ['+(ERIC_LABEL[it.accion]?.label||'')+'] '+it.texto+' ('+it.area+')')));
+  });
+  if(sintesisSueltas.length>0){
+    sintesisChildren.push(new Paragraph({spacing:{before:160,after:60},children:[new TextRun({text:'Ideas sin agrupar',bold:true,color:'6B7280'})]}));
+    sintesisSueltas.forEach(it=>sintesisChildren.push(P('• ['+(ERIC_LABEL[it.accion]?.label||'')+'] '+it.texto+(it.lineaPropuesta?' — '+it.lineaPropuesta:'')+' ('+it.area+')')));
+  }
+  if(sintesisChildren.length===0)sintesisChildren.push(P('Sin líneas candidatas todavía.'));
+
+  const doc_=new Document({sections:[{children:[
+    new Paragraph({heading:HeadingLevel.TITLE,children:[new TextRun({text:'Análisis y Diagnóstico — '+entidad.nombre,bold:true,color:'4C1D95'})]}),
+    P('Ámbito: '+(areaLabel||'Todas las áreas')),
+    H1('VRIO'),vrio.length?tabla(['Área','Recurso','Clasificación'],vrioRows):P('Sin registros.'),
+    H1('Matriz de contraste'),contraste.length?tabla(['Área','Línea vigente','Decisión'],contrasteRows):P('Sin registros.'),
+    H1('PESTEL'),pestel.length?tabla(['Área','Dimensión','Factor','Tipo'],pestelRows):P('Sin registros.'),
+    H1('Business Model Canvas'),bmc.length?tabla(['Área','Bloque','Nota'],bmcRows):P('Sin registros.'),
+    H1('ERIC al Canvas'),eric.length?tabla(['Área','Acción','Idea','Línea propuesta'],ericRows):P('Sin registros.'),
+    H1('Síntesis — líneas estratégicas candidatas'),...sintesisChildren,
+  ]}]});
+  const blob=await Packer.toBlob(doc_);
+  descargarBlob(blob,'AnalisisDiagnostico_'+entidad.nombre.replace(/\s+/g,'_')+'.docx');
+};
+
+const exportarExcelAnalisis=(entidad,vrio,contraste,pestel,bmc,eric)=>{
+  const wb=XLSX.utils.book_new();
+  const vrioRows=vrio.map(v=>({Área:v.area,Cargo:v.cargo||'',Recurso:v.recurso,Descripción:v.descripcion,Valioso:v.valioso?'Sí':'No',Raro:v.raro?'Sí':'No',Inimitable:v.inimitable?'Sí':'No',Organizado:v.organizado?'Sí':'No',Clasificación:vrioTier(v.valioso,v.raro,v.inimitable,v.organizado).label}));
+  const contrasteRows=contraste.map(c=>({Área:c.area,Cargo:c.cargo||'','Línea vigente':c.linea,'Relevante externamente':c.relevante,'Capacidad interna':c.capacidad,'% Cumplimiento':c.cumplimiento,Decisión:contrasteDecision(c.relevante,c.capacidad,c.cumplimiento).label}));
+  const pestelRows=pestel.map(p=>({Área:p.area,Cargo:p.cargo||'',Dimensión:PESTEL_DIMS.find(d=>d.key===p.dimension)?.label,Factor:p.factor,Impacto:p.impacto,Probabilidad:p.probabilidad,Tipo:p.tipo==='oportunidad'?'Oportunidad':'Amenaza'}));
+  const bmcRows=bmc.map(b=>({Área:b.area,Cargo:b.cargo||'',Bloque:BMC_LABEL[b.bloque],Nota:b.texto,'Enlazado a':b.origenLabel||''}));
+  const ericRows=eric.map(e=>({Área:e.area,Cargo:e.cargo||'',Acción:ERIC_LABEL[e.accion]?.label,Idea:e.texto,'Enlazado a':e.refLabel||'','Línea propuesta':e.lineaPropuesta||''}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(vrioRows),'VRIO');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(contrasteRows),'Matriz de contraste');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(pestelRows),'PESTEL');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(bmcRows),'Business Model Canvas');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(ericRows),'ERIC y líneas');
+  const{grupos:sintesisGruposXls,sueltas:sintesisSueltasXls}=agruparSintesis(eric);
+  const sintesisRows=[];
+  Object.entries(sintesisGruposXls).forEach(([nombre,items])=>{
+    items.forEach(it=>sintesisRows.push({'Línea estratégica':nombre,Área:it.area,Acción:ERIC_LABEL[it.accion]?.label,Idea:it.texto}));
+  });
+  sintesisSueltasXls.forEach(it=>sintesisRows.push({'Línea estratégica':it.lineaPropuesta||'(sin agrupar)',Área:it.area,Acción:ERIC_LABEL[it.accion]?.label,Idea:it.texto}));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sintesisRows),'Síntesis');
+  XLSX.writeFile(wb,'AnalisisDiagnostico_'+entidad.nombre.replace(/\s+/g,'_')+'.xlsx');
+};
+
+const ModalImpresionAnalisis=({entidad,vrio,contraste,pestel,bmc,eric,areaLabel,onClose})=>(
+  <div className="modal-overlay"><div className="modal" style={{maxWidth:'900px',width:'95%',maxHeight:'90vh',overflow:'auto'}}>
+    <div className="modal-header"><h2>Análisis y Diagnóstico — {entidad.nombre}</h2>
+      <div style={{display:'flex',gap:'0.5rem'}}>
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>window.print()}>Imprimir</button>
+        <button className="btn-cerrar" onClick={onClose}>x</button>
+      </div>
+    </div>
+    <div className="modal-body">
+      <p style={{color:'#6B7280',marginBottom:'1rem'}}>Ámbito: {areaLabel||'Todas las áreas'}</p>
+      <h3>VRIO ({vrio.length})</h3>
+      <table className="tabla"><thead><tr><th>Área</th><th>Recurso</th><th>Clasificación</th></tr></thead>
+        <tbody>{vrio.map(v=>{const t=vrioTier(v.valioso,v.raro,v.inimitable,v.organizado);return<tr key={v.id}><td>{v.area}</td><td>{v.recurso}</td><td>{t.label}</td></tr>;})}</tbody>
+      </table>
+      <h3 style={{marginTop:'1.5rem'}}>Matriz de contraste ({contraste.length})</h3>
+      <table className="tabla"><thead><tr><th>Área</th><th>Línea vigente</th><th>Decisión</th></tr></thead>
+        <tbody>{contraste.map(c=>{const d=contrasteDecision(c.relevante,c.capacidad,c.cumplimiento);return<tr key={c.id}><td>{c.area}</td><td>{c.linea}</td><td>{d.label}</td></tr>;})}</tbody>
+      </table>
+      <h3 style={{marginTop:'1.5rem'}}>PESTEL ({pestel.length})</h3>
+      <table className="tabla"><thead><tr><th>Área</th><th>Dimensión</th><th>Factor</th><th>Tipo</th></tr></thead>
+        <tbody>{pestel.map(p=><tr key={p.id}><td>{p.area}</td><td>{PESTEL_DIMS.find(d=>d.key===p.dimension)?.label}</td><td>{p.factor}</td><td>{p.tipo==='oportunidad'?'Oportunidad':'Amenaza'}</td></tr>)}</tbody>
+      </table>
+      <h3 style={{marginTop:'1.5rem'}}>Business Model Canvas ({bmc.length})</h3>
+      <table className="tabla"><thead><tr><th>Área</th><th>Bloque</th><th>Nota</th></tr></thead>
+        <tbody>{bmc.map(b=><tr key={b.id}><td>{b.area}</td><td>{BMC_LABEL[b.bloque]}</td><td>{b.texto}</td></tr>)}</tbody>
+      </table>
+      <h3 style={{marginTop:'1.5rem'}}>ERIC al Canvas ({eric.length})</h3>
+      <table className="tabla"><thead><tr><th>Área</th><th>Acción</th><th>Idea</th><th>Línea propuesta</th></tr></thead>
+        <tbody>{eric.map(e=><tr key={e.id}><td>{e.area}</td><td>{ERIC_LABEL[e.accion]?.label}</td><td>{e.texto}</td><td>{e.lineaPropuesta||'-'}</td></tr>)}</tbody>
+      </table>
+      <h3 style={{marginTop:'1.5rem'}}>Síntesis — líneas estratégicas candidatas</h3>
+      {(()=>{const{grupos,sueltas}=agruparSintesis(eric);
+        const totalGrupos=Object.keys(grupos).length;
+        if(totalGrupos===0&&sueltas.length===0)return<p style={{color:'#6B7280'}}>Sin líneas candidatas todavía.</p>;
+        return(<>
+          {Object.entries(grupos).map(([nombre,items])=>(
+            <div key={nombre} style={{marginBottom:'1rem',borderLeft:'4px solid #4F46E5',paddingLeft:'0.75rem'}}>
+              <strong style={{color:'#4F46E5'}}>🎯 {nombre}</strong>
+              <ul style={{margin:'0.25rem 0 0',paddingLeft:'1.25rem'}}>{items.map(it=><li key={it.id} style={{fontSize:'0.875rem',color:'#374151'}}>[{ERIC_LABEL[it.accion]?.label}] {it.texto} ({it.area})</li>)}</ul>
+            </div>
+          ))}
+          {sueltas.length>0&&<div>
+            <strong style={{color:'#6B7280'}}>Ideas sin agrupar</strong>
+            <ul style={{margin:'0.25rem 0 0',paddingLeft:'1.25rem'}}>{sueltas.map(it=><li key={it.id} style={{fontSize:'0.875rem',color:'#374151'}}>[{ERIC_LABEL[it.accion]?.label}] {it.texto}{it.lineaPropuesta?' — '+it.lineaPropuesta:''} ({it.area})</li>)}</ul>
+          </div>}
+        </>);
+      })()}
+    </div>
+  </div></div>
+);
+
+
+const TRANSVERSAL='Transversal / Corporativo';
+
+const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo})=>{
+  const[sub,setSub]=useState('vrio');
+  const[cargos,setCargos]=useState([]);
+  const[areaActiva,setAreaActiva]=useState('');
+  const[modalPrint,setModalPrint]=useState(false);
+  const[exportando,setExportando]=useState(false);
+  const canEdit=isAdmin||!isMonitoreo;
+  useEffect(()=>{
+    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
+      const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
+      setCargos(d);
+    });
+    return()=>unsub();
+  },[]);
+  const areasExistentes=[...new Set([...cargos.map(c=>c.area).filter(Boolean),TRANSVERSAL])].sort();
+  const miCargo=cargos.find(c=>c.nombre===userCargo);
+  const miArea=miCargo?miCargo.area:'';
+  const areaFiltro=isAdmin?(areaActiva||null):(miArea||null);
+
+  const[vrio,setVrio]=useState([]);
+  const[contraste,setContraste]=useState([]);
+  const[pestel,setPestel]=useState([]);
+  const[bmc,setBmc]=useState([]);
+  const[eric,setEric]=useState([]);
+  useEffect(()=>{
+    if(!entidad)return;
+    const ref=db.collection('fundacoofisam_datos').doc(entidad.id);
+    const creadoMs=(d)=>{
+      if(!d.creado)return Date.now();
+      if(typeof d.creado.toMillis==='function')return d.creado.toMillis();
+      if(d.creado.seconds)return d.creado.seconds*1000;
+      return 0;
+    };
+    const ordenar=(arr)=>[...arr].sort((a,b)=>creadoMs(b)-creadoMs(a));
+    const withArea=(coll,setter)=>{
+      // Nota: sin orderBy() en la consulta a propósito, para no requerir un índice
+      // compuesto en Firestore. El orden se aplica aquí mismo, en el navegador.
+      if(!areaFiltro){
+        return ref.collection(coll).onSnapshot(s=>{setter(ordenar(s.docs.map(d=>({id:d.id,...d.data()}))));});
+      }
+      let dataA=[],dataB=[];
+      const merge=()=>{const map={};[...dataA,...dataB].forEach(d=>map[d.id]=d);setter(ordenar(Object.values(map)));};
+      const u1=ref.collection(coll).where('area','==',areaFiltro).onSnapshot(s=>{dataA=s.docs.map(d=>({id:d.id,...d.data()}));merge();});
+      const u2=ref.collection(coll).where('area','==',TRANSVERSAL).onSnapshot(s=>{dataB=s.docs.map(d=>({id:d.id,...d.data()}));merge();});
+      return()=>{u1();u2();};
+    };
+    const u1=withArea('vrio',setVrio),u2=withArea('contraste',setContraste),u3=withArea('pestel',setPestel),u4=withArea('bmc',setBmc),u5=withArea('eric',setEric);
+    return()=>{u1();u2();u3();u4();u5();};
+  },[entidad,areaFiltro]);
+
+  if(!entidad)return <div className="empty-state"><h3>Selecciona un periodo PE</h3></div>;
+  if(!isAdmin&&!userCargo)return <div className="empty-state"><h3>🏷️ Sin cargo asignado</h3><p>Tu usuario todavía no tiene un cargo asignado en esta entidad. Pide al administrador que te lo asigne desde "Usuarios" para poder ver y registrar la información de tu área.</p></div>;
+  if(!isAdmin&&userCargo&&!miArea)return <div className="empty-state"><h3>🗂️ Tu cargo no tiene área asignada</h3><p>Tu cargo (<strong>{userCargo}</strong>) existe, pero todavía no está asociado a un área. Pide al administrador que complete el campo "Área" para ese cargo desde el menú "Cargos".</p></div>;
+
+  const ref=db.collection('fundacoofisam_datos').doc(entidad.id);
+  const add=(coll,data)=>ref.collection(coll).add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  const remove=(coll,id)=>{if(window.confirm('¿Eliminar?'))ref.collection(coll).doc(id).delete();};
+  const update=(coll,id,data)=>ref.collection(coll).doc(id).update(data);
+
+  const SUBTABS=[
+    {key:'vrio',label:'🧬 VRIO'},{key:'contraste',label:'📋 Matriz de contraste'},{key:'pestel',label:'🌬️ PESTEL'},
+    {key:'bmc',label:'🗂️ Business Model Canvas'},{key:'eric',label:'🔧 ERIC al Canvas'},
+    ...(isAdmin?[{key:'sintesis',label:'🔗 Síntesis'}]:[]),
+  ];
+
+  const areaTag=isAdmin?areaActiva:miArea;
+  const cargoTag=isAdmin?'':userCargo;
+  const areaLabelActual=isAdmin?(areaActiva||'Todas las áreas'):miArea;
+
+  const onWord=async()=>{
+    setExportando(true);
+    try{await exportarWordAnalisis(entidad,vrio,contraste,pestel,bmc,eric,areaLabelActual);}
+    catch(err){alert('Error generando Word: '+err.message);}
+    finally{setExportando(false);}
+  };
+  const onExcel=()=>{
+    try{exportarExcelAnalisis(entidad,vrio,contraste,pestel,bmc,eric);}
+    catch(err){alert('Error generando Excel: '+err.message);}
+  };
+  const[cargandoEjemplo,setCargandoEjemplo]=useState(false);
+  const onDatosEjemplo=async()=>{
+    if(!window.confirm('¿Cargar datos de ejemplo en la entidad "'+entidad.nombre+'"? Esto agrega cargos, VRIO, PESTEL, Canvas y ERIC de muestra.'))return;
+    setCargandoEjemplo(true);
+    try{await cargarDatosEjemplo(entidad);alert('Datos de ejemplo cargados.');}
+    catch(err){alert('Error: '+err.message);}
+    finally{setCargandoEjemplo(false);}
+  };
+
+  return(<div>
+    <div className="page-header">
+      <h1>Análisis y Diagnóstico — {entidad.nombre}</h1>
+      <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap'}}>
+        {typeof MODO_PRUEBA!=='undefined'&&MODO_PRUEBA&&isAdmin&&<button className="btn-secondary" onClick={onDatosEjemplo} disabled={cargandoEjemplo} style={{border:'2px solid #059669',color:'#059669'}}>🌱 {cargandoEjemplo?'Cargando...':'Datos de ejemplo'}</button>}
+        <button className="btn-primary" style={{width:'auto'}} onClick={()=>setModalPrint(true)}>🖨️ Imprimir</button>
+        <button className="btn-primary" style={{width:'auto'}} onClick={onWord} disabled={exportando}>📄 {exportando?'Generando...':'Word'}</button>
+        <button className="btn-primary" style={{width:'auto'}} onClick={onExcel}>📊 Excel</button>
+      </div>
+    </div>
+    <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',marginBottom:'1.5rem'}}>
+      {SUBTABS.map(t=>(
+        <button key={t.key} onClick={()=>setSub(t.key)}
+          style={{padding:'0.5rem 1rem',borderRadius:'8px',border:'2px solid '+(sub===t.key?'#4F46E5':'#E5E7EB'),background:sub===t.key?'#EDE9FE':'white',color:sub===t.key?'#4F46E5':'#4B5563',fontWeight:600,cursor:'pointer',fontSize:'0.875rem'}}>
+          {t.label}
+        </button>
+      ))}
+    </div>
+    {!isAdmin&&<div className="card" style={{padding:'0.75rem 1rem',marginBottom:'1rem',background:'#F9FAFB'}}>
+      <span style={{fontSize:'0.8rem',color:'#6B7280'}}>Tu cargo: </span><Chip color="#6B7280" bg="#F3F4F6">{userCargo}</Chip>
+      <span style={{fontSize:'0.8rem',color:'#6B7280',marginLeft:8}}>→ Área: </span><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {miArea}</Chip>
+      <span style={{fontSize:'0.75rem',color:'#9CA3AF',marginLeft:10}}>(también ves lo marcado como {TRANSVERSAL})</span>
+      {!canEdit&&<span style={{marginLeft:8,fontSize:'0.8rem',color:'#6B7280'}}>(modo monitoreo — solo lectura)</span>}
+    </div>}
+    {isAdmin&&<div className="card" style={{padding:'0.75rem 1rem',marginBottom:'1rem',background:'#F9FAFB'}}>
+      <div className="form-group" style={{marginBottom:0}}>
+        <label>Área que registra / consulta (déjalo vacío para ver todas)</label>
+        <input type="text" list="areas-analisis" value={areaActiva} onChange={e=>setAreaActiva(e.target.value)} placeholder="Ej. Riesgos, Talento Humano, Gerencia..."/>
+        <datalist id="areas-analisis">{areasExistentes.map(a=><option key={a} value={a}/>)}</datalist>
+      </div>
+    </div>}
+
+    {sub==='vrio'&&<AnalisisVrio entries={vrio} area={areaTag} cargo={cargoTag} isAdmin={isAdmin} canEdit={canEdit} onAdd={d=>add('vrio',d)} onUpdate={(id,d)=>update('vrio',id,d)} onRemove={id=>remove('vrio',id)} onEric={d=>add('eric',d)}/>}
+    {sub==='contraste'&&<AnalisisContraste entries={contraste} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('contraste',d)} onUpdate={(id,d)=>update('contraste',id,d)} onRemove={id=>remove('contraste',id)}/>}
+    {sub==='pestel'&&<AnalisisPestel entries={pestel} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('pestel',d)} onUpdate={(id,d)=>update('pestel',id,d)} onRemove={id=>remove('pestel',id)}/>}
+    {sub==='bmc'&&<AnalisisBmc entries={bmc} vrio={vrio} contraste={contraste} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('bmc',d)} onUpdate={(id,d)=>update('bmc',id,d)} onRemove={id=>remove('bmc',id)}/>}
+    {sub==='eric'&&<AnalisisEric entries={eric} bmc={bmc} vrio={vrio} area={areaTag} cargo={cargoTag} canEdit={canEdit} onAdd={d=>add('eric',d)} onUpdate={(id,d)=>update('eric',id,d)} onRemove={id=>remove('eric',id)}/>}
+    {sub==='sintesis'&&isAdmin&&<AnalisisSintesis eric={eric} bmc={bmc} onUpdate={(id,d)=>update('eric',id,d)}/>}
+    {modalPrint&&<ModalImpresionAnalisis entidad={entidad} vrio={vrio} contraste={contraste} pestel={pestel} bmc={bmc} eric={eric} areaLabel={areaLabelActual} onClose={()=>setModalPrint(false)}/>}
+  </div>);
+};
+
+const TransversalCheck=({checked,onChange})=>(
+  <label style={{display:'inline-flex',alignItems:'center',gap:6,fontSize:'0.8rem',color:'#6B7280',cursor:'pointer'}}>
+    <input type="checkbox" checked={checked} onChange={e=>onChange(e.target.checked)}/>🌐 Marcar como {TRANSVERSAL}
+  </label>
+);
+
+const AnalisisVrio=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove,onEric})=>{
+  const[editId,setEditId]=useState(null);
+  const[editArea,setEditArea]=useState('');
+  const[recurso,setRecurso]=useState('');const[descripcion,setDescripcion]=useState('');
+  const[valioso,setValioso]=useState(false);const[raro,setRaro]=useState(false);const[inimitable,setInimitable]=useState(false);const[organizado,setOrganizado]=useState(false);
+  const[transversal,setTransversal]=useState(false);
+
+  const limpiar=()=>{setEditId(null);setEditArea('');setRecurso('');setDescripcion('');setValioso(false);setRaro(false);setInimitable(false);setOrganizado(false);setTransversal(false);};
+  const editar=(item)=>{setEditId(item.id);setEditArea(item.area||'');setRecurso(item.recurso);setDescripcion(item.descripcion||'');setValioso(!!item.valioso);setRaro(!!item.raro);setInimitable(!!item.inimitable);setOrganizado(!!item.organizado);setTransversal(item.area===TRANSVERSAL);};
+  const submit=(e)=>{
+    e.preventDefault();if(!recurso.trim())return;
+    const areaFinal=transversal?TRANSVERSAL:(area||editArea||'Sin asignar');
+    const payload={area:areaFinal,cargo:cargo||'',recurso,descripcion,valioso,raro,inimitable,organizado};
+    if(editId)onUpdate(editId,payload);else onAdd(payload);
+    limpiar();
+  };
+  const marcarEric=(entry,tier)=>{if(!tier.accion)return;onEric({area:entry.area,cargo:entry.cargo||'',accion:tier.accion,texto:'(desde VRIO) '+entry.recurso,refTipo:'vrio',refId:entry.id,refLabel:entry.recurso});};
+  const checks=[['valioso',valioso,setValioso,'Valioso'],['raro',raro,setRaro,'Raro'],['inimitable',inimitable,setInimitable,'Inimitable'],['organizado',organizado,setOrganizado,'Organizado']];
+  return(<div>
+    <p style={{color:'#6B7280',marginBottom:'1rem'}}>Registra los recursos o capacidades clave. La clasificación y la acción sugerida se calculan automáticamente.</p>
+    {canEdit&&<form onSubmit={submit} className="card">
+      {editId&&<div style={{marginBottom:'0.75rem',fontSize:'0.8rem',color:'#4F46E5',fontWeight:600}}>✏️ Editando registro — <a href="#" onClick={ev=>{ev.preventDefault();limpiar();}} style={{color:'#6B7280',fontWeight:400,textDecoration:'underline'}}>cancelar</a></div>}
+      <div className="form-row">
+        <div className="form-group"><label>Recurso o capacidad</label><input value={recurso} onChange={e=>setRecurso(e.target.value)} placeholder="Ej. Base de asociados fidelizados"/></div>
+        <div className="form-group"><label>Descripción breve</label><input value={descripcion} onChange={e=>setDescripcion(e.target.value)} placeholder="¿En qué consiste?"/></div>
+      </div>
+      <div style={{display:'flex',gap:'0.75rem',flexWrap:'wrap',marginBottom:'1rem'}}>
+        {checks.map(([k,val,set,label])=>(<label key={k} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'0.5rem 0.75rem',border:'2px solid #E5E7EB',borderRadius:8,cursor:'pointer',fontSize:'0.875rem'}}><input type="checkbox" checked={val} onChange={e=>set(e.target.checked)}/>{label}</label>))}
+      </div>
+      {isAdmin&&<div style={{marginBottom:'1rem'}}><TransversalCheck checked={transversal} onChange={setTransversal}/></div>}
+      <button type="submit" className="btn-primary" style={{width:'auto'}} disabled={!editId&&!area&&!transversal}>{editId?'💾 Guardar cambios':'+ Agregar recurso'}</button>
+      {!area&&!transversal&&<span style={{marginLeft:10,fontSize:'0.8rem',color:'#DC2626'}}>Selecciona un área arriba primero.</span>}
+    </form>}
+    <div className="grid">
+      {entries.map(e=>{
+        const tier=vrioTier(e.valioso,e.raro,e.inimitable,e.organizado);
+        const quad=tier.accion?ERIC_LABEL[tier.accion]:null;
+        return(<div key={e.id} className="card">
+          <h4>{e.recurso}</h4>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip><Chip color={tier.color} bg={tier.bg}>{tier.label}</Chip></div>
+          {e.descripcion&&<p style={{color:'#6B7280',fontSize:'0.875rem'}}>{e.descripcion}</p>}
+          {canEdit&&<div className="btn-group">
+            {quad&&<button className="btn-edit" onClick={()=>marcarEric(e,tier)}>{quad.emoji} Marcar para {quad.label.toLowerCase()}</button>}
+            <button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button>
+            <button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button>
+          </div>}
+        </div>);
+      })}
+      {entries.length===0&&<p style={{color:'#6B7280'}}>Todavía no hay recursos registrados.</p>}
+    </div>
+  </div>);
+};
+
+const AnalisisContraste=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>{
+  const[editId,setEditId]=useState(null);
+  const[editArea,setEditArea]=useState('');
+  const[linea,setLinea]=useState('');const[relevante,setRelevante]=useState('si');const[capacidad,setCapacidad]=useState('si');const[cumplimiento,setCumplimiento]=useState('');
+  const[transversal,setTransversal]=useState(false);
+  const limpiar=()=>{setEditId(null);setEditArea('');setLinea('');setRelevante('si');setCapacidad('si');setCumplimiento('');setTransversal(false);};
+  const editar=(item)=>{setEditId(item.id);setEditArea(item.area||'');setLinea(item.linea);setRelevante(item.relevante);setCapacidad(item.capacidad);setCumplimiento(item.cumplimiento);setTransversal(item.area===TRANSVERSAL);};
+  const submit=(e)=>{
+    e.preventDefault();if(!linea.trim())return;
+    const areaFinal=transversal?TRANSVERSAL:(area||editArea||'Sin asignar');
+    const payload={area:areaFinal,cargo:cargo||'',linea,relevante,capacidad,cumplimiento};
+    if(editId)onUpdate(editId,payload);else onAdd(payload);
+    limpiar();
+  };
+  return(<div>
+    <p style={{color:'#6B7280',marginBottom:'1rem'}}>Contrasta cada línea estratégica vigente contra la realidad actual.</p>
+    {canEdit&&<form onSubmit={submit} className="card">
+      {editId&&<div style={{marginBottom:'0.75rem',fontSize:'0.8rem',color:'#4F46E5',fontWeight:600}}>✏️ Editando registro — <a href="#" onClick={ev=>{ev.preventDefault();limpiar();}} style={{color:'#6B7280',fontWeight:400,textDecoration:'underline'}}>cancelar</a></div>}
+      <div className="form-group"><label>Línea estratégica vigente</label><input value={linea} onChange={e=>setLinea(e.target.value)} placeholder="Ej. Expansión regional"/></div>
+      <div className="form-row">
+        <div className="form-group"><label>¿Relevante externamente?</label><select value={relevante} onChange={e=>setRelevante(e.target.value)}><option value="si">Sí</option><option value="parcial">Parcial</option><option value="no">No</option></select></div>
+        <div className="form-group"><label>¿Capacidad interna instalada?</label><select value={capacidad} onChange={e=>setCapacidad(e.target.value)}><option value="si">Sí</option><option value="parcial">Parcial</option><option value="no">No</option></select></div>
+      </div>
+      <div className="form-group"><label>% cumplimiento histórico</label><input type="number" min="0" max="100" value={cumplimiento} onChange={e=>setCumplimiento(e.target.value)}/></div>
+      {isAdmin&&<div style={{marginBottom:'1rem'}}><TransversalCheck checked={transversal} onChange={setTransversal}/></div>}
+      <button type="submit" className="btn-primary" style={{width:'auto'}} disabled={!editId&&!area&&!transversal}>{editId?'💾 Guardar cambios':'+ Agregar línea'}</button>
+      {!area&&!transversal&&<span style={{marginLeft:10,fontSize:'0.8rem',color:'#DC2626'}}>Selecciona un área arriba primero.</span>}
+    </form>}
+    <div className="grid">
+      {entries.map(e=>{const dec=contrasteDecision(e.relevante,e.capacidad,e.cumplimiento);return(
+        <div key={e.id} className="card">
+          <h4>{e.linea}</h4>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}><Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip><Chip color={dec.color} bg={dec.bg}>{dec.label}</Chip></div>
+          <p style={{color:'#6B7280',fontSize:'0.875rem'}}>Relevante: {e.relevante} · Capacidad: {e.capacidad} · Cumplimiento: {e.cumplimiento||0}%</p>
+          {canEdit&&<div className="btn-group"><button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button></div>}
+        </div>);})}
+      {entries.length===0&&<p style={{color:'#6B7280'}}>Todavía no hay líneas contrastadas.</p>}
+    </div>
+  </div>);
+};
+
+const AnalisisPestel=({entries,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>{
+  const[editId,setEditId]=useState(null);
+  const[editArea,setEditArea]=useState('');
+  const[dimension,setDimension]=useState('politico');const[factor,setFactor]=useState('');const[impacto,setImpacto]=useState('');const[probabilidad,setProbabilidad]=useState('media');const[tipo,setTipo]=useState('oportunidad');
+  const[transversal,setTransversal]=useState(false);
+  const limpiar=()=>{setEditId(null);setEditArea('');setDimension('politico');setFactor('');setImpacto('');setProbabilidad('media');setTipo('oportunidad');setTransversal(false);};
+  const editar=(item)=>{setEditId(item.id);setEditArea(item.area||'');setDimension(item.dimension);setFactor(item.factor);setImpacto(item.impacto||'');setProbabilidad(item.probabilidad);setTipo(item.tipo);setTransversal(item.area===TRANSVERSAL);};
+  const submit=(e)=>{
+    e.preventDefault();if(!factor.trim())return;
+    const areaFinal=transversal?TRANSVERSAL:(area||editArea||'Sin asignar');
+    const payload={area:areaFinal,cargo:cargo||'',dimension,factor,impacto,probabilidad,tipo};
+    if(editId)onUpdate(editId,payload);else onAdd(payload);
+    limpiar();
+  };
+  return(<div>
+    <p style={{color:'#6B7280',marginBottom:'1rem'}}>Factores Políticos, Económicos, Sociales, Tecnológicos, Ecológicos y Legales.</p>
+    {canEdit&&<form onSubmit={submit} className="card">
+      {editId&&<div style={{marginBottom:'0.75rem',fontSize:'0.8rem',color:'#4F46E5',fontWeight:600}}>✏️ Editando registro — <a href="#" onClick={ev=>{ev.preventDefault();limpiar();}} style={{color:'#6B7280',fontWeight:400,textDecoration:'underline'}}>cancelar</a></div>}
+      <div className="form-row">
+        <div className="form-group"><label>Dimensión</label><select value={dimension} onChange={e=>setDimension(e.target.value)}>{PESTEL_DIMS.map(d=><option key={d.key} value={d.key}>{d.label}</option>)}</select></div>
+        <div className="form-group"><label>Factor o tendencia</label><input value={factor} onChange={e=>setFactor(e.target.value)} placeholder="Ej. Nueva regulación de tasas"/></div>
+      </div>
+      <div className="form-group"><label>Impacto</label><input value={impacto} onChange={e=>setImpacto(e.target.value)} placeholder="¿Cómo afecta o beneficia?"/></div>
+      <div className="form-row">
+        <div className="form-group"><label>Probabilidad</label><select value={probabilidad} onChange={e=>setProbabilidad(e.target.value)}><option value="alta">Alta</option><option value="media">Media</option><option value="baja">Baja</option></select></div>
+        <div className="form-group"><label>Tipo</label><select value={tipo} onChange={e=>setTipo(e.target.value)}><option value="oportunidad">Oportunidad</option><option value="amenaza">Amenaza</option></select></div>
+      </div>
+      {isAdmin&&<div style={{marginBottom:'1rem'}}><TransversalCheck checked={transversal} onChange={setTransversal}/></div>}
+      <button type="submit" className="btn-primary" style={{width:'auto'}} disabled={!editId&&!area&&!transversal}>{editId?'💾 Guardar cambios':'+ Agregar factor'}</button>
+      {!area&&!transversal&&<span style={{marginLeft:10,fontSize:'0.8rem',color:'#DC2626'}}>Selecciona un área arriba primero.</span>}
+    </form>}
+    {PESTEL_DIMS.map(d=>{
+      const items=entries.filter(e=>e.dimension===d.key);
+      if(items.length===0)return null;
+      return(<div key={d.key} style={{marginBottom:'1.5rem'}}>
+        <h4 style={{color:'#4F46E5',marginBottom:'0.5rem'}}>{d.label}</h4>
+        <div className="grid">{items.map(e=>(
+          <div key={e.id} className="card">
+            <h4>{e.factor}</h4>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',margin:'0.5rem 0'}}>
+              <Chip color="#4F46E5" bg="#EDE9FE">🗂️ {e.area}</Chip>
+              <Chip color={e.tipo==='oportunidad'?'#059669':'#991B1B'} bg={e.tipo==='oportunidad'?'#D1FAE5':'#FEE2E2'}>{e.tipo==='oportunidad'?'Oportunidad':'Amenaza'}</Chip>
+              <Chip color="#6B7280" bg="#F3F4F6">Probabilidad {e.probabilidad}</Chip>
+            </div>
+            {e.impacto&&<p style={{color:'#6B7280',fontSize:'0.875rem'}}>{e.impacto}</p>}
+            {canEdit&&<div className="btn-group"><button className="btn-edit" onClick={()=>editar(e)}>✏️ Editar</button><button className="btn-secondary" onClick={()=>onRemove(e.id)}>🗑️ Eliminar</button></div>}
+          </div>))}
+        </div>
+      </div>);
+    })}
+    {entries.length===0&&<p style={{color:'#6B7280'}}>Todavía no hay factores PESTEL.</p>}
+  </div>);
+};
+
+const AnalisisBmc=({entries,vrio,contraste,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>(
+  <div>
+    <p style={{color:'#6B7280',marginBottom:'1rem'}}>Cada bloque acepta notas enlazadas opcionalmente a un recurso VRIO o a una línea de la matriz de contraste.</p>
+    <div style={{display:'grid',gap:'0.85rem',gridTemplateColumns:'repeat(5, minmax(200px,1fr))',gridTemplateAreas:`"socios actividades valor relaciones segmentos" "socios recursos valor canales segmentos" "costos costos costos ingresos ingresos"`}}>
+      {BMC_BLOCKS.map(b=><BmcBlock key={b.key} block={b} entries={entries.filter(e=>e.bloque===b.key)} area={area} cargo={cargo} isAdmin={isAdmin} canEdit={canEdit} vrio={vrio} contraste={contraste} onAdd={onAdd} onUpdate={onUpdate} onRemove={onRemove}/>)}
+    </div>
+  </div>
+);
+const BmcBlock=({block,entries,area,cargo,isAdmin,canEdit,vrio,contraste,onAdd,onUpdate,onRemove})=>{
+  const[editId,setEditId]=useState(null);
+  const[editArea,setEditArea]=useState('');
+  const[text,setText]=useState('');const[origenValue,setOrigenValue]=useState('');const[transversal,setTransversal]=useState(false);
+  const limpiar=()=>{setEditId(null);setEditArea('');setText('');setOrigenValue('');setTransversal(false);};
+  const editar=(item)=>{setEditId(item.id);setEditArea(item.area||'');setText(item.texto);setOrigenValue(item.origenTipo?item.origenTipo+':'+item.origenId:'');setTransversal(item.area===TRANSVERSAL);};
+  const submit=(e)=>{e.preventDefault();if(!text.trim())return;
+    const areaFinal=transversal?TRANSVERSAL:(area||editArea||'Sin asignar');
+    let data={area:areaFinal,cargo:cargo||'',bloque:block.key,texto:text,origenTipo:null,origenId:null,origenLabel:null};
+    if(origenValue){const[tipo,id]=origenValue.split(':');
+      if(tipo==='vrio'){const v=vrio.find(x=>x.id===id);if(v){data.origenTipo='vrio';data.origenId=id;data.origenLabel=v.recurso;}}
+      if(tipo==='contraste'){const c=contraste.find(x=>x.id===id);if(c){data.origenTipo='contraste';data.origenId=id;data.origenLabel=c.linea;}}}
+    if(editId)onUpdate(editId,data);else onAdd(data);
+    limpiar();};
+  return(<div style={{gridArea:block.area}} className="card" >
+    <h4 style={{fontSize:'0.8rem',textTransform:'uppercase'}}>{block.label}</h4>
+    <div style={{display:'flex',flexDirection:'column',gap:6,maxHeight:220,overflowY:'auto',margin:'0.5rem 0'}}>
+      {entries.length===0&&<span style={{fontSize:'0.75rem',color:'#9CA3AF'}}>Sin notas aún.</span>}
+      {entries.map(e=>(<div key={e.id} style={{background:'#FEF3C7',borderRadius:8,padding:'0.4rem 0.6rem',fontSize:'0.75rem',display:'flex',justifyContent:'space-between',gap:6}}>
+        <div><div style={{whiteSpace:'pre-wrap'}}>{e.texto}</div><div style={{opacity:0.7}}>🗂️ {e.area}{e.origenLabel&&<span> · 🔗 {e.origenLabel}</span>}</div></div>
+        {canEdit&&<div style={{display:'flex',flexDirection:'column',gap:2}}><button onClick={()=>editar(e)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.6}}>✏️</button><button onClick={()=>onRemove(e.id)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.5}}>🗑️</button></div>}
+      </div>))}
+    </div>
+    {canEdit&&<form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:5}}>
+      {editId&&<div style={{fontSize:'0.7rem',color:'#4F46E5',fontWeight:600}}>✏️ Editando — <a href="#" onClick={ev=>{ev.preventDefault();limpiar();}} style={{color:'#6B7280',fontWeight:400}}>cancelar</a></div>}
+      <select value={origenValue} onChange={e=>setOrigenValue(e.target.value)} style={{fontSize:'0.7rem',padding:'0.3rem',border:'1px solid #E5E7EB',borderRadius:6}}>
+        <option value="">Vincular a (opcional)...</option>
+        {vrio.length>0&&<optgroup label="VRIO">{vrio.map(v=><option key={v.id} value={'vrio:'+v.id}>{v.recurso}</option>)}</optgroup>}
+        {contraste.length>0&&<optgroup label="Matriz de contraste">{contraste.map(c=><option key={c.id} value={'contraste:'+c.id}>{c.linea}</option>)}</optgroup>}
+      </select>
+      <textarea value={text} onChange={e=>setText(e.target.value)} placeholder="Agregar nota..." disabled={!editId&&!area&&!transversal} rows={3} style={{fontSize:'0.78rem',padding:'0.4rem 0.55rem',border:'1px solid #E5E7EB',borderRadius:6,resize:'vertical',fontFamily:'inherit'}}/>
+      {isAdmin&&<label style={{display:'inline-flex',alignItems:'center',gap:5,fontSize:'0.68rem',color:'#6B7280',cursor:'pointer'}}><input type="checkbox" checked={transversal} onChange={e=>setTransversal(e.target.checked)}/>🌐 Transversal</label>}
+      <button type="submit" disabled={!editId&&!area&&!transversal} style={{borderRadius:6,padding:'0.3rem 0.6rem',background:'#4F46E5',color:'white',border:'none',cursor:'pointer',fontSize:'0.75rem'}}>{editId?'Guardar':'+ Agregar'}</button>
+      {!area&&!transversal&&<span style={{fontSize:'0.68rem',color:'#DC2626'}}>Selecciona un área arriba primero.</span>}
+    </form>}
+  </div>);
+};
+
+const AnalisisEric=({entries,bmc,vrio,area,cargo,isAdmin,canEdit,onAdd,onUpdate,onRemove})=>(
+  <div>
+    <p style={{color:'#6B7280',marginBottom:'1rem'}}>Puedes registrar ideas aquí, o marcarlas directamente desde un recurso VRIO.</p>
+    <div className="grid">
+      {ERIC_QUADS.map(q=><EricQuad key={q.key} quad={q} entries={entries.filter(e=>e.accion===q.key)} area={area} cargo={cargo} isAdmin={isAdmin} canEdit={canEdit} bmc={bmc} vrio={vrio} onAdd={onAdd} onUpdate={onUpdate} onRemove={onRemove}/>)}
+    </div>
+  </div>
+);
+const EricQuad=({quad,entries,area,cargo,isAdmin,canEdit,bmc,vrio,onAdd,onUpdate,onRemove})=>{
+  const[editId,setEditId]=useState(null);
+  const[editArea,setEditArea]=useState('');
+  const[text,setText]=useState('');const[refValue,setRefValue]=useState('');const[transversal,setTransversal]=useState(false);
+  const limpiar=()=>{setEditId(null);setEditArea('');setText('');setRefValue('');setTransversal(false);};
+  const editar=(item)=>{setEditId(item.id);setEditArea(item.area||'');setText(item.texto);setRefValue(item.refTipo?item.refTipo+':'+item.refId:'');setTransversal(item.area===TRANSVERSAL);};
+  const submit=(e)=>{e.preventDefault();if(!text.trim())return;
+    const areaFinal=transversal?TRANSVERSAL:(area||editArea||'Sin asignar');
+    let data={area:areaFinal,cargo:cargo||'',accion:quad.key,texto:text,refTipo:null,refId:null,refLabel:null,refBloque:null};
+    if(refValue){const[tipo,id]=refValue.split(':');
+      if(tipo==='bmc'){const n=bmc.find(x=>x.id===id);if(n){data.refTipo='bmc';data.refId=id;data.refBloque=n.bloque;data.refLabel=n.texto;}}
+      if(tipo==='vrio'){const v=vrio.find(x=>x.id===id);if(v){data.refTipo='vrio';data.refId=id;data.refLabel=v.recurso;}}}
+    if(editId)onUpdate(editId,data);else onAdd(data);
+    limpiar();};
+  return(<div className="card">
+    <h4 style={{color:quad.color}}>{quad.emoji} {quad.label}</h4>
+    <p style={{color:'#6B7280',fontSize:'0.8rem'}}>{quad.hint}</p>
+    <div style={{display:'flex',flexDirection:'column',gap:6,maxHeight:170,overflowY:'auto',margin:'0.5rem 0'}}>
+      {entries.length===0&&<span style={{fontSize:'0.75rem',color:'#9CA3AF'}}>Sin ideas registradas.</span>}
+      {entries.map(e=>(<div key={e.id} style={{background:quad.bg,borderRadius:8,padding:'0.5rem 0.7rem',fontSize:'0.8rem',display:'flex',justifyContent:'space-between',gap:8}}>
+        <div><div>{e.texto}</div><div style={{opacity:0.7,fontSize:'0.7rem'}}>🗂️ {e.area}{e.refLabel&&<span> · 🔗 {e.refTipo==='bmc'?BMC_LABEL[e.refBloque]+': ':'VRIO: '}{e.refLabel}</span>}{e.lineaPropuesta&&<span> · 🎯 {e.lineaPropuesta}</span>}</div></div>
+        {canEdit&&<div style={{display:'flex',flexDirection:'column',gap:2}}><button onClick={()=>editar(e)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.6}}>✏️</button><button onClick={()=>onRemove(e.id)} style={{background:'none',border:'none',cursor:'pointer',opacity:0.5}}>🗑️</button></div>}
+      </div>))}
+    </div>
+    {canEdit&&<form onSubmit={submit} style={{display:'flex',flexDirection:'column',gap:6}}>
+      {editId&&<div style={{fontSize:'0.7rem',color:'#4F46E5',fontWeight:600}}>✏️ Editando — <a href="#" onClick={ev=>{ev.preventDefault();limpiar();}} style={{color:'#6B7280',fontWeight:400}}>cancelar</a></div>}
+      <select value={refValue} onChange={e=>setRefValue(e.target.value)} style={{fontSize:'0.7rem',padding:'0.3rem',border:'1px solid #E5E7EB',borderRadius:6}}>
+        <option value="">Enlazar a (opcional)...</option>
+        {bmc.length>0&&<optgroup label="Notas del Canvas">{bmc.map(n=><option key={n.id} value={'bmc:'+n.id}>{BMC_LABEL[n.bloque]}: {n.texto}</option>)}</optgroup>}
+        {vrio.length>0&&<optgroup label="Recursos VRIO">{vrio.map(v=><option key={v.id} value={'vrio:'+v.id}>{v.recurso}</option>)}</optgroup>}
+      </select>
+      <div style={{display:'flex',gap:6}}>
+        <input value={text} onChange={e=>setText(e.target.value)} placeholder={'Idea para '+quad.label.toLowerCase()+'...'} disabled={!editId&&!area&&!transversal} style={{flex:1,fontSize:'0.8rem',padding:'0.4rem 0.6rem',border:'1px solid #E5E7EB',borderRadius:6}}/>
+        <button type="submit" disabled={!editId&&!area&&!transversal} style={{borderRadius:6,padding:'0 0.8rem',background:'#4F46E5',color:'white',border:'none',cursor:'pointer'}}>{editId?'💾':'+'}</button>
+      </div>
+      {!area&&!transversal&&<span style={{fontSize:'0.7rem',color:'#DC2626'}}>Selecciona un área arriba primero.</span>}
+      {isAdmin&&<TransversalCheck checked={transversal} onChange={setTransversal}/>}
+    </form>}
+  </div>);
+};
+
+const AnalisisSintesis=({eric,bmc,onUpdate})=>{
+  const candidatas=eric.filter(e=>e.accion==='incrementar'||e.accion==='crear');
+  const[seleccion,setSeleccion]=useState([]);
+  const[nombreGrupo,setNombreGrupo]=useState('');
+
+  const grupos={};const sueltas=[];
+  candidatas.forEach(e=>{
+    if(e.lineaPropuesta&&e.lineaPropuesta.trim()){
+      (grupos[e.lineaPropuesta]=grupos[e.lineaPropuesta]||[]).push(e);
+    }else sueltas.push(e);
+  });
+
+  const toggleSel=(id)=>setSeleccion(s=>s.includes(id)?s.filter(x=>x!==id):[...s,id]);
+  const agrupar=async(e)=>{
+    e.preventDefault();
+    if(!nombreGrupo.trim()||seleccion.length===0)return;
+    for(const id of seleccion)await onUpdate(id,{lineaPropuesta:nombreGrupo});
+    setSeleccion([]);setNombreGrupo('');
+  };
+  const desagrupar=async(id)=>{await onUpdate(id,{lineaPropuesta:''});};
+  const renombrarGrupo=async(nombreViejo,nombreNuevo)=>{
+    if(!nombreNuevo.trim()||nombreNuevo===nombreViejo)return;
+    for(const it of grupos[nombreViejo])await onUpdate(it.id,{lineaPropuesta:nombreNuevo});
+  };
+
+  const Tarjeta=({e})=>{
+    const quad=ERIC_LABEL[e.accion];
+    const notaBmc=e.refTipo==='bmc'?bmc.find(n=>n.id===e.refId):null;
+    return(
+      <div style={{display:'flex',alignItems:'flex-start',gap:8,padding:'0.5rem 0',borderTop:'1px solid #F3F4F6'}}>
+        <input type="checkbox" checked={seleccion.includes(e.id)} onChange={()=>toggleSel(e.id)} style={{marginTop:4}}/>
+        <div style={{flex:1}}>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap',alignItems:'center',marginBottom:4}}>
+            {e.refTipo==='vrio'&&<Chip color="#B45309" bg="#FEF3C7">VRIO: {e.refLabel}</Chip>}
+            {notaBmc&&<Chip color="#4F46E5" bg="#EDE9FE">{BMC_LABEL[notaBmc.bloque]}: {notaBmc.texto}</Chip>}
+            <Chip color={quad.color} bg={quad.bg}>{quad.label}: {e.texto}</Chip>
+            <Chip color="#6B7280" bg="#F3F4F6">🗂️ {e.area}</Chip>
+          </div>
+          {e.lineaPropuesta&&<button onClick={()=>desagrupar(e.id)} style={{fontSize:'0.7rem',color:'#DC2626',background:'none',border:'none',cursor:'pointer',textDecoration:'underline'}}>Quitar del grupo</button>}
+        </div>
+      </div>
+    );
+  };
+
+  return(<div style={{display:'flex',flexDirection:'column',gap:'1.5rem'}}>
+    <p style={{color:'#6B7280'}}>Marca varias ideas de Incrementar/Crear y agrúpalas en una sola línea estratégica cuando en realidad son la misma idea. Las que dejes sueltas quedan como candidatas independientes.</p>
+
+    {seleccion.length>0&&<form onSubmit={agrupar} className="card" style={{background:'#EDE9FE',display:'flex',gap:'0.5rem',flexWrap:'wrap',alignItems:'flex-end'}}>
+      <div className="form-group" style={{flex:'1 1 260px',marginBottom:0}}>
+        <label>Nombre de línea estratégica para las {seleccion.length} ideas seleccionadas</label>
+        <input value={nombreGrupo} onChange={e=>setNombreGrupo(e.target.value)} placeholder="Ej. Fortalecimiento del canal digital de servicio"/>
+      </div>
+      <button type="submit" className="btn-primary" style={{width:'auto'}}>Agrupar seleccionadas</button>
+      <button type="button" className="btn-secondary" style={{width:'auto'}} onClick={()=>setSeleccion([])}>Cancelar selección</button>
+    </form>}
+
+    {Object.keys(grupos).length===0&&sueltas.length===0&&<p style={{color:'#6B7280'}}>Aún no hay ideas de tipo Incrementar o Crear.</p>}
+
+    {Object.entries(grupos).map(([nombre,items])=>(
+      <div key={nombre} className="card" style={{borderLeft:'4px solid #4F46E5'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+          <span style={{fontSize:'1.5rem'}}>🎯</span>
+          <input defaultValue={nombre} onBlur={ev=>renombrarGrupo(nombre,ev.target.value)} style={{fontWeight:700,fontSize:'1rem',border:'none',borderBottom:'2px solid transparent',padding:'0.2rem 0'}} onFocus={ev=>ev.target.style.borderBottom='2px solid #4F46E5'}/>
+          <span style={{fontSize:'0.75rem',color:'#6B7280'}}>({items.length} ideas agrupadas)</span>
+        </div>
+        {items.map(e=><Tarjeta key={e.id} e={e}/>)}
+      </div>
+    ))}
+
+    {sueltas.length>0&&<div className="card">
+      <h3 style={{fontSize:'1rem',marginBottom:4}}>Ideas sin agrupar</h3>
+      {sueltas.map(e=>(
+        <div key={e.id}>
+          <Tarjeta e={e}/>
+          <div style={{paddingLeft:26,paddingBottom:10}}>
+            <input defaultValue={e.lineaPropuesta||''} onBlur={ev=>onUpdate(e.id,{lineaPropuesta:ev.target.value})} placeholder="Nombrar como línea independiente..." style={{width:'100%',maxWidth:420,padding:'0.4rem 0.6rem',border:'1px solid #E5E7EB',borderRadius:6,fontSize:'0.85rem'}}/>
+          </div>
+        </div>
+      ))}
+    </div>}
+  </div>);
+};
+// ===================== FIN ANÁLISIS Y DIAGNÓSTICO =====================
+
 const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
   const[vista,setVista]=useState('planes');
   const[planSel,setPlanSel]=useState(null);
@@ -785,7 +1722,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
     return()=>unsub();
   },[entidad,planSel]);
   
-  if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona una entidad</h3></div>;
+  if(!entidad||!datos)return <div className="empty-state"><h3>Selecciona un periodo PE</h3></div>;
   const{ejes=[],objetivos=[]}=datos;
   
   const guardarPlan=async(e)=>{
@@ -1086,7 +2023,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
               <div className="form-group">
                 <label>Año *</label>
                 <select value={formPlan.anio||''} onChange={e=>setFormPlan({...formPlan,anio:e.target.value})} required>
-                  <option value="">Seleccionar...</option>
+                  <option value="">Seleccionar periodo...</option>
                   {['2024','2025','2026','2027','2028'].map(a=><option key={a} value={a}>{a}</option>)}
                 </select>
               </div>
@@ -1112,7 +2049,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
             </div>
             <div className="form-group">
               <label>Líder del POA</label>
-              <CargosSelect entidad={entidad} value={formPlan.lider||''} onChange={v=>setFormPlan({...formPlan,lider:v})}/>
+              <CargosSelect value={formPlan.lider||''} onChange={v=>setFormPlan({...formPlan,lider:v})}/>
               <small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>El cargo que lidera este plan operativo</small>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
@@ -1157,7 +2094,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
             </div>
             <div className="form-group">
               <label>Líder</label>
-              <CargosSelect entidad={entidad} value={formActividad.cargoResponsable||''} onChange={v=>setFormActividad({...formActividad,cargoResponsable:v})}/>
+              <CargosSelect value={formActividad.cargoResponsable||''} onChange={v=>setFormActividad({...formActividad,cargoResponsable:v})}/>
               <small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Cargo líder responsable de esta actividad</small>
             </div>
             <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
@@ -1530,7 +2467,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
               <div className="form-group">
                 <label>Mes *</label>
                 <select value={form.mes||''} onChange={e=>setForm({...form,mes:e.target.value})} required>
-                  <option value="">Seleccionar...</option>
+                  <option value="">Seleccionar periodo...</option>
                   {meses.map(m=><option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
@@ -1719,9 +2656,9 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
                 <option value="monitoreo">Monitoreo</option>
               </select>
             </div>
-            {form.rol==='seguimiento'&&<div className="form-group">
+            {(form.rol==='seguimiento'||form.rol==='monitoreo')&&<div className="form-group">
               <label>Cargo</label>
-              <CargosSelect entidad={entidad} value={form.cargo||''} onChange={v=>setForm({...form,cargo:v})}/>
+              <CargosSelect value={form.cargo||''} onChange={v=>setForm({...form,cargo:v})}/>
             </div>}
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading?'Espere...':(usuarioEdit?'Guardar Cambios':'Crear Usuario')}
@@ -1767,9 +2704,9 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
     </div>
   </div></div>);
 };const ModalImpresionPlaneacion=({entidad,datos,onClose})=>{
-  const{ejes=[],objetivos=[],indicadores=[]}=datos;
+  const{ejes=[],objetivos=[],estrategias=[],indicadores=[]}=datos;
   return(<div className="modal-overlay"><div className="modal" style={{maxWidth:'900px',width:'95%',maxHeight:'90vh',overflow:'auto'}}>
-    <div className="modal-header"><h2>Planeacion - {entidad.nombre}</h2>
+    <div className="modal-header"><h2>Planeación - {entidad.nombre}</h2>
       <div style={{display:'flex',gap:'0.5rem'}}>
         <button className="btn-primary" style={{width:'auto'}} onClick={()=>window.print()}>Imprimir</button>
         <button className="btn-cerrar" onClick={onClose}>x</button>
@@ -1782,11 +2719,25 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
           <h3 style={{color:'#4F46E5',margin:'0 0 0.5rem'}}>{eje.nombre}</h3>
           {objsEje.map(obj=>{
             const indsObj=indicadores.filter(i=>i.objetivoId===obj.id);
-            return(<div key={obj.id} style={{marginLeft:'1rem',marginBottom:'0.75rem'}}>
-              <h4 style={{margin:'0 0 0.25rem'}}>{obj.nombre}</h4>
-              {indsObj.map(ind=><div key={ind.id} style={{marginLeft:'1rem',fontSize:'0.875rem',color:'#374151',padding:'0.25rem 0'}}>
-                {ind.nombre} - Meta: {ind.meta} {ind.unidad}
-              </div>)}
+            const estsObj=estrategias.filter(es=>es.objetivoId===obj.id);
+            const gruposEstrategia=[...estsObj,{id:'',nombre:'Sin estrategia asignada'}];
+            return(<div key={obj.id} style={{marginLeft:'1rem',marginBottom:'1rem'}}>
+              <h4 style={{margin:'0 0 0.5rem'}}>🎯 {obj.nombre}</h4>
+              {gruposEstrategia.map(est=>{
+                const indsEst=indsObj.filter(ind=>(ind.estrategiaId||'')===est.id);
+                if(indsEst.length===0)return null;
+                return(<div key={est.id||'sin'} style={{marginLeft:'1rem',marginBottom:'0.75rem'}}>
+                  <p style={{margin:'0 0 0.25rem',fontWeight:600,color:est.id?'#4F46E5':'#9CA3AF',fontSize:'0.9rem'}}>↳ {est.nombre}</p>
+                  {indsEst.map(ind=>(
+                    <div key={ind.id} style={{marginLeft:'1rem',fontSize:'0.875rem',color:'#374151',padding:'0.3rem 0',borderBottom:'1px solid #F3F4F6'}}>
+                      <strong>{ind.nombre}</strong> — Meta: {ind.meta} {ind.unidad} | {ind.tipo==='ascendente'?'📈 Ascendente':'📉 Descendente'} | {ind.periodicidad}
+                      {ind.metasPorAnio&&Object.keys(ind.metasPorAnio).length>0&&(<div style={{color:'#4F46E5',fontSize:'0.8rem'}}>Metas por año: {Object.entries(ind.metasPorAnio).map(([a,m])=>`${a}: ${m}`).join(' · ')}</div>)}
+                      {ind.cargoResponsable&&<div style={{color:'#6B7280',fontSize:'0.8rem'}}>Responsable: {ind.cargoResponsable}</div>}
+                      {ind.estrategia&&<div style={{color:'#6B7280',fontSize:'0.8rem'}}>Notas: {ind.estrategia}</div>}
+                    </div>
+                  ))}
+                </div>);
+              })}
             </div>);
           })}
         </div>);
