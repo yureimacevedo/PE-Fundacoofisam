@@ -599,7 +599,7 @@ const VistaCargos=({entidad})=>{
   const[loading,setLoading]=useState(false);
   const[msg,setMsg]=useState('');
   useEffect(()=>{
-    if(!entidad?.id)return;const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
+    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));setCargos(d);
     });
