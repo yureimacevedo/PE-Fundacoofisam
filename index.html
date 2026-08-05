@@ -571,6 +571,29 @@ const CargosSelect=({value,onChange,entidad})=>{
 const VistaCargos=({entidad})=>{
   const[cargos,setCargos]=useState([]);
   const[modal,setModal]=useState(false);
+  useEffect(()=>{
+    const migrar=async()=>{
+      try{
+        const snap=await db.collection('fundacoofisam_cargos').get();
+        if(!snap.empty)return;
+        const periodos=await db.collection('fundacoofisam_datos').get();
+        const vistos=new Set();
+        for(const periodo of periodos.docs){
+          const cs=await periodo.ref.collection('cargos').get();
+          for(const doc of cs.docs){
+            const d=doc.data();
+            if(d.nombre&&!vistos.has(d.nombre)){
+              vistos.add(d.nombre);
+              const {createdAt,...rest}=d;
+              await db.collection('fundacoofisam_cargos').add({...rest,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+            }
+          }
+        }
+        if(vistos.size>0)console.log('Cargos migrados:',vistos.size);
+      }catch(e){console.warn('Migracion cargos:',e);}
+    };
+    migrar();
+  },[]);
   const[form,setForm]=useState({nombre:'',descripcion:'',area:''});
   const[itemEdit,setItemEdit]=useState(null);
   const[loading,setLoading]=useState(false);
