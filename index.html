@@ -609,7 +609,7 @@ const VistaCargos=({entidad})=>{
   const guardar=async(e)=>{
     e.preventDefault();setLoading(true);
     try{
-      if(!entidad?.id)return;const ref=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos');
+      const ref=db.collection('fundacoofisam_cargos');
       if(itemEdit){await ref.doc(itemEdit.id).update({nombre:form.nombre,descripcion:form.descripcion||'',area:form.area||''});}
       else{await ref.add({nombre:form.nombre,descripcion:form.descripcion||'',area:form.area||'',createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
       setModal(false);setForm({nombre:'',descripcion:'',area:''});setItemEdit(null);setMsg('Guardado.');
@@ -617,7 +617,7 @@ const VistaCargos=({entidad})=>{
     }catch(err){setMsg('Error: '+err.message);}
     finally{setLoading(false);}
   };
-  const eliminar=async(id)=>{if(!window.confirm('¿Eliminar cargo?'))return;await db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').doc(id).delete();};
+  const eliminar=async(id)=>{if(!window.confirm('¿Eliminar cargo?'))return;await db.collection('fundacoofisam_cargos').doc(id).delete();};
   const editar=(c)=>{setItemEdit(c);setForm({nombre:c.nombre,descripcion:c.descripcion||'',area:c.area||''});setModal(true);};
   return(<div>
     <div className="page-header"><h1>🏷️ Cargos</h1>
