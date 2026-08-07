@@ -1237,6 +1237,7 @@ const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo,user})=>{
   const[areaActiva,setAreaActiva]=useState('');
   const[modalPrint,setModalPrint]=useState(false);
   const[exportando,setExportando]=useState(false);
+  const[cargandoEjemplo,setCargandoEjemplo]=useState(false);
   const canEdit=isAdmin||!isMonitoreo;
   const canEditEntry=(entry)=>isAdmin||(entry?.autorUid&&entry.autorUid===user?.uid);
   useEffect(()=>{
@@ -1311,7 +1312,6 @@ const VistaAnalisis=({entidad,isAdmin,isMonitoreo,userCargo,user})=>{
     try{exportarExcelAnalisis(entidad,vrio,contraste,pestel,bmc,eric);}
     catch(err){alert('Error generando Excel: '+err.message);}
   };
-  const[cargandoEjemplo,setCargandoEjemplo]=useState(false);
   const onDatosEjemplo=async()=>{
     if(!window.confirm('¿Cargar datos de ejemplo en la entidad "'+entidad.nombre+'"? Esto agrega cargos, VRIO, PESTEL, Canvas y ERIC de muestra.'))return;
     setCargandoEjemplo(true);
