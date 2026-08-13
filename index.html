@@ -554,13 +554,13 @@ const VistaDashboard=({entidad,datos})=>{
 const CargosSelect=({value,onChange,entidad})=>{
   const[cargos,setCargos]=useState([]);
   useEffect(()=>{
-    if(!entidad?.id)return;const unsub=db.collection('fundacoofisam_datos').doc(entidad.id).collection('cargos').onSnapshot(s=>{
+    const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));
       setCargos(d);
     });
     return()=>unsub();
-  },[entidad?.id]);
+  },[]);
   return(<select value={value} onChange={e=>onChange(e.target.value)}
     style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}}>
     <option value="">Sin cargo</option>
