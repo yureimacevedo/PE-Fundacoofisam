@@ -553,17 +553,19 @@ const VistaDashboard=({entidad,datos})=>{
 };
 const CargosSelect=({value,onChange,entidad})=>{
   const[cargos,setCargos]=useState([]);
+  const[listo,setListo]=useState(false);
   useEffect(()=>{
     const unsub=db.collection('fundacoofisam_cargos').onSnapshot(s=>{
       const d=[];s.forEach(doc=>d.push({id:doc.id,...doc.data()}));
       d.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-      setCargos(d);
+      setCargos(d);setListo(true);
     });
     return()=>unsub();
   },[]);
+  if(!listo)return(<select style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}} disabled><option>Cargando...</option></select>);
   return(<select value={value} onChange={e=>onChange(e.target.value)}
     style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'1rem'}}>
-    <option value="">Sin cargo</option>
+    <option value="">Seleccionar cargo...</option>
     {cargos.map(c=><option key={c.id} value={c.nombre}>{c.nombre}</option>)}
   </select>);
 };
@@ -2557,21 +2559,42 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
         setModal(false);setForm({email:'',password:'',rol:'seguimiento',nombre:''});setUsuarioEdit(null);
         setLoading(false);return;
       }
+      // Verificar si ya existe en esta colección
       const existing=await db.collection('fundacoofisam_usuarios').where('email','==',form.email).get();
       if(!existing.empty){
-        await existing.docs[0].ref.update({nombre:form.nombre||form.email,rol:form.rol});
+        // Ya existe en esta entidad — solo actualizar datos
+        await existing.docs[0].ref.update({nombre:form.nombre||form.email,rol:form.rol,cargo:form.cargo||''});
         setMensaje({texto:'Usuario actualizado.',tipo:'ok'});
       }else{
-        const _app=firebase.initializeApp(firebase.app().options,'sec'+Date.now());
-        const _auth=_app.auth();
-        const cred=await _auth.createUserWithEmailAndPassword(form.email,form.password);
-        await db.collection('fundacoofisam_usuarios').doc(cred.user.uid).set({
+        // Intentar crear en Firebase Auth
+        let uid=null;
+        try{
+          const _app=firebase.initializeApp(firebase.app().options,'sec'+Date.now());
+          const _auth=_app.auth();
+          const cred=await _auth.createUserWithEmailAndPassword(form.email,form.password);
+          uid=cred.user.uid;
+          await _auth.signOut();await _app.delete();
+        }catch(authErr){
+          // Si ya existe en Auth (email-already-in-use), buscar su UID en otras colecciones
+          if(authErr.code==='auth/email-already-in-use'){
+            // Buscar el UID en otras colecciones de usuarios
+            const colecciones=['coosanroque_usuarios','coonecta_usuarios','fundacoofisam_usuarios','coogomezplata_usuarios','unioncoop_usuarios','coofisam_usuarios'];
+            for(const col of colecciones){
+              const snap=await db.collection(col).where('email','==',form.email).get();
+              if(!snap.empty){uid=snap.docs[0].id;break;}
+            }
+            if(!uid){setMensaje({texto:'El correo ya existe en Firebase pero no se encontró su ID. Agrégalo manualmente.',tipo:'error'});setLoading(false);return;}
+          }else{
+            throw authErr;
+          }
+        }
+        // Registrar en esta entidad con sus propios datos
+        await db.collection('fundacoofisam_usuarios').doc(uid).set({
           email:form.email,nombre:form.nombre||form.email,rol:form.rol,cargo:form.cargo||'',
           entidadId:'general',creadoPor:user.uid,
           createdAt:firebase.firestore.FieldValue.serverTimestamp()
         });
-        await _auth.signOut();await _app.delete();
-        setMensaje({texto:'Usuario creado.',tipo:'ok'});
+        setMensaje({texto:'Usuario agregado a esta entidad.',tipo:'ok'});
       }
       setForm({email:'',password:'',rol:'seguimiento',nombre:''});
     }catch(err){setMensaje({texto:'Error: '+err.message,tipo:'error'});}
@@ -2580,7 +2603,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
 
   const abrirEditar=(u)=>{
     setUsuarioEdit(u);
-    setForm({email:u.email,nombre:u.nombre||'',rol:u.rol,password:''});
+    setForm({email:u.email,nombre:u.nombre||'',rol:u.rol,password:'',cargo:u.cargo||''});
     setModal(true);
   };
 
