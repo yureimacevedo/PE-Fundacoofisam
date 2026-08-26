@@ -1568,11 +1568,11 @@ const AnalisisEric=({entries,bmc,vrio,area,cargo,isAdmin,canEdit,userId,onAdd,on
   <div>
     <p style={{color:'#6B7280',marginBottom:'1rem'}}>Puedes registrar ideas aquí, o marcarlas directamente desde un recurso VRIO.</p>
     <div className="grid">
-      {ERIC_QUADS.map(q=><EricQuad key={q.key} quad={q} entries={entries.filter(e=>e.accion===q.key)} area={area} cargo={cargo} isAdmin={isAdmin} canEdit={canEdit} bmc={bmc} vrio={vrio} onAdd={onAdd} onUpdate={onUpdate} onRemove={onRemove}/>)}
+      {ERIC_QUADS.map(q=><EricQuad key={q.key} quad={q} entries={entries.filter(e=>e.accion===q.key)} area={area} cargo={cargo} isAdmin={isAdmin} canEdit={canEdit} userId={userId} bmc={bmc} vrio={vrio} onAdd={onAdd} onUpdate={onUpdate} onRemove={onRemove}/>)}
     </div>
   </div>
 );
-const EricQuad=({quad,entries,area,cargo,isAdmin,canEdit,bmc,vrio,onAdd,onUpdate,onRemove})=>{
+const EricQuad=({quad,entries,area,cargo,isAdmin,canEdit,userId,bmc,vrio,onAdd,onUpdate,onRemove})=>{
   const[editId,setEditId]=useState(null);
   const[editArea,setEditArea]=useState('');
   const[text,setText]=useState('');const[refValue,setRefValue]=useState('');const[transversal,setTransversal]=useState(false);
