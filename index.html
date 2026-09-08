@@ -787,10 +787,20 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
     setLoading(true);
     try{
       const metasPorAnio={};
+      const metasMensuales={};
       if(form.anios){
         form.anios.split(',').forEach(a=>{
           const anio=a.trim();
-          if(anio)metasPorAnio[anio]=parseFloat(form[`meta_${anio}`]||form.meta);
+          if(!anio)return;
+          metasPorAnio[anio]=parseFloat(form[`meta_${anio}`]||form.meta);
+          // Metas por periodo según periodicidad
+          const periodos=getPeriodosPorPeriodicidad(form.periodicidad);
+          metasMensuales[anio]={};
+          periodos.forEach(mes=>{
+            const key=`metames_${anio}_${mes}`;
+            if(form[key]!==undefined&&form[key]!=='')
+              metasMensuales[anio][mes]=parseFloat(form[key]);
+          });
         });
       }
       const updateData={
@@ -803,6 +813,7 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
         unidad:String(form.unidad),
         estrategia:String(form.estrategia||''),tipoMeta:String(form.tipoMeta||'independiente'),
         metasPorAnio:metasPorAnio,
+        metasMensuales:metasMensuales,
         cargoResponsable:String(form.cargoResponsable||'')
       };
       if(itemEdit){
@@ -986,7 +997,13 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
           <div className="form-group"><label>Unidad *</label><input type="text" value={form.unidad} onChange={e=>setForm({...form,unidad:e.target.value})} required placeholder="%"/></div>
         </div>
         <div className="form-group"><label>Años con Metas Específicas</label><input type="text" value={form.anios} onChange={e=>setForm({...form,anios:e.target.value})} placeholder="2025,2026,2027"/><small style={{color:'#6B7280',display:'block',marginTop:'0.25rem'}}>Separados por coma</small></div>
-        {form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;return(<div key={anio} className="form-group"><label>Meta para {anio}</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>);})}
+        {form.anios&&form.anios.split(',').map(a=>{const anio=a.trim();if(!anio)return null;const periodos=getPeriodosPorPeriodicidad(form.periodicidad);return(<div key={anio} style={{border:'1px solid #E5E7EB',borderRadius:'8px',padding:'1rem',marginBottom:'0.75rem'}}>
+          <div className="form-group"><label style={{fontWeight:700,color:'#374151'}}>📅 Año {anio} — Meta anual</label><input type="number" step="0.01" value={form[`meta_${anio}`]||form.meta||''} onChange={e=>setForm({...form,[`meta_${anio}`]:e.target.value})}/></div>
+          {periodos.length>0&&(<div><p style={{fontSize:'0.8rem',color:'#6B7280',marginBottom:'0.5rem'}}>Metas por {form.periodicidad==='mensual'?'mes':form.periodicidad==='trimestral'?'trimestre':'semestre'}:</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:'0.5rem'}}>
+          {periodos.map(mes=>(<div key={mes} className="form-group" style={{margin:0}}><label style={{fontSize:'0.75rem'}}>{mes}</label><input type="number" step="0.01" placeholder={form[`meta_${anio}`]||form.meta||'Meta'} value={form[`metames_${anio}_${mes}`]||''} onChange={e=>setForm({...form,[`metames_${anio}_${mes}`]:e.target.value})}/></div>))}
+          </div></div>)}
+        </div>);})}
         <div className="form-group"><label>Notas adicionales (opcional)</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={2} placeholder="Cualquier detalle extra que no quepa en la estrategia estructurada de arriba"/></div>
         <div className="form-group"><label>Cargo Responsable</label><CargosSelect value={form.cargoResponsable||''} onChange={v=>setForm({...form,cargoResponsable:v})} entidad={entidad}/></div>
         <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
@@ -1917,8 +1934,11 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
                   {plan.descripcion&&<p style={{margin:'0.5rem 0 0 0',fontSize:'0.85rem',color:'#6B7280',fontStyle:'italic'}}>"{plan.descripcion}"</p>}
                 </div>
                 <div style={{display:'flex',gap:'0.3rem'}} onClick={e=>e.stopPropagation()}>
-                  {!isMonitoreo&&<button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
-                  {!isMonitoreo&&<button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
+                  {plan.aprobado&&<span style={{background:'#059669',color:'white',fontSize:'0.7rem',padding:'2px 8px',borderRadius:'12px'}}>✅ Aprobado</span>}
+                  {!isMonitoreo&&!plan.aprobado&&<button className="btn-edit" onClick={()=>{setFormPlan(plan);setItemEdit(plan);setModalPlan(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
+                  {!isMonitoreo&&!plan.aprobado&&<button className="btn-secondary" onClick={()=>eliminarPlan(plan.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
+                  {isAdmin&&!plan.aprobado&&<button className="btn-primary" style={{padding:'0.3rem 0.6rem',fontSize:'0.75rem',background:'#059669',width:'auto'}} onClick={e=>{e.stopPropagation();aprobarPlan(plan);}}>✅ Aprobar</button>}
+                  {isAdmin&&plan.aprobado&&<button className="btn-secondary" style={{padding:'0.3rem 0.6rem',fontSize:'0.75rem',borderColor:'#D97706',color:'#D97706',width:'auto'}} onClick={e=>{e.stopPropagation();desbloquearPlan(plan);}}>🔓 Desbloquear</button>}
                 </div>
               </div>
             </div>);
@@ -1941,7 +1961,7 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
       <div className="card">
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
           <h3>Actividades ({actividades.length})</h3>
-          {!isMonitoreo&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>}
+          {!isMonitoreo&&!planSel?.aprobado&&<button className="btn-primary" style={{width:'auto'}} onClick={()=>{setFormActividad({});setItemEdit(null);setModalActividad(true);}}>+ Nueva Actividad</button>}
         </div>
         {actividades.length===0?<p style={{color:'#9CA3AF'}}>Sin actividades</p>:
         <table className="tabla">
@@ -1968,8 +1988,8 @@ const VistaPlanOperativo=({user,entidad,datos,isAdmin,isMonitoreo,userCargo})=>{
                 <td><span style={{padding:'0.25rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem',fontWeight:600,background:ec.bg,color:ec.c}}>{act.estado}</span></td>
                 <td>
                   <div style={{display:'flex',gap:'0.3rem'}}>
-                    {!isMonitoreo&&<button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
-                    {!isMonitoreo&&<button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
+                    {!isMonitoreo&&!planSel?.aprobado&&<button className="btn-edit" onClick={()=>{setFormActividad(act);setItemEdit(act);setModalActividad(true);}} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>✏️</button>}
+                    {!isMonitoreo&&!planSel?.aprobado&&<button className="btn-secondary" onClick={()=>eliminarActividad(act.id)} style={{padding:'0.3rem 0.5rem',fontSize:'0.75rem'}}>🗑️</button>}
                   </div>
                 </td>
               </tr>);
@@ -2506,7 +2526,12 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
             <div className="form-row">
               <div className="form-group">
                 <label>Mes *</label>
-                <select value={form.mes||''} onChange={e=>setForm({...form,mes:e.target.value})} required>
+                <select value={form.mes||''} onChange={e=>{
+                    const mes=e.target.value;
+                    const metaAuto=indicador?.metasMensuales&&form.anio&&indicador.metasMensuales[String(form.anio)]&&indicador.metasMensuales[String(form.anio)][mes]!==undefined
+                      ?indicador.metasMensuales[String(form.anio)][mes]:'';
+                    setForm({...form,mes,metaMes:metaAuto!==''?String(metaAuto):form.metaMes});
+                  }} required>
                   <option value="">Seleccionar periodo...</option>
                   {meses.map(m=><option key={m} value={m}>{m}</option>)}
                 </select>
@@ -2524,8 +2549,13 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
                 <input type="number" value={form.metaAnual||(indicador.metasPorAnio&&form.anio&&indicador.metasPorAnio[String(form.anio)]!==undefined?indicador.metasPorAnio[String(form.anio)]:indicador.meta)||''} onChange={e=>setForm({...form,metaAnual:e.target.value})}/>
               </div>
               <div className="form-group">
-                <label>Meta del Mes ({indicador.unidad}) *</label>
-                <input type="number" value={form.metaMes||''} onChange={e=>setForm({...form,metaMes:e.target.value})} required/>
+                <label>Meta del Mes ({indicador.unidad}){isMonitoreo&&' (definida por admin)'}</label>
+                <input type="number"
+                  value={form.metaMes||(indicador.metasMensuales&&form.anio&&form.mes&&indicador.metasMensuales[String(form.anio)]&&indicador.metasMensuales[String(form.anio)][form.mes]!==undefined?indicador.metasMensuales[String(form.anio)][form.mes]:'')||''}
+                  onChange={e=>!isMonitoreo&&setForm({...form,metaMes:e.target.value})}
+                  readOnly={isMonitoreo}
+                  style={{background:isMonitoreo?'#F3F4F6':undefined}}
+                  required/>
               </div>
             </div>
             <div className="form-group">
