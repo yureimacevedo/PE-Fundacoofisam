@@ -783,10 +783,11 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
   const guardarEstrategia=async(e)=>{e.preventDefault();setLoading(true);try{const data={objetivoId:form.objetivoId,nombre:form.nombre};if(itemEdit){await ref.collection('estrategias').doc(itemEdit.id).update(data);}else{await ref.collection('estrategias').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}setModal(null);setForm({});setItemEdit(null);}catch(error){alert('Error: '+error.message);}finally{setLoading(false);}};
 
   const getPeriodosPorPeriodicidad=(per)=>{
-    if(per==='mensual')return['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    if(per==='trimestral')return['T1 (Ene-Mar)','T2 (Abr-Jun)','T3 (Jul-Sep)','T4 (Oct-Dic)'];
-    if(per==='semestral')return['Semestral 1','Semestral 2'];
-    return[]; // anual — solo meta anual
+    const p=(per||'').toLowerCase();
+    if(p==='mensual')return['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    if(p==='trimestral')return['T1 (Ene-Mar)','T2 (Abr-Jun)','T3 (Jul-Sep)','T4 (Oct-Dic)'];
+    if(p==='semestral')return['Semestral 1','Semestral 2'];
+    return[];
   };
   const guardarIndicador=async(e)=>{
     e.preventDefault();
