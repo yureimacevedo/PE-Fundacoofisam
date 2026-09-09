@@ -897,6 +897,14 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
     const anios=ind.metasPorAnio?Object.keys(ind.metasPorAnio).join(','):'';
     const formData={objetivoId:ind.objetivoId,estrategiaId:ind.estrategiaId||'',nombre:ind.nombre,tipo:ind.tipo,periodicidad:ind.periodicidad,meta:ind.meta,unidad:ind.unidad,estrategia:ind.estrategia||'',tipoMeta:ind.tipoMeta||'independiente',anios,cargoResponsable:ind.cargoResponsable||''};
     if(ind.metasPorAnio){Object.entries(ind.metasPorAnio).forEach(([anio,meta])=>{formData[`meta_${anio}`]=meta;});}
+    if(ind.metasMensuales){
+      Object.entries(ind.metasMensuales).forEach(([anio,meses])=>{
+        if(meses&&typeof meses==='object'){
+          Object.entries(meses).forEach(([mes,val])=>{formData[`metames_${anio}_${mes}`]=val;});
+        }
+      });
+    }
+    formData.indicadorPadreId=ind.indicadorPadreId||'';
     setForm(formData);
     setModal('indicador');
   };
@@ -2529,10 +2537,12 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
   const indicadoresDeArea=indicadores.filter(i=>!!i.indicadorPadreId);
   
   const indicadoresFiltrados=indicadores.filter(i=>{
-    // Si es seguimiento: ver solo los de su área (por cargo) o indicadores estratégicos sin filtro de cargo
     if(!isMonitoreo&&userCargo){
       const esSuCargo=i.cargoResponsable&&i.cargoResponsable.trim().toLowerCase()===userCargo.trim().toLowerCase();
-      if(!esSuCargo)return false;
+      // Mostrar: indicadores de su cargo O indicadores estratégicos (sin cargo asignado o con cargo diferente)
+      // Los de área solo si coincide su cargo
+      if(i.esIndicadorArea&&!esSuCargo)return false;
+      if(!i.esIndicadorArea&&!esSuCargo)return false;
     }
     const o=objetivos.find(x=>x.id===i.objetivoId);
     const ej=ejes.find(x=>x.id===o?.ejeId);
