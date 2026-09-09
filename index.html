@@ -327,6 +327,28 @@ const VistaDashboard=({entidad,datos})=>{
       return parseFloat(ind.metasPorAnio[String(anio)]);
     return parseFloat(ind.meta||0);
   };
+  // Separar indicadores estratégicos y de área
+  const indsEstrategicos=indicadores.filter(i=>!i.indicadorPadreId);
+  const indsDeArea=indicadores.filter(i=>!!i.indicadorPadreId);
+
+  // Para cada indicador estratégico, calcular consolidado de sus hijos de área
+  const consolidadoArea=(indId,anio,mes)=>{
+    const hijos=indsDeArea.filter(i=>i.indicadorPadreId===indId);
+    if(hijos.length===0)return null;
+    let totalAvance=0;let totalMeta=0;let count=0;
+    hijos.forEach(hijo=>{
+      const segs=seguimientos.filter(s=>s.indicadorId===hijo.id&&
+        (!anio||String(s.anio)===String(anio))&&(!mes||s.mes===mes));
+      if(segs.length>0){
+        const ult=segs[segs.length-1];
+        totalAvance+=parseFloat(ult.avance||0);
+        totalMeta+=parseFloat(ult.metaMes||0);
+        count++;
+      }
+    });
+    return{hijos,totalAvance,totalMeta,count};
+  };
+
   const indicadoresConEstado=indicadores.map(ind=>{
     const segsInd=segsFiltrados.filter(s=>s.indicadorId===ind.id);
     const segPeriodo=modoAnio?segsInd[segsInd.length-1]:segsInd[0];
@@ -516,9 +538,24 @@ const VistaDashboard=({entidad,datos})=>{
 
     {indicadores.length>0&&<div className="card">
       <h3>📊 Estado de Indicadores — {periodoLabel}</h3>
-      <table className="tabla">
+      <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.75rem',alignItems:'center'}}>
+          <span style={{fontSize:'0.85rem',fontWeight:600,color:'#374151'}}>Mostrar:</span>
+          {[{v:'',l:'Todos'},{'v':'estrategico',l:'📊 Estratégicos'},{'v':'area',l:'🎯 De Área'}].map(op=>(
+            <button key={op.v} onClick={()=>setTipoIndDash(op.v)}
+              style={{padding:'0.3rem 0.7rem',borderRadius:'20px',border:'none',cursor:'pointer',fontSize:'0.8rem',
+                background:tipoIndDash===op.v?'#00BEC8':'#F3F4F6',
+                color:tipoIndDash===op.v?'white':'#374151',fontWeight:tipoIndDash===op.v?700:400}}>
+              {op.l}
+            </button>
+          ))}
+        </div>
+        <table className="tabla">
         <thead><tr><th>Eje</th><th>Objetivo</th><th>Indicador</th><th>Meta</th><th>Avance</th><th>Rendimiento</th><th>Estado</th></tr></thead>
-        <tbody>{indicadoresConEstado.map(ind=>{
+        <tbody>{indicadoresConEstado.filter(ind=>{
+          if(tipoIndDash==='estrategico')return !ind.indicadorPadreId;
+          if(tipoIndDash==='area')return !!ind.indicadorPadreId;
+          return true;
+        }).map(ind=>{
           const s=ind.ultimoSeguimiento;
           const sc={optimo:{bg:'#D1FAE5',c:'#065F46',icon:'🟢'},precaucion:{bg:'#FEF3C7',c:'#92400E',icon:'🟡'},critico:{bg:'#FEE2E2',c:'#991B1B',icon:'🔴'},sin_meta:{bg:'#F3F4F6',c:'#6B7280',icon:'⚪'}}[s?.score||'sin_meta']||{bg:'#F3F4F6',c:'#6B7280',icon:'—'};
           if(modoAnio&&ind.segsAnio&&ind.segsAnio.length>1){
@@ -527,7 +564,15 @@ const VistaDashboard=({entidad,datos})=>{
               <tr style={{background:'#F0F4FF'}}>
                 <td rowSpan={ind.segsAnio.length+1}><div className="badge" style={{background:ind.eje?.color||'#6B7280',color:'white',padding:'0.2rem 0.5rem',borderRadius:'6px',fontSize:'0.75rem'}}>{ind.eje?.nombre||'-'}</div></td>
                 <td rowSpan={ind.segsAnio.length+1} style={{fontSize:'0.8rem',color:'#6B7280'}}>{ind.objetivo?.nombre}</td>
-                <td colSpan={5}><strong>{ind.nombre}</strong> <span style={{fontSize:'0.75rem',color:'#6B7280'}}>({ind.segsAnio.length} registros en {filtroAnio})</span></td>
+                <td colSpan={5}>
+                  <strong>{ind.nombre}</strong>
+                  {ind.indicadorPadreId&&<span style={{background:'#EDE9FE',color:'#5B21B6',fontSize:'0.7rem',padding:'1px 6px',borderRadius:'10px',marginLeft:'0.4rem'}}>🎯 Área</span>}
+                  {!ind.indicadorPadreId&&indsDeArea.some(h=>h.indicadorPadreId===ind.id)&&<span style={{background:'#D1FAE5',color:'#065F46',fontSize:'0.7rem',padding:'1px 6px',borderRadius:'10px',marginLeft:'0.4rem'}}>📊 Estratégico</span>}
+                  <span style={{fontSize:'0.75rem',color:'#6B7280',marginLeft:'0.3rem'}}>({ind.segsAnio.length} registros en {filtroAnio})</span>
+                  {(()=>{const con=consolidadoArea(ind.id,filtroAnio,filtroMes);if(!con||con.hijos.length===0)return null;return(<div style={{marginTop:'0.4rem',padding:'0.3rem 0.6rem',background:'#F0FDF4',borderRadius:'6px',border:'1px solid #BBF7D0',fontSize:'0.78rem',color:'#166534'}}>
+                    📈 Consolidado de área: <strong>{con.totalAvance.toFixed(1)}</strong> / <strong>{con.totalMeta.toFixed(1)}</strong> ({con.count} indicadores de área)
+                  </div>);})()}
+                </td>
               </tr>
               {ind.segsAnio.map(seg=>{
                 const scc={optimo:{bg:'#D1FAE5',c:'#065F46',icon:'🟢'},precaucion:{bg:'#FEF3C7',c:'#92400E',icon:'🟡'},critico:{bg:'#FEE2E2',c:'#991B1B',icon:'🔴'},sin_meta:{bg:'#F3F4F6',c:'#6B7280',icon:'⚪'}}[seg.score||'sin_meta']||{bg:'#F3F4F6',c:'#6B7280',icon:'—'};
@@ -821,7 +866,9 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
         estrategia:String(form.estrategia||''),tipoMeta:String(form.tipoMeta||'independiente'),
         metasPorAnio:metasPorAnio,
         metasMensuales:metasMensuales,
-        cargoResponsable:String(form.cargoResponsable||'')
+        cargoResponsable:String(form.cargoResponsable||''),
+        indicadorPadreId:String(form.indicadorPadreId||''),
+        esIndicadorArea:form.indicadorPadreId?true:false
       };
       if(itemEdit){
         updateData.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
@@ -1012,6 +1059,15 @@ const VistaConfig=({user,entidad,datos,isAdmin})=>{
           </div></div>)}
         </div>);})}
         <div className="form-group"><label>Notas adicionales (opcional)</label><textarea value={form.estrategia} onChange={e=>setForm({...form,estrategia:e.target.value})} rows={2} placeholder="Cualquier detalle extra que no quepa en la estrategia estructurada de arriba"/></div>
+        <div className="form-group">
+          <label>¿Apunta a un indicador estratégico? <span style={{fontSize:'0.75rem',color:'#6B7280'}}>(opcional — para indicadores de área)</span></label>
+          <select value={form.indicadorPadreId||''} onChange={e=>setForm({...form,indicadorPadreId:e.target.value})}>
+            <option value="">No — es indicador estratégico independiente</option>
+            {indicadores.filter(i=>!i.indicadorPadreId&&i.id!==itemEdit?.id).map(i=>(
+              <option key={i.id} value={i.id}>📊 {i.nombre}</option>
+            ))}
+          </select>
+        </div>
         <div className="form-group"><label>Cargo Responsable</label><CargosSelect value={form.cargoResponsable||''} onChange={v=>setForm({...form,cargoResponsable:v})} entidad={entidad}/></div>
         <button type="submit" className="btn-primary" disabled={loading}>{loading?'⏳...':'💾 Guardar'}</button>
       </form></div>
@@ -2391,6 +2447,7 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
   const[ejeSel,setEjeSel]=useState('');
   const[objetivoSel,setObjetivoSel]=useState('');
   const[segEdit,setSegEdit]=useState(null);
+  const[tipoIndFiltro,setTipoIndFiltro]=useState('');
   const[modal,setModal]=useState(false);
   const[form,setForm]=useState({});
   const[loading,setLoading]=useState(false);
@@ -2466,12 +2523,22 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
   const meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre','Semestral 1','Semestral 2','Anual'];
 
   const objetivosPorEje=ejeSel?objetivos.filter(o=>o.ejeId===ejeSel):objetivos;
+  // Indicadores de área: los que apuntan a un indicador estratégico
+  const indicadoresEstrategicos=indicadores.filter(i=>!i.indicadorPadreId);
+  const indicadoresDeArea=indicadores.filter(i=>!!i.indicadorPadreId);
+  
   const indicadoresFiltrados=indicadores.filter(i=>{
-    if(!isMonitoreo&&userCargo&&i.cargoResponsable&&i.cargoResponsable.trim().toLowerCase()!==userCargo.trim().toLowerCase())return false;
+    // Si es seguimiento: ver solo los de su área (por cargo) o indicadores estratégicos sin filtro de cargo
+    if(!isMonitoreo&&userCargo){
+      const esSuCargo=i.cargoResponsable&&i.cargoResponsable.trim().toLowerCase()===userCargo.trim().toLowerCase();
+      if(!esSuCargo)return false;
+    }
     const o=objetivos.find(x=>x.id===i.objetivoId);
     const ej=ejes.find(x=>x.id===o?.ejeId);
     if(ejeSel&&ej?.id!==ejeSel)return false;
     if(objetivoSel&&o?.id!==objetivoSel)return false;
+    if(tipoIndFiltro==='estrategico'&&i.indicadorPadreId)return false;
+    if(tipoIndFiltro==='area'&&!i.indicadorPadreId)return false;
     return(i.nombre+' '+(o?.nombre||'')+' '+(ej?.nombre||'')).toLowerCase().includes(busquedaSeg.toLowerCase());
   });
 
@@ -2488,6 +2555,14 @@ const VistaSeguimiento=({user,entidad,datos,isMonitoreo,userCargo})=>{
     </div>
     <div className="card">
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem',marginBottom:'1rem'}}>
+        <div className="form-group" style={{margin:0}}>
+          <label style={{fontSize:'0.85rem',fontWeight:600}}>Tipo de Indicador</label>
+          <select value={tipoIndFiltro} onChange={e=>setTipoIndFiltro(e.target.value)} style={{width:'100%',padding:'0.5rem',borderRadius:'6px',border:'1px solid #E5E7EB'}}>
+            <option value="">Todos</option>
+            <option value="estrategico">📊 Estratégicos</option>
+            <option value="area">🎯 De Área</option>
+          </select>
+        </div>
         <div className="form-group" style={{margin:0}}>
           <label style={{fontSize:'0.85rem',fontWeight:600}}>Filtrar por Eje</label>
           <select value={ejeSel} onChange={e=>{setEjeSel(e.target.value);setObjetivoSel('');setIndicadorSel(null);}}
