@@ -270,6 +270,7 @@ const VistaDashboard=({entidad,datos})=>{
   const[modalInforme,setModalInforme]=useState(false);
   const[actividadesPOA,setActividadesPOA]=useState([]);
   const[planesPOA,setPlanesPOA]=useState([]);
+  const[tipoIndDash,setTipoIndDash]=useState('');
 
   useEffect(()=>{
     if(!entidad)return;
