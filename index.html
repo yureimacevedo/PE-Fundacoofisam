@@ -391,7 +391,7 @@ const VistaDashboard=({entidad,datos})=>{
       if(a.anio!==b.anio)return parseInt(a.anio)-parseInt(b.anio);
       return mesesOrden.indexOf(a.mes)-mesesOrden.indexOf(b.mes);
     }):[];
-    return{...ind,ultimoSeguimiento:ultSeg,avanceAcum:avanceCalc,metaAcum:metaCalc,enPeriodo,objetivo:obj,eje:eje,segsAnio:segsAnioOrdenados};
+    const con=consolidadoArea(ind.id,filtroAnio,filtroMes);return{...ind,ultimoSeguimiento:ultSeg,avanceAcum:avanceCalc,metaAcum:metaCalc,enPeriodo,objetivo:obj,eje:eje,segsAnio:segsAnioOrdenados,consolidado:con};
   }).filter(ind=>ind.enPeriodo||(ind.ultimoSeguimiento&&!modoAnio));
 
   return(<div>
@@ -569,9 +569,9 @@ const VistaDashboard=({entidad,datos})=>{
                   {ind.indicadorPadreId&&<span style={{background:'#EDE9FE',color:'#5B21B6',fontSize:'0.7rem',padding:'1px 6px',borderRadius:'10px',marginLeft:'0.4rem'}}>🎯 Área</span>}
                   {!ind.indicadorPadreId&&indsDeArea.some(h=>h.indicadorPadreId===ind.id)&&<span style={{background:'#D1FAE5',color:'#065F46',fontSize:'0.7rem',padding:'1px 6px',borderRadius:'10px',marginLeft:'0.4rem'}}>📊 Estratégico</span>}
                   <span style={{fontSize:'0.75rem',color:'#6B7280',marginLeft:'0.3rem'}}>({ind.segsAnio.length} registros en {filtroAnio})</span>
-                  {(()=>{const con=consolidadoArea(ind.id,filtroAnio,filtroMes);if(!con||con.hijos.length===0)return null;return(<div style={{marginTop:'0.4rem',padding:'0.3rem 0.6rem',background:'#F0FDF4',borderRadius:'6px',border:'1px solid #BBF7D0',fontSize:'0.78rem',color:'#166534'}}>
-                    📈 Consolidado de área: <strong>{con.totalAvance.toFixed(1)}</strong> / <strong>{con.totalMeta.toFixed(1)}</strong> ({con.count} indicadores de área)
-                  </div>);})()}
+                  {ind.consolidado&&ind.consolidado.hijos.length>0&&<div style={{marginTop:'0.4rem',padding:'0.3rem 0.6rem',background:'#F0FDF4',borderRadius:'6px',border:'1px solid #BBF7D0',fontSize:'0.78rem',color:'#166534'}}>
+                    📈 Consolidado de área: <strong>{ind.consolidado.totalAvance.toFixed(1)}</strong> / <strong>{ind.consolidado.totalMeta.toFixed(1)}</strong> ({ind.consolidado.count} indicadores de área)
+                  </div>}
                 </td>
               </tr>
               {ind.segsAnio.map(seg=>{
