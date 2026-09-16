@@ -1785,7 +1785,7 @@ const AnalisisSintesis=({eric,bmc,onUpdate,isAdmin,miArea,userCargo})=>{
       <div key={nombre} className="card" style={{borderLeft:'4px solid #00BEC8'}}>
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
           <span style={{fontSize:'1.5rem'}}>🎯</span>
-          <input defaultValue={nombre} onBlur={ev=>renombrarGrupo(nombre,ev.target.value)} style={{fontWeight:700,fontSize:'1rem',border:'none',borderBottom:'2px solid transparent',padding:'0.2rem 0'}} onFocus={ev=>ev.target.style.borderBottom='2px solid #00BEC8'}/>
+          <textarea defaultValue={nombre} onBlur={ev=>renombrarGrupo(nombre,ev.target.value)} rows={2} style={{fontWeight:700,fontSize:'1rem',border:'none',borderBottom:'2px solid transparent',padding:'0.2rem 0',width:'100%',resize:'none',background:'transparent',lineHeight:1.4,overflow:'hidden'}} onFocus={ev=>ev.target.style.borderBottom='2px solid #00BEC8'} onInput={ev=>{ev.target.style.height='auto';ev.target.style.height=ev.target.scrollHeight+'px';}}/>
           <span style={{fontSize:'0.75rem',color:'#6B7280'}}>({items.length} ideas agrupadas)</span>
         </div>
         {items.map(e=><Tarjeta key={e.id} e={e}/>)}
