@@ -1747,6 +1747,12 @@ const AnalisisSintesis=({eric,bmc,onUpdate,isAdmin,miArea,userCargo})=>{
   const Tarjeta=({e})=>{
     const quad=ERIC_LABEL[e.accion];
     const notaBmc=e.refTipo==='bmc'?bmc.find(n=>n.id===e.refId):null;
+    const[editando,setEditando]=useState(false);
+    const[textoEdit,setTextoEdit]=useState(e.texto);
+    const guardarEdit=async()=>{
+      if(textoEdit.trim()&&textoEdit!==e.texto)await onUpdate(e.id,{texto:textoEdit.trim()});
+      setEditando(false);
+    };
     return(
       <div style={{display:'flex',alignItems:'flex-start',gap:8,padding:'0.5rem 0',borderTop:'1px solid #F3F4F6'}}>
         <input type="checkbox" checked={seleccion.includes(e.id)} onChange={()=>toggleSel(e.id)} style={{marginTop:4}}/>
@@ -1754,7 +1760,16 @@ const AnalisisSintesis=({eric,bmc,onUpdate,isAdmin,miArea,userCargo})=>{
           <div style={{display:'flex',gap:6,flexWrap:'wrap',alignItems:'center',marginBottom:4}}>
             {e.refTipo==='vrio'&&<Chip color="#B45309" bg="#FEF3C7">VRIO: {e.refLabel}</Chip>}
             {notaBmc&&<Chip color="#00BEC8" bg="#FFE5E5">{BMC_LABEL[notaBmc.bloque]}: {notaBmc.texto}</Chip>}
-            <Chip color={quad.color} bg={quad.bg}>{quad.label}: {e.texto}</Chip>
+            {editando?
+              <div style={{display:'flex',gap:6,alignItems:'center',flex:1}}>
+                <input value={textoEdit} onChange={ev=>setTextoEdit(ev.target.value)} autoFocus
+                  style={{flex:1,padding:'0.3rem 0.5rem',border:'2px solid #00BEC8',borderRadius:6,fontSize:'0.85rem'}}/>
+                <button onClick={guardarEdit} style={{background:'#059669',color:'white',border:'none',borderRadius:6,padding:'0.3rem 0.6rem',cursor:'pointer',fontSize:'0.8rem'}}>✅</button>
+                <button onClick={()=>{setTextoEdit(e.texto);setEditando(false);}} style={{background:'#6B7280',color:'white',border:'none',borderRadius:6,padding:'0.3rem 0.6rem',cursor:'pointer',fontSize:'0.8rem'}}>✕</button>
+              </div>:
+              <><Chip color={quad.color} bg={quad.bg}>{quad.label}: {e.texto}</Chip>
+              <button onClick={()=>setEditando(true)} title="Editar" style={{background:'none',border:'none',cursor:'pointer',fontSize:'0.8rem',color:'#6B7280',padding:'0 4px'}}>✏️</button></>
+            }
             <Chip color="#6B7280" bg="#F3F4F6">🗂️ {e.area}</Chip>
           </div>
           {e.lineaPropuesta&&<button onClick={()=>desagrupar(e.id)} style={{fontSize:'0.7rem',color:'#DC2626',background:'none',border:'none',cursor:'pointer',textDecoration:'underline'}}>Quitar del grupo</button>}
