@@ -1803,6 +1803,51 @@ const AnalisisSintesis=({eric,bmc,onUpdate,isAdmin,miArea,userCargo})=>{
         </div>
       ))}
     </div>}
+
+    <SintesisNarrativa area={miArea} isAdmin={isAdmin} onUpdate={onUpdate}/>
+  </div>);
+};
+
+const SintesisNarrativa=({area,isAdmin,onUpdate})=>{
+  const[texto,setTexto]=useState('');
+  const[guardado,setGuardado]=useState(false);
+
+  // Cargar texto guardado de Firebase
+  useEffect(()=>{
+    if(!area&&!isAdmin)return;
+    const key=isAdmin?'general':(area||'general');
+    const unsub=db.collection('fundacoofisam_datos').doc('sintesis_narrativa').collection('areas').doc(key).onSnapshot(snap=>{
+      if(snap.exists)setTexto(snap.data().texto||'');
+    });
+    return()=>unsub();
+  },[area,isAdmin]);
+
+  const guardarTexto=async()=>{
+    const key=isAdmin?'general':(area||'general');
+    await db.collection('fundacoofisam_datos').doc('sintesis_narrativa').collection('areas').doc(key).set({
+      texto,area:key,updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    setGuardado(true);
+    setTimeout(()=>setGuardado(false),2000);
+  };
+
+  return(<div className="card" style={{borderLeft:'4px solid #00BEC8'}}>
+    <h3 style={{fontSize:'1rem',marginBottom:'0.75rem'}}>📝 Síntesis narrativa {area&&!isAdmin?`— Área: ${area}`:''}</h3>
+    <p style={{fontSize:'0.82rem',color:'#6B7280',marginBottom:'0.75rem'}}>Escribe aquí el análisis cualitativo de las líneas estratégicas identificadas. Este texto se muestra en tiempo real.</p>
+    <textarea
+      value={texto}
+      onChange={e=>setTexto(e.target.value)}
+      rows={6}
+      style={{width:'100%',padding:'0.75rem',border:'2px solid #E5E7EB',borderRadius:'8px',fontSize:'0.9rem',lineHeight:1.6,resize:'vertical'}}
+      placeholder="Describe las principales líneas estratégicas identificadas para tu área, los factores críticos y las prioridades de acción..."/>
+    <div style={{display:'flex',alignItems:'center',gap:'0.75rem',marginTop:'0.5rem'}}>
+      <button onClick={guardarTexto} className="btn-primary" style={{width:'auto'}}>💾 Guardar síntesis</button>
+      {guardado&&<span style={{color:'#059669',fontSize:'0.85rem',fontWeight:600}}>✅ Guardado</span>}
+    </div>
+    {texto&&<div style={{marginTop:'1rem',padding:'1rem',background:'#F0F8FF',borderRadius:'8px',border:'1px solid #BAE6FD'}}>
+      <p style={{fontSize:'0.8rem',color:'#0369A1',fontWeight:600,marginBottom:'0.5rem'}}>Vista previa:</p>
+      <p style={{fontSize:'0.9rem',color:'#1E293B',lineHeight:1.7,whiteSpace:'pre-wrap'}}>{texto}</p>
+    </div>}
   </div>);
 };
 // ===================== FIN ANÁLISIS Y DIAGNÓSTICO =====================
